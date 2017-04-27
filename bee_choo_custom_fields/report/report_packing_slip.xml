@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="packing_slip">
+            <t t-call="report.html_container">
+                <t t-foreach="doc_ids" t-as="doc_id">
+                    <t t-raw="translate_doc(doc_id, doc_model, 'partner_id.lang', 'bee_choo_custom_fields.report_packing_slip')"/>
+                </t>
+            </t>
+        </template>
+        <template id="report_packing_slip">
+            <xpath expr="//t[@t-call='report.external_layout']" position="replace">
+                <t t-call="bee_choo_custom_fields.external_packing_slip_layout">
+                    <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
+                    <div class="page">
+                        <strong><hr style="border:0.5px solid black;" size="5"></hr></strong>
+                        <div style="text-align:center;font-size: 20px;border-top:1px solid black;border-bottom:1px solid black;">
+                            <strong>PACKING LIST</strong>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 pull-left">
+                                <table class="table1 table-condensed"
+                                       style=" width:100%;">
+                                    <tr>
+                                        <td colspan="6" style="font-size:12px;">
+                                            <strong>BILL TO :</strong><br/>
+<!--                                             <address t-field="o.partner_id"
+                                                     t-field-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: true}"/> -->
+                                            <span t-if="o.partner_id.name" t-field="o.partner_id.name"/><br/>
+                                            <span t-if="o.partner_id.street" t-field="o.partner_id.street"/><br t-if="o.partner_id.street"/>
+                                            <span t-if="o.partner_id.street2" t-field="o.partner_id.street2"/><br t-if="o.partner_id.street2"></br>
+                                            <span t-if="o.partner_id.city" t-field="o.partner_id.city"/><br t-if="o.partner_id.city and not o.partner_id.state_id"></br>
+                                            <span t-if="o.partner_id.state_id" t-field="o.partner_id.state_id"/>
+                                            <span t-if="o.partner_id.zip" t-field="o.partner_id.zip"/><br t-if="o.partner_id.zip"></br>
+                                            <span t-if="o.partner_id.country_id" t-field="o.partner_id.country_id"/>
+                                            <br t-if="o.partner_id.country_id"></br>
+                                            <span t-if="o.partner_id.vat">TIN:
+                                                <span t-field="o.partner_id.vat"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr></tr>
+                                    <tr style="font-size:12px;">
+                                        <td align="left">
+                                            <strong>ATTENTION :</strong>
+                                        </td>
+                                        <td align="left">
+                                            <span t-field="o.partner_id.attention"></span>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td align="left">
+                                            <strong>TEL :</strong>
+                                        </td>
+                                        <td align="left">
+                                            <span t-field="o.partner_id.phone"></span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="col-xs-6 pull-right">
+                                <table class="table1 table-condensed"
+                                       style=" width:100%;  max-height: 250px;font-size: 12px;">
+                                    <tr>
+                                        <th>DO NO</th>
+                                        <td>
+                                            :
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>DATE</th>
+                                        <td>
+                                            :
+                                            <span t-field="o.date_order"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>DELIVERY DATE</th>
+                                        <td>
+                                            :
+                                            <span t-field="o.schedule_new_date"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>PAGE</th>
+                                        <td>
+                                            :
+                                            <t t-set="nbr_page" t-value="0"/>
+                                            <t t-set="compteur" t-value="nbr_page+1"/>
+                                            <t t-esc="compteur"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>PAYMENT TERM</th>
+                                        <td>
+                                            :
+                                            <span t-field="o.payment_term"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>CURRENCY</th>
+                                        <td>
+                                            :
+                                            <span t-field="o.currency_id.name"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div>
+                            <table class="table1 table-condensed"
+                                   style="font-size: 12px;table-layout: fixed; page-break-inside:auto; width:100%; border-top:1px solid black;">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" style="width:10%;font-size: 12px;vertical-align:middle;">
+                                            ITEM NO
+                                        </th>
+                                        <th class="text-center" style="width:8%;font-size: 12px;vertical-align:middle;">
+                                            COUNTRY OF ORIGIN
+                                        </th>
+                                        <th class="text-center" style="width:30%;font-size: 12px;vertical-align:middle;">
+                                            DESCRIPTION
+                                        </th>
+                                        <th class="text-center" style="width:8%;font-size: 12px;vertical-align:middle;">
+                                            QTY
+                                        </th>
+                                        <th class="text-center" style="width:11%;font-size: 12px;vertical-align:middle;">
+                                            PACKAGE (CTN)
+                                        </th>
+                                        <th class="text-center" style="width:8%;font-size: 12px;vertical-align:middle;">
+                                            NET WEIGHT (Kg)
+                                        </th>
+                                        <th class="text-center" style="width:10%;font-size: 12px;vertical-align:middle;">
+                                            CARTON     REF NO
+                                        </th>
+                                        <th class="text-center" style="width:8%;font-size: 12px;vertical-align:middle;">
+                                            PALLET     REF NO
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="invoice_tbody">
+                                    <t t-set="i" t-value="0"/>
+                                    <tr t-foreach="o.get_data()" t-as="data"
+                                        style="page-break-inside: avoid; page-break-after : always; page-break-before : always; white-space: nowrap;">
+                                        <t t-set="i" t-value="i+1"/>
+                                        <td class="text-center" style="width:5%; vertical-align:top;padding-bottom: 1em;">
+                                            <span t-esc="i"/>
+                                        </td>
+                                        <td class="text-center" style="width:15%;vertical-align:top;padding-bottom: 1em;">
+                                            <span t-esc="data['country_origin']"/>
+                                        </td>
+                                        <td class="text-center" style="width:30%;vertical-align:top;padding-bottom: 1em;">
+                                             <span t-esc="data['description']"/>
+                                        </td>
+                                        <td class="text-center" style="width:8%;vertical-align:top;padding-bottom: 1em;">
+                                             <span t-esc="data['qty']"/>
+                                        </td>
+                                        <td class="text-center" style="width:10%;vertical-align:top;padding-bottom: 1em;">
+                                            <span t-esc="data['package']"/>
+                                        </td>
+                                        <td class="text-center" style="width:10%;vertical-align:top;padding-bottom: 1em; ">
+                                            <span t-esc="data['net_wt']"/>
+                                        </td>
+                                        <td class="text-center" style="width:10%;vertical-align:top;padding-bottom: 1em; ">
+                                            <span t-esc="data['carton_ref']"/>
+                                        </td>
+                                        <td class="text-center" style="width:12%;vertical-align:top;padding-bottom: 1em; ">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                    <div style="border-top:1px solid black;">
+                    </div>
+                    <div class="row">
+                        <div>
+                            <table class="table1 table-condensed" style="table-layout: fixed; width:100%;font-size: 12px;">
+                                <tr t-foreach="o.get_total_data()" t-as="total"
+                                    style="page-break-inside: avoid; page-break-after : always; page-break-before : always; white-space: nowrap;">
+                                    <th class="text-right" style="width:50%;padding-right: 1em;"><strong>Total</strong></th>
+                                    <td class="text-center" style="width:8.5%;border-bottom:1px solid black;padding-bottom: 1em;">
+                                        <span t-esc="total['qty']"/>
+                                    </td>
+                                    <td class="text-center" style="width:10.5%;border-bottom:1px solid black;padding-bottom: 1em;">
+                                        <span t-esc="total['package']"/>
+                                    </td>
+                                    <td class="text-center" style="width:10%;border-bottom:1px solid black;padding-bottom: 1em; ">
+                                        <span t-esc="total['net_wt']"/>
+                                    </td>
+                                    <td class="text-center" style="width:10%;border-bottom:1px solid black;padding-bottom: 1em; ">
+                                        0
+                                    </td>
+                                    <td class="text-center" style="width:10%;border-bottom:1px solid black;padding-bottom: 1em; "></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-xs-8 pull-right">
+                            <table border="0" class="table1 table-condensed" style="font-size: 12px;border-bottom: 1px solid black;table-layout: fixed; width:100%;" column="6">
+                                <tr>
+                                    <td colspan="3" align="left" style="border-bottom: 1px solid black;font-size: 12px;">
+                                        <span><strong>DIMENSION OF PALLET</strong></span>
+                                    </td>
+                                    <td colspan="3" align="center"></td>
+                                 </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-8 pull-right">
+                            <table border="0" class="table1 table-condensed" style="table-layout: fixed; width:100%;">
+                                <t t-set="i" t-value="0"/>
+                                <tr t-foreach="o.get_pallet()" t-as="l">
+                                    <t t-set="i" t-value="i+1"/>
+                                    <th style="font-size: 12px;"><strong>PALLET </strong><span t-esc="i"/>:</th>
+                                    <td colspan="4" style="border-bottom: 0.5px solid black;padding-left: 1em;font-size: 12px;">
+                                        <span t-esc="l['packing_size']"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-xs-4 pull-left">
+                            <table class="table1 table-condensed" style="table-layout: fixed; width:100%;">
+                                <tr t-foreach="o.get_total_data()" t-as="total">
+                                    <th colspan="3" align="left" style="font-size: 12px;"><span><strong>TOTAL OF CARTON</strong></span></th>
+                                    <td>:</td>
+                                    <td style="border-bottom: 0.5px solid black;font-size: 12px;">
+                                        <span t-esc="total['package']"/>
+                                    </td>
+                                </tr>
+                                <tr t-foreach="o.get_total_data()" t-as="total">
+                                    <th colspan="3" align="left" style="font-size: 12px;"><span><strong>GROSS WEIGHT (KG)</strong></span></th>
+                                    <td>:</td>
+                                    <td style="border-bottom: 0.5px solid black;font-size: 12px;">
+                                        <span t-esc="total['net_wt']"/>
+                                    </td>
+                                </tr>
+                                <tr t-foreach="o.get_total_data()" t-as="total">
+                                    <th colspan="3" align="left" style="font-size: 12px;"><span><strong>NO OF PALLET</strong></span></th>
+                                    <td>:</td>
+                                    <td style="border-bottom: 0.5px solid black;font-size: 12px;"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom:50px;">
+                        <div class="col-xs-4 pull-left">
+                            <div style="margin-top:35px;font-size:12px;text-align
+                                :center;">
+                                <span>
+                                    <strong>PHOENIE</strong>
+                                </span>
+                                <div style="height:1px;width:100%;background:#000;"/>
+                                <span>
+                                    <strong>ISSUED BY</strong>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div style="margin-top:35px;font-size:12px;text-align:center;">
+                                <span>
+                                    <strong><span style="color:white;">.</span></strong>
+                                </span>
+                                <div style="height:1px;width:100%;background:#000; "/>
+                                <span>
+                                    <strong>CHECKED BY</strong>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-xs-4 pull-right">
+                            <div style="margin-top:35px;font-size:12px;text-align:center;">
+                                <span>
+                                    <strong><span style="color:white;">.</span></strong>
+                                </span>
+                                <div style="height:1px;width:100%;background:#000;"/>
+                                <span>
+                                    <strong>RECEIVED BY</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </t>
+            </xpath>
+        </template>
+
+    </data>
+</openerp>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="account.report_overdue_document">
+            <xpath expr="//t[@t-call='report.external_layout']" position="replace">
+                <t t-call="bee_choo_custom_fields.external_due_custom">
+<!--                     <div class="header">
+                        <div class="row">
+                            <div class="col-xs-3 pull-left">
+                                <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"
+                                     style="max-height: 80px;magin-top:20px;margin-right:30px;"/>
+                            </div>
+                            <div class="col-xs-9">
+                                <div style="font-weight:700;font-size:25px">
+                                    <strong>Origin Herbal Hair Treatment Pte Ltd</strong>
+                                </div>
+                                <div style="font-size:15px">
+                                    23, Kaki Bukit Place, Singapore 416201
+                                </div>
+                                <div style="font-size:15px">
+                                    Tel. No. 6742 3033 Fax No. 6635 8655 UEN/GST Reg. No. 200903578H
+                                </div>
+                                <div style="font-size:15px">
+                                    Email: originherbal@gmail.com Website: www.beechoohair.com
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                    <div class="page">
+                        <br/>
+                        <div style="text-align:center;font-size:20px;border-top:1px solid black;border-bottom:1px solid black;">
+                            <strong style="font-weight:700;">
+                                STATEMENT OF ACCOUNT
+                            </strong>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <span t-field="o.name"/>
+                                <br/>
+                                <span t-raw="addresses[o.id].replace('\n\n', '\n').replace('\n', '&lt;br&gt;')"/>
+                                <span t-field="o.vat"/>
+                            </div>
+                        </div>
+                        <p>
+                            <br/>
+                            DATE:
+                            <span t-esc="formatLang(time.strftime('%Y-%m-%d'), date=True)"/>
+                            <br/>
+                            ATTN:
+                            <span t-field="o.attention"/>
+                        </p>
+
+                        <table class="table table-condensed" t-if="getLines(o)">
+                            <thead>
+                                <tr>
+                                    <th>DATE</th>
+                                    <!-- <th>Description</th> -->
+                                    <th class="text-center">REF</th>
+                                    <th class="text-right">DUE</th>
+                                    <th class="text-right">PAID</th>
+                                    <th class="text-right">REMAINING</th>
+                                </tr>
+                            </thead>
+                            <tr t-foreach="getLines(o)" t-as="line">
+                                <td>
+                                    <span t-field="line.date"/>
+                                </td>
+<!--                                 <td>
+                                    <span t-field="line.name"/>
+                                </td> -->
+                                <td class="text-center">
+                                    <span t-esc="get_inv_nm(line)"/>
+                                </td>
+                                <td class="text-right">
+                                    <t t-if="line.account_id.type == 'receivable'">
+                                        <span t-esc="formatLang(line.debit, currency_obj=res_company.currency_id)"/>
+                                    </t>
+                                    <t t-if="line.account_id.type == 'payable'">
+                                        <span t-esc="formatLang(line['credit'] * -1, currency_obj=res_company.currency_id)"/>
+                                    </t>
+                                </td>
+                                <td class="text-right">
+                                    <t t-if="line.account_id.type == 'receivable'">
+                                        <span t-esc="formatLang(line.credit, currency_obj=res_company.currency_id)"/>
+                                    </t>
+                                    <t t-if="line.account_id.type == 'payable'">
+                                        <span t-esc="formatLang(line.debit * -1, currency_obj=res_company.currency_id)"/>
+                                    </t>
+                                </td>
+                                <td class="text-right">
+                                    <t t-if="time.strftime('%Y-%m-%d') &gt; line['date_maturity']">
+                                        <span t-esc="formatLang(line.debit - line.credit, currency_obj=res_company.currency_id)"/>
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1"/>
+                                <td>
+                                    <strong>SUB-TOTAL :</strong>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="formatLang(due[o.id], currency_obj=res_company.currency_id)"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="formatLang(paid[o.id], currency_obj=res_company.currency_id)"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="formatLang(mat[o.id], currency_obj=res_company.currency_id)"/>
+                                </td>
+                                <td/>
+                            </tr>
+                            <tr>
+                                <td colspan="1"/>
+                                <td>
+                                    <strong>BALANCE :</strong>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="formatLang(due[o.id] - paid[o.id], currency_obj=res_company.currency_id)"/>
+                                </td>
+                                <td/>
+                                <td/>
+                                <td/>
+                            </tr>
+                        </table>
+
+                        <p t-if="getLines(o)">
+                            TOTAL AMOUNT DUE:
+                            <span t-esc="formatLang((reduce(lambda x, y: x + (y['debit'] - y['credit']), getLines(o), 0)), currency_obj=res_company.currency_id)"/>
+                        </p>
+
+                        <p t-if="not getLines(o)">
+                            <strong>THERE IS NOTHING DUE WITH THIS CUSTOMER.</strong>
+                        </p>
+                    </div>
+<!--                     <div class="footer">
+                        
+                    </div> -->
+                </t>
+
+            </xpath>
+        </template>
+    </data>
+</openerp>

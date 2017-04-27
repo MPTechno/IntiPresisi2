@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="account.report_partnerledger">
+            <xpath expr="//t[@t-call='report.internal_layout']" position="replace">
+                <t t-call="bee_choo_custom_fields.external_partner_ledger_layout">
+                    <t t-foreach="docs" t-as="partner">
+                        <div class="page">
+
+                            <div class="row">
+                                <div style="text-align:center;font-size:20px;border-top:1px solid black;border-bottom:1px solid black;">
+                                    <strong style="font-weight:700;">
+                                        STATEMENT OF ACCOUNT
+                                    </strong>
+                                </div>
+                                <div class="col-xs-5">
+                                    <span t-field="partner.name"/>
+                                    <br/>
+                                    <!-- <span t-raw="addresses[partner.id].replace('\n\n', '\n').replace('\n', '&lt;br&gt;')"/> -->
+                                    <span t-if="partner.street" t-field="partner.street"/><br/>
+                                    <span t-if="partner.street2" t-field="partner.street2"/><br t-if="partner.street2"></br>
+                                    <span t-if="partner.city" t-field="partner.city"/><br t-if="partner.city and not partner.state_id"></br>
+                                    <span t-if="partner.state_id" t-field="partner.state_id"/>
+                                    <span t-if="partner.zip" t-field="partner.zip"/><br t-if="partner.zip"></br>
+                                    <span t-if="partner.country_id" t-field="partner.country_id"/>
+                                    <br t-if="partner.country_id"></br>
+                                    <span t-field="partner.vat"/>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <p style="margin-top:10px;">
+                                    <b>DATE:</b>
+                                    <span t-esc="formatLang(time.strftime('%Y-%m-%d'), date=True)"/>
+                                    <br/>
+                                    <b>ATTN:</b>
+                                    <span t-field="partner.attention"/>
+                                </p>
+
+                                <table class="table table-condensed">
+                                    <tr>
+                                        <th>DATE</th>
+                                        <th  class="text-center">REF</th>
+                                        <th class="text-right">DEBIT</th>
+                                        <th class="text-right">CREDIT</th>
+                                        <th class="text-right">BALANCE</th>
+                                        <th t-if="amount_currency">CURRENCY</th>
+                                    </tr>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="5">
+                                                <strong t-esc="partner.ref"/>
+                                                -
+                                                <strong t-esc="partner.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr t-if="initial_balance">
+                                            <td colspan="5">INITIAL BALANCE</td>
+                                            <td>
+                                                <span t-esc="formatLang(get_intial_balance(partner)[0][0])"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="formatLang(get_intial_balance(partner)[0][1])"/>
+                                            </td>
+                                            <td>
+                                                <span t-esc="formatLang(get_intial_balance(partner)[0][2], currency_obj=res_company.currency_id)"/>
+                                            </td>
+                                        </tr>
+                                        <tr t-foreach="lines(partner)" t-as="line">
+                                            <td>
+                                                <span t-esc="formatLang(line['date'], date=True)"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-esc="get_inv_nm(line)"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="formatLang((line['debit']), currency_obj=res_company.currency_id)"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="formatLang((line['credit']), currency_obj=res_company.currency_id)"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="formatLang(line['progress'], currency_obj=res_company.currency_id)"/>
+                                            </td>
+                                            <td t-if="amount_currency">
+                                                <span t-esc="formatLang(line['amount_currency'])"/>&amp;nbsp;
+                                                <span t-esc="line['currency_code']"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" class="text-right">
+                                                <strong>SUB-TOTAL:</strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="formatLang(sum_debit_partner(partner), currency_obj=res_company.currency_id)"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="formatLang(sum_credit_partner(partner), currency_obj=res_company.currency_id)"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="formatLang((sum_debit_partner(partner) - sum_credit_partner(partner)), currency_obj=res_company.currency_id)"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" class="text-right">
+                                                <strong>BALANCE:</strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <strong t-esc="formatLang((sum_debit_partner(partner) - sum_credit_partner(partner)), currency_obj=res_company.currency_id)"/>
+                                            </td>
+                                            <td colspan="2"><span style="color:white;">.</span></td>
+                                        </tr>
+                                        <tr style="border-top:none;">
+                                            <td colspan="5"><span style="color:white;">.</span></td>
+                                        </tr>
+                                        <tr style="border-top:none;">
+                                            <td colspan="5"><span style="color:white;">.</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" class="text-left">
+                                                <t t-if="getLines(partner)">
+                                                    <strong>TOTAL AMOUNT DUE:</strong>
+                                                    <span t-esc="formatLang((reduce(lambda x, y: x + (y['debit'] - y['credit']), getLines(partner), 0)), currency_obj=res_company.currency_id)"/>
+                                                </t>
+
+                                                <t t-if="not getLines(partner)">
+                                                    <strong>THERE IS NOTHING DUE WITH THIS CUSTOMER.</strong>
+                                                </t>
+                                            </td>
+                                            <td colspan="3"><span style="color:white;">.</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </xpath>
+        </template>
+    </data>
+</openerp>

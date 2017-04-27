@@ -1,0 +1,31 @@
+<openerp>
+    <data noupdate="1">
+         <record id="sequence_invoice_number_type" model="ir.sequence.type">
+            <field name="name">Invoice NUMBER TYPE</field>
+            <field name="code">invoice.number.default</field>
+        </record>
+
+        <record id="sequence_invoice_number" model="ir.sequence">
+            <field name="name">Invoice NUMBER DEFAULT</field>
+            <field name="code">invoice.number.default</field>
+            <field name="prefix"></field>
+            <field name="padding">8</field>
+            <field name="number_next">00005303</field>
+            <field eval="1" name="number_increment"/>
+        </record>
+
+        <record id="sequence_delivery_order_number_type" model="ir.sequence.type">
+            <field name="name">Delivery Order TYPE</field>
+            <field name="code">delivery.order.default</field>
+        </record>
+
+        <record id="sequence_delivery_order_number" model="ir.sequence">
+            <field name="name">Delivery Order DEFAULT</field>
+            <field name="code">delivery.order.default</field>
+            <field name="prefix"></field>
+            <field name="padding">8</field>
+            <field name="number_next">00005303</field>
+            <field eval="1" name="number_increment"/>
+        </record>
+    </data>
+</openerp>
