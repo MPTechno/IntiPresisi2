@@ -1,2 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_bee_choo_custom_fields_bee_choo_custom_fields,bee_choo_custom_fields.bee_choo_custom_fields,model_bee_choo_custom_fields_bee_choo_custom_fields,,1,0,0,0
