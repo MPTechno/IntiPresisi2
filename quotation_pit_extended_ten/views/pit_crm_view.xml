@@ -11,16 +11,88 @@
             <field name="arch" type="xml">
                 <data>
                     <xpath expr="//field[@name='partner_id']" position="attributes">
-                        <attribute name="string">Account</attribute>
+                        <attribute name="string">Account Name</attribute>
                     </xpath>
                     <xpath expr="//field[@name='user_id']" position="attributes">
-                        <attribute name="string">Prospect Owner</attribute>
+                        <attribute name="string">Enquiry Owner</attribute>
                     </xpath>
                     <xpath expr="//field[@name='partner_name']" position="attributes">
                         <attribute name="string">Name</attribute>
                     </xpath>
                     <xpath expr="//label[@for='name']" position="attributes">
                         <attribute name="string">Enquiry</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='name']" position="before">
+                        <div class="oe_title">
+                            <h1>
+                                <field name="en_number" readonly="1"/>
+                            </h1>
+                        </div>
+                    </xpath>
+                    <xpath expr="//field[@name='date_deadline']" position="attributes">
+                        <attribute name="string">Close Date</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='priority']" position="replace"></xpath>
+                    <xpath expr="//field[@name='partner_id']" position="after">
+                        <field name="enquiry_type"/>
+                    </xpath>
+                    <xpath expr="//field[@name='date_deadline']" position="after">
+                        <field name="stage"/>
+                        <field name="priority" widget="priority"/>
+                    </xpath>
+                    
+                    <xpath expr="//field[@name='tag_ids']" position="after">
+                        <field name="en_status"/>
+                        <field name="en_stages"/>
+                    </xpath>
+                    <xpath expr="//notebook" position="inside">
+                        <page string="Additional Information">
+                            <group col="4">
+                                <field name="prospects_source_id"/>
+                                <field name="reason_enquiry"/>
+                                <field name="next_step"/>
+                            </group>
+                        </page>
+                        <page string="Negotiation Information">
+                            <group>
+                                <field name="nagotiation_note" nolabel="1" placeholder="Negotiation Information..."/>
+                            </group>
+                        </page>
+                        <page string="Description Information">
+                            <group>
+                                <field name="description_te" nolabel="1" placeholder="Description..."/>
+                            </group>
+                        </page>
+                        <page string="System Information">
+                            <group col="4">
+                                <field name="created_by_en"/>
+                                <field name="last_modified_by_en"/>
+                            </group>
+                        </page>
+                        <page string="Attachments">
+                            <group col="4">
+                                <field name="attachment_type_id"/>
+                                <field name="created_by_attch"/>
+                                <field name="title_attach"/>
+                                <field name="last_modified_attach"/>
+                            </group>
+                        </page>
+                        <page string="Product Pricelisting">
+                            <group col="4">
+                                <field name="product_en"/>
+                                <field name="internal_code_en"/>
+                                <field name="qty_en"/>
+                                <field name="part_number"/>
+                                <field name="unit_price_en"/>
+                                <field name="workpiece_material"/>
+                                <field name="total_price_en"/>
+                                <field name="coating_en"/>
+                                <field name="pricing_date"/>
+                            </group>
+                            <group string="Remarks">
+                                <field name="remarks_en" nolabel="1" placeholder="remarks..."/>
+                            </group>
+                        </page>
                     </xpath>
                 </data>
             </field>
@@ -39,7 +111,33 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="q_enquiry_filters_view">
+            <field name="name">Enquiry.filters</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//filter[@name='assigned_to_me']" position="attributes">
+                        <attribute name="string">My Enquiry</attribute>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
         <!-- LEED VIEW -->
+
+        <record model="ir.ui.view" id="quotation_per_enquiry_filters_view">
+            <field name="name">Prospects.filters</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.view_crm_case_leads_filter"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//filter[@name='assigned_to_me']" position="attributes">
+                        <attribute name="string">My Prospects</attribute>
+                    </xpath>
+                </data>
+            </field>
+        </record>
 
         <record model="ir.ui.view" id="quotation_per_prospects_tree_view">
             <field name="name">Prospect</field>
@@ -180,9 +278,6 @@
                                 <field name="ref_email"/>
                                 <field name="ref_mobile"/>
                             </group>                          
-                        </page>
-                        <page string="Map">
-                            <field name="g_map" widget="FieldMap"/>
                         </page>
                     </xpath>
                 </data>

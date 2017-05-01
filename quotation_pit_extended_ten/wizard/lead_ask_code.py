@@ -27,8 +27,10 @@ class crm_askcode_partner(models.TransientModel):
             partner = self.env['res.partner']
             vals_dict = {}
             if lead_obje.partner_name:
+                sale_pricelist_id = self.env['product.pricelist'].create({'name':lead_obje.partner_name})
                 vals_dict = {
-                    'name': w.code_partner,
+                    'partner_code': w.code_partner,
+                    'name':lead_obje.partner_name,
                     'phone':lead_obje.phone,
                     'user_id': self._uid,
                     'partner_code':w.code_partner,
@@ -37,6 +39,7 @@ class crm_askcode_partner(models.TransientModel):
                     'street2':lead_obje.street2,
                     'country_id':lead_obje.country_id.id,
                     'zip':lead_obje.zip,
+                    'property_product_pricelist':sale_pricelist_id.id,
                     'is_company': False,
                     'type': 'contact',
                     'customer':True,

@@ -16,31 +16,55 @@ class prospect_source(models.Model):
     _name='prospect.source'
     
     name = fields.Char('Prospect Source Name')
-    prospect_source_ids = fields.One2many('crm.lead','prospect_source','Lead')
+    # prospect_source_ids = fields.One2many('crm.lead','prospect_source','Lead')
 
 class industry_source(models.Model):
     _name = 'industry.source'
     
     name = fields.Char('Industry Name')
-    indus_ids = fields.One2many('crm.lead','industry_source_id','Lead')
+    # indus_ids = fields.One2many('crm.lead','industry_source_id','Lead')
 
 class qty_machine(models.Model):
     _name = 'qty.machine'
     
     name = fields.Char('Name')
-    q_machine_ids = fields.One2many('crm.lead','quantity_of_machine','Lead')
+    # q_machine_ids = fields.One2many('crm.lead','quantity_of_machine','Lead')
 
 class prospect_production(models.Model):
     _name = 'prospect.production'
     
     name = fields.Char('Name')
-    prospect_production_ids = fields.One2many('crm.lead','prospect_production','Lead')
+    # prospect_production_ids = fields.One2many('crm.lead','prospect_production','Lead')
 
 class customer_group(models.Model):
     _name = 'customer.group'
     
     name = fields.Char('Name')
-    customer_group_ids = fields.One2many('res.partner','customer_group_id','Lead')
+    # customer_group_ids = fields.One2many('res.partner','customer_group_id','Lead')
+
+class enquiry_status(models.Model):
+    _name = 'enquiry.status'
+    
+    name = fields.Char('Name')
+    # en_status_ids = fields.One2many('crm.lead','en_status','status')
+
+class workpiece_material(models.Model):
+    _name = 'workpiece.material'
+    
+    name = fields.Char('Name')
+    # workpiece_ids = fields.One2many('crm.lead','workpiece_material','Workpiece Material')
+
+class coating_enquiry(models.Model):
+    _name = 'coating.enquiry'
+    
+    name = fields.Char('Name')
+    # coating_en_ids = fields.One2many('crm.lead','coating_en','Coating')
+
+class attachment_type_en(models.Model):
+    _name = 'attachment.type.en'
+    
+    name = fields.Char('Name')
+    # attachment_type_en_ids = fields.One2many('crm.lead','attachment_type_id','Type')
 
 class crm_lead(models.Model):
     _inherit = 'crm.lead'
@@ -52,7 +76,6 @@ class crm_lead(models.Model):
         group_expand='_read_group_stage_ids', default=lambda self: self._default_stage_id())
     prospect_quality = fields.Selection([('a','A'),('b','B'),('c','C'),('d','D'),('e','E')], 'Prospect Quality')
     website = fields.Char('Website')
-
 
     # Additional Information
     no_of_employee = fields.Integer('No of Employee')
@@ -78,12 +101,68 @@ class crm_lead(models.Model):
     created_by = fields.Char('Created By')
     last_modified_by = fields.Char('Last Modified By')
 
+
+    # OPPORTUNITY FIELDS
+    en_number = fields.Char('Enquiry Number')
+    enquiry_type = fields.Selection([('new_business','New Business'),('existing_business','Existing Business')], 'Enquiry Type')
+    # close_date = fields.Date('Close Date')
+    stage = fields.Char('Stage')
+    en_status = fields.Many2one('enquiry.status','Enquiry Status')
+    en_stages = fields.Many2one('crm.stage', string='Enquiry Stage', track_visibility='onchange', index=True,
+        domain="['|', ('team_id', '=', False), ('team_id', '=', team_id)]",
+        group_expand='_read_group_stage_ids', default=lambda self: self._default_stage_id())
+
+          # ADDITIONAL INFO
+    prospects_source_id = fields.Many2one('crm.lead', 'Prospect Source',domain="[('type', '=', 'lead')]")
+    next_step = fields.Char('Next Step')
+    reason_enquiry = fields.Text('Reason')
+
+        # NEGOTITION INFORMATION 
+
+    nagotiation_note = fields.Text('Negotiation n Notes')
+
+        # DESCRIPTION INFORMATION
+
+    description_te = fields.Text('Description')
+
+        # SYSTEM INFORMATION
+    created_by_en = fields.Char('Created By')
+    last_modified_by_en = fields.Char('Last Modified By')
+
+        # Attachments
+
+    attachment_type_id = fields.Many2one('attachment.type.en','Type')
+    title_attach = fields.Char('Title')
+    last_modified_attach = fields.Date('Last Modified')
+    created_by_attch = fields.Date('Created By')
+
+        # PRODUCT PRICELISTING
+
+    product_en = fields.Many2one('product.product','Product')
+    qty_en = fields.Integer('Quantity')
+    unit_price_en = fields.Float('Unit Price')
+    total_price_en = fields.Float('Total Price')
+    part_number = fields.Char('Part Number')
+    internal_code_en = fields.Char('Internal Code')
+    workpiece_material = fields.Many2one('workpiece.material','Workpiece Material')
+    coating_en = fields.Many2one('coating.enquiry','Coating')
+    pricing_date = fields.Date('Pricing Date')
+    remarks_en = fields.Text('Remarks')
+
+
+
     @api.multi
     def write(self, vals):
         # stage change: update date_last_stage_update
         if 'stage_new_id' in vals:
             vals['stage_id'] = vals.get('stage_new_id')
         return super(crm_lead, self).write(vals)
+
+    @api.model
+    def create(self, vals):
+        if vals['type'] == 'opportunity':
+            vals['en_number'] = self.env['ir.sequence'].get('crm.lead')
+        return super(crm_lead, self).create(vals)
 
     @api.model
     def _onchange_stage_id_values(self, stage_id):
@@ -100,7 +179,6 @@ class crm_lead(models.Model):
 class res_partner(models.Model):
     _inherit = 'res.partner'
     
-    g_map = fields.Text('map')
     partner_code = fields.Char('Code',required=True)
     street_delivery =  fields.Char('Street')
     street2_delivery =  fields.Char('Street2')
@@ -132,3 +210,11 @@ class res_partner(models.Model):
             state = self.env['res.country.state'].browse(state_id)
             return {'value': {'country_id_delivery': state.country_id.id}}
         return {}
+
+class product_pricelist(models.Model):
+    _inherit = 'product.pricelist'
+
+    @api.model
+    def create(self, vals):
+        vals['name'] = vals['name'] + self.env['ir.sequence'].get('product.pricelist')
+        return super(product_pricelist, self).create(vals)
