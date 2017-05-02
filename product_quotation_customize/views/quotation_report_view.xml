@@ -39,7 +39,7 @@
 							<strong>Quotation Date:</strong><br/>
 							<span t-field="o.date_order" /> <br/>
 							<strong>Our Reference:</strong><br/>
-							<span t-if="o.client_order_ref" t-field="o.client_order_ref" /> <!--strong>Page: <span class="page"/> of <span class="topage"/></strong-->
+							<span t-if="o.client_order_ref" t-field="o.client_order_ref" /> 
 						</div>
 						<div class="col-xl-3 pull-right">
 							<strong>Customer Code:</strong><br/>
@@ -48,7 +48,8 @@
 							<!--span t-esc="get_printout_date()" /><br/-->
 							<span t-field="o.date_order" /> <br/>
 							<strong>Our Reference:</strong><br/>
-							<span t-if="o.client_order_ref" t-field="o.client_order_ref" />
+							<span t-if="o.client_order_ref" t-field="o.client_order_ref" /><br/>
+							<strong>Page:</strong> <span class="page"/> <strong>of</strong> <span class="topage"/>
 						</div>
 					</div>
 				</div>

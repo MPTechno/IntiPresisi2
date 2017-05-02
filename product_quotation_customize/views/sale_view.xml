@@ -8,14 +8,18 @@
 		<field name="inherit_id" ref="sale.view_order_form"/>
 		<field name="arch" type="xml">
 		    <data>
-		        <xpath expr="//notebook/page[2]/group/group/field[@name='invoice_status']" position="after">
-		        	<field name="revision"/>
-		        </xpath>
 		        <xpath expr="//form/sheet/group/group/field[@name='partner_id']" position="before">
 		        	<field name="sale_order_name_id"/>
 		        </xpath>
 		        <xpath expr="//form/sheet/group/group/field[@name='payment_term_id']" position="after">
 		        	<field name="manual_sequence"/>
+		        	<field name="revision"/>
+		        </xpath>
+		        <xpath expr="//form/sheet/group/group/field[@name='date_order']" position="attributes">
+		        	<attribute name='string'>Quote Date</attribute>
+		        </xpath>
+		        <xpath expr='//notebook/page[1]/group[@name="sale_total"]/div/label[@for="amount_total"]' position="attributes">
+		        	<attribute name='string'>Grand Total</attribute>
 		        </xpath>
 		    </data>
 		</field>

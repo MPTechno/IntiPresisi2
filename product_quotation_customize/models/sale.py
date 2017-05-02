@@ -6,8 +6,8 @@ from odoo import api, fields, models, _
 class sale_order(models.Model):
 	_inherit = 'sale.order'
 	revision = fields.Char('Revision')
-	sale_order_name_id = fields.Many2one('sale.order.name','Order Name')
-	manual_sequence = fields.Char('Manual Input',required=True)
+	sale_order_name_id = fields.Many2one('sale.order.name','Quote Name')
+	manual_sequence = fields.Char('Quote Number',required=True)
 	
 	@api.model
 	def create(self, vals):
