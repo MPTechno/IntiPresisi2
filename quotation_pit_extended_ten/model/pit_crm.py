@@ -66,16 +66,20 @@ class attachment_type_en(models.Model):
     name = fields.Char('Name')
     # attachment_type_en_ids = fields.One2many('crm.lead','attachment_type_id','Type')
 
+class crm_new_case(models.Model):
+    _name = 'crm.new.case'
+    
+    name = fields.Char('Name')
+
 class crm_lead(models.Model):
     _inherit = 'crm.lead'
 
     
     partner_name = fields.Char('Account Name',required=True)
-    stage_new_id = fields.Many2one('crm.stage', string='Stage', track_visibility='onchange', index=True,
-        domain="['|', ('team_id', '=', False), ('team_id', '=', team_id)]",
-        group_expand='_read_group_stage_ids', default=lambda self: self._default_stage_id())
+    stage_new_pr = fields.Many2one('crm.new.case','Prospects Status')
     prospect_quality = fields.Selection([('a','A'),('b','B'),('c','C'),('d','D'),('e','E')], 'Prospect Quality')
     website = fields.Char('Website')
+    comp_name = fields.Char('Company')
 
     # Additional Information
     no_of_employee = fields.Integer('No of Employee')
@@ -186,8 +190,8 @@ class res_partner(models.Model):
     city_delivery =  fields.Char('City')
     state_id_delivery =  fields.Many2one("res.country.state", 'State', ondelete='restrict')
     country_id_delivery =  fields.Many2one('res.country', 'Country', ondelete='restrict')
-    mailing_address_name = fields.Char('Name')
-    delivery_address_name = fields.Char('Name')
+    mailing_address_name = fields.Char('Mailing Address')
+    delivery_address_name = fields.Char('Delivery Address')
     city2_mailing =  fields.Char('City')
     city2_delivery =  fields.Char('City')
     zip2_mailing =  fields.Char('Zip')
@@ -197,7 +201,8 @@ class res_partner(models.Model):
     vat_code = fields.Char('Vat Code')
     vat_number = fields.Char('Vat Number')
     country_code = fields.Char('Country Code')
-
+    state_id2 = fields.Many2one("res.country.state", 'State', ondelete='restrict')
+    state_id2_delivery = fields.Many2one("res.country.state", 'State', ondelete='restrict')
         # REFERENCE DETAILS
     ref_name = fields.Char('Name')
     ref_phone = fields.Char('Phone')

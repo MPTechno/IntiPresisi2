@@ -46,6 +46,16 @@
             <field name="name">Approved</field>
         </record>
 
+        <!-- Prospects.status -->
+        <record model="crm.new.case" id="stage_pr_open">
+            <field name="name">Open</field>
+        </record>
+        <record model="crm.new.case" id="stage_pr_work">
+            <field name="name">Working</field>
+        </record>
+        <record model="crm.new.case" id="stage_pr_closed">
+            <field name="name">Closed</field>
+        </record>
 
         <record id="seq_crm_lead" model="ir.sequence">
             <field name="name">CRM LEAD</field>
