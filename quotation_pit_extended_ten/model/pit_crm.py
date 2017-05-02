@@ -164,8 +164,9 @@ class crm_lead(models.Model):
 
     @api.model
     def create(self, vals):
-        if vals['type'] == 'opportunity':
-            vals['en_number'] = self.env['ir.sequence'].get('crm.lead')
+        if 'type' in vals:
+            if vals['type'] == 'opportunity':
+                vals['en_number'] = self.env['ir.sequence'].get('crm.lead')
         return super(crm_lead, self).create(vals)
 
     @api.model
@@ -182,7 +183,16 @@ class crm_lead(models.Model):
 
 class res_partner(models.Model):
     _inherit = 'res.partner'
-    
+
+    @api.model
+    def _get_euro(self):
+        return self.env['res.currency.rate'].search([('rate', '=', 1)], limit=1).currency_id
+
+    @api.model
+    def _get_user_currency(self):
+        currency_id = self.env['res.users'].browse(self._uid).company_id.currency_id
+        return currency_id or self._get_euro()
+
     partner_code = fields.Char('Code',required=True)
     street_delivery =  fields.Char('Street')
     street2_delivery =  fields.Char('Street2')
@@ -196,7 +206,7 @@ class res_partner(models.Model):
     city2_delivery =  fields.Char('City')
     zip2_mailing =  fields.Char('Zip')
     zip2_delivery =  fields.Char('Zip')
-    currency_id =  fields.Many2one('res.currency', 'Currency')
+    currency_new_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self._get_user_currency())
     customer_group_id = fields.Many2one('customer.group','Customer Group')
     vat_code = fields.Char('Vat Code')
     vat_number = fields.Char('Vat Number')

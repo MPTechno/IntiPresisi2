@@ -212,31 +212,32 @@
                     </xpath>
                     <xpath expr="//field[@name='partner_id']" position="replace">
                     </xpath>
-                    <xpath expr="//field[@name='team_id']" position="after">
-                        <field name="partner_id"/>
-                    </xpath>
                     <xpath expr="//header/button" position="replace">
                         <button name="%(quotation_pit_extended_ten.action_crm_askcode_partner_action)d" string="Convert to Account" type="action" help="Convert to Accounts" class="oe_highlight" attrs="{'invisible': [('partner_id','!=',False)]}"/>
                     </xpath>
-                    <xpath expr="//field[@name='partner_id']" position="attributes">
-                        <attribute name="string">Account</attribute>
-                    </xpath>
+
                     <xpath expr="//field[@name='user_id']" position="attributes">
                         <attribute name="string">Prospect Owner</attribute>
                     </xpath>
                     <xpath expr="//sheet/group/group/label[@for='contact_name']" position="replace"></xpath>
-                    <xpath expr="//field[@name='contact_name']" position="replace">
-                    </xpath>
-                    <xpath expr="//field[@name='title']" position="replace">
+                    <xpath expr="//field[@name='contact_name']" position="replace"></xpath>
+                    <xpath expr="//field[@name='title']" position="replace"></xpath>
+                    <xpath expr="//field[@name='function']" position="replace"></xpath>
+                    <xpath expr="//field[@name='tag_ids']" position="attributes">
+                        <attribute name="invisible">True</attribute>
                     </xpath>
                     <xpath expr="//sheet/group/group/div[@class='o_row']" position="replace"></xpath>
                     <xpath expr="//field[@name='partner_name']" position="replace">
+                        <field name="partner_id"/>
                         <label for="partner_name" string="Name"/>
                         <div class="o_row">
                             <field name="partner_name"/>
                             <field name="title" placeholder="Title" domain="[]" options='{"no_open": True}'/>
                         </div>
                         <field name="comp_name"/>
+                    </xpath>
+                    <xpath expr="//field[@name='partner_id']" position="attributes">
+                        <attribute name="string">Account</attribute>
                     </xpath>
                     <xpath expr='//field[@name="priority"]' position='replace'>
                         <field name="stage_new_pr" string="Prospect Status"/>
@@ -300,7 +301,7 @@
             <field name="arch" type="xml">
                 <data>
                     <xpath expr="//field[@name='is_company']" position="after">
-                        <field name="partner_code"/>
+                        <field name="partner_code" placeholder="Account Code"/>
                     </xpath>
                     <xpath expr="//label[@for='street']" position="attributes">
                         <attribute name="string">Mailing Address 1</attribute>
@@ -317,9 +318,8 @@
                             <field name="city2_mailing" placeholder="City" class="o_address_city"/>
                             <field name="state_id2" placeholder="State" class="o_address_state"/>
                             <field name="zip2_mailing" placeholder="ZIP"  class="o_address_zip"/>
-                            <field name="country_id" placeholder="Country..." class="o_address_country" />
                         </div>
-                        <field name="country_code"/>
+                        <field name="country_id" placeholder="Country..." />
 
                         <field name="delivery_address_name" placeholder="Name..."/>
                         
@@ -334,15 +334,19 @@
                             <field name="zip2_delivery" placeholder="ZIP"/>
                         </div>
                     </xpath>
-
-                    <xpath expr="//field[@name='title']" position="after">
-                        <field name="lang"/>
-                        <field name="currency_id"/>
+                    <xpath expr="//field[@name='function']" position="replace"></xpath>
+                    <xpath expr="//field[@name='category_id']" position="attributes">
+                        <attribute name="invisible">True</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='title']" position="replace"></xpath>
+                    <xpath expr="//field[@name='email']" position="after">
                         <field name="customer_group_id"/>
                         <field name="vat_code"/>
                         <field name="vat_number"/>
                     </xpath>
-
+                    <xpath expr="//field[@name='lang']" position="after">
+                        <field name="currency_new_id" options="{'no_create': True}"/>
+                    </xpath>
                     <xpath expr="//notebook/page" position="after">
                         <page string="Reference">
                             <group string="Referece Details" col="4">

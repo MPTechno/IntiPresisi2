@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <form string="Convert to Account">
                     <group name="name">
-                        <field name="code_partner" class="oe_inline"/>
+                        <field name="code_partner" class="oe_inline" placeholder="Account Code"/>
                     </group>
                     <footer>
                         <button name="convert_to_part" string="Create Accounts" type="object" class="oe_highlight"/>
