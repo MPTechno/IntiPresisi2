@@ -202,6 +202,8 @@ class res_partner(models.Model):
         currency_id = self.env['res.users'].browse(self._uid).company_id.currency_id
         return currency_id or self._get_euro()
 
+
+    email_count = fields.Integer("Emails", compute='_compute_emails_count')
     partner_code = fields.Char('Code',required=True)
     street_delivery =  fields.Char('Street')
     street2_delivery =  fields.Char('Street2')
@@ -234,6 +236,12 @@ class res_partner(models.Model):
             state = self.env['res.country.state'].browse(state_id)
             return {'value': {'country_id_delivery': state.country_id.id}}
         return {}
+
+    @api.multi
+    def _compute_emails_count(self):
+        for partner in self:
+            partner.email_count = self.env['mail.mail'].search_count([('recipient_ids','in', [partner.id])])
+
 
 class product_pricelist(models.Model):
     _inherit = 'product.pricelist'

@@ -117,6 +117,19 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="quotation_per_enquiry_another_tree_view">
+            <field name="name">Enquiry</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='name']" position="attributes">
+                        <attribute name="string">Enquiry</attribute>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="quotation_per_enquiry_tree_view">
             <field name="name">Enquiry</field>
             <field name="model">crm.lead</field>
@@ -143,10 +156,10 @@
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="crm_lead_opportunities_new">
-            <field name="name">Opportunities</field>
+        <record model="ir.actions.act_window" id="crm.crm_lead_opportunities">
+            <field name="name">Enquiry</field>
             <field name="res_model">crm.lead</field>
-            <field name="view_mode">tree,graph,pivot,form,calendar,kanban</field>
+            <field name="view_mode">tree,graph,pivot,form,calendar</field>
             <field name="domain">[('type','=','opportunity')]</field>
             <field name="context">{
                     'default_type': 'opportunity',
@@ -154,6 +167,29 @@
                 }
             </field>
             <field name="search_view_id" ref="crm.view_crm_case_opportunities_filter"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="crm.action_crm_tag_kanban_view_oppor11">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="crm.crm_case_kanban_view_leads"/>
+            <field name="act_window_id" ref="crm.crm_lead_opportunities"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="crm.action_crm_tag_tree_view_oppor11">
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="crm.crm_case_tree_view_oppor"/>
+            <field name="act_window_id" ref="crm.crm_lead_opportunities"/>
+        </record>
+
+        <record id="action_view_mail_mail0" model="ir.actions.act_window">
+            <field name="name">Emails</field>
+            <field name="res_model">mail.mail</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_recipient_ids': [active_id]}</field>
+            <field name="search_view_id" ref="mail.view_mail_search"/>
         </record>
 
         <record id="crm.view_partners_form_crm1" model="ir.ui.view">
@@ -167,10 +203,10 @@
                     <div name="button_box" position="inside">
                         <button class="oe_stat_button o_res_partner_tip_opp" type="action"
                             attrs="{'invisible': [('customer', '=', False)]}"
-                            name="%(quotation_pit_extended_ten.crm_lead_opportunities_new)d"
+                            name="%(crm.crm_lead_opportunities)d"
                             icon="fa-star"
                             context="{'search_default_partner_id': active_id}">
-                            <field string="Opportunities" name="opportunity_count" widget="statinfo"/>
+                            <field string="Enquiry" name="opportunity_count" widget="statinfo"/>
                         </button>
                         <button class="oe_stat_button" type="object"
                             name="schedule_meeting"
@@ -182,6 +218,12 @@
                             name="%(crm.crm_activity_report_action_tree)d"
                             icon="fa-clock-o">
                             <field string="Activities" name="activities_count" widget="statinfo"/>
+                        </button>
+                        <button class="oe_inline oe_stat_button" type="action"
+                            name="%(quotation_pit_extended_ten.action_view_mail_mail0)d"
+                            icon="fa-phone"
+                            context="{'search_default_partner_id': active_id}">
+                            <field string="Emails" name="email_count" widget="statinfo"/>
                         </button>
                     </div>
                 </data>
