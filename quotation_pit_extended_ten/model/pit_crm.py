@@ -80,6 +80,7 @@ class crm_lead(models.Model):
     prospect_quality = fields.Selection([('a','A'),('b','B'),('c','C'),('d','D'),('e','E')], 'Prospect Quality')
     website = fields.Char('Website')
     comp_name = fields.Char('Company')
+    planned_revenue = fields.Float('Expected Revenue (Amount)', track_visibility='always')
 
     # Additional Information
     no_of_employee = fields.Integer('No of Employee')
@@ -119,7 +120,7 @@ class crm_lead(models.Model):
           # ADDITIONAL INFO
     prospects_source_id = fields.Many2one('crm.lead', 'Prospect Source',domain="[('type', '=', 'lead')]")
     next_step = fields.Char('Next Step')
-    reason_enquiry = fields.Text('Reason')
+    reason_enquiry = fields.Char('Reason')
 
         # NEGOTITION INFORMATION 
 
@@ -140,18 +141,7 @@ class crm_lead(models.Model):
     last_modified_attach = fields.Date('Last Modified')
     created_by_attch = fields.Date('Created By')
 
-        # PRODUCT PRICELISTING
-
-    product_en = fields.Many2one('product.product','Product')
-    qty_en = fields.Integer('Quantity')
-    unit_price_en = fields.Float('Unit Price')
-    total_price_en = fields.Float('Total Price')
-    part_number = fields.Char('Part Number')
-    internal_code_en = fields.Char('Internal Code')
-    workpiece_material = fields.Many2one('workpiece.material','Workpiece Material')
-    coating_en = fields.Many2one('coating.enquiry','Coating')
-    pricing_date = fields.Date('Pricing Date')
-    remarks_en = fields.Text('Remarks')
+    lead_line_ids = fields.One2many('crm.lead.line','lead_line_id',string='CRM Lead Line')
 
 
 
@@ -180,6 +170,25 @@ class crm_lead(models.Model):
         if stage.id != self.browse(cr, uid, ids, context=context).stage_new_id.id:
             vals['stage_new_id'] = stage.id
         return {'value': vals}
+
+
+class crm_lead_line(models.Model):
+    _name='crm.lead.line'
+    _order = 'lead_line_id'
+
+        # PRODUCT PRICELISTINGt
+    lead_line_id = fields.Many2one('crm.lead',string='Listing Line',index=True)
+    product_en = fields.Many2one('product.product','Product')
+    qty_en = fields.Integer('Quantity')
+    unit_price_en = fields.Float('Unit Price')
+    total_price_en = fields.Float('Total Price')
+    part_number = fields.Char('Part Number')
+    internal_code_en = fields.Char('Internal Code')
+    workpiece_material = fields.Many2one('workpiece.material','Workpiece Material')
+    coating_en = fields.Many2one('coating.enquiry','Coating')
+    pricing_date = fields.Date('Pricing Date')
+    remarks_en = fields.Text('Remarks')
+
 
 class res_partner(models.Model):
     _inherit = 'res.partner'
