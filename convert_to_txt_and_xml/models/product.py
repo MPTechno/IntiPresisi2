@@ -10,7 +10,7 @@ class ProductProduct(models.Model):
             content = ''
             for product in self.env['product.product'].browse(product_ids):
                 content += str(product.default_code or '') + '	' + str(product.name) + '\n'
-            filename = 'Products.txt'
+            filename = '/opt/odoo/Products.txt'
             f = open(filename, 'w')
             f.write(content)
             f.close()

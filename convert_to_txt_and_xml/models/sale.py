@@ -172,7 +172,7 @@ class SaleOrder(models.Model):
                     Alloy = SubElement(Row,'Alloy')
                     Alloy.text = ''#FixMe
                     
-            filename = 'Sale Order XML.xml'
+            filename = '/opt/odoo/Sale Order XML.xml'
             f = open(filename, 'w')
             orders = ElementTree.tostring(Orders,encoding="utf-8")
             data = minidom.parseString(orders).toprettyxml(encoding="utf-8")

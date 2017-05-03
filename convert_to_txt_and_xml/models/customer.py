@@ -15,7 +15,7 @@ class ResPartner(models.Model):
                 (customer.street or '')+ '	'+(customer.city or '') + '	'+\
                 (customer.state_id and customer.state_id.name or '')+ '	'+\
                 (customer.zip or '')+ '	'+'\n' 
-            filename = 'Customers.txt'
+            filename = '/opt/odoo/Customers.txt'
             f = open(filename, 'w')
             f.write(content)
             f.close()
