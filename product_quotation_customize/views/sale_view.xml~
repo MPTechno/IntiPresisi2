@@ -13,8 +13,8 @@
 		        </xpath>
 		        <xpath expr="//form/sheet/group/group/field[@name='payment_term_id']" position="after">
 		        	<field name="manual_sequence"/>
-		        	<field name="revision"/>
 		        	<field name="goods_label"/>
+		        	<field name="revision"/>
 		        </xpath>
 		        <xpath expr="//form/sheet/group/group/field[@name='date_order']" position="attributes">
 		        	<attribute name='string'>Quote Date</attribute>
