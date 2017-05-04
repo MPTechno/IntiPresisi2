@@ -176,6 +176,20 @@ class crm_lead_line(models.Model):
     _name='crm.lead.line'
     _order = 'lead_line_id'
 
+    @api.depends('qty_en', 'discount', 'unit_price_en', 'tax_id')
+    def _compute_amount(self):
+        """
+        Compute the amounts of the SO line.
+        """
+        for line in self:
+            price = line.unit_price_en * (1 - (line.discount or 0.0) / 100.0)
+            taxes = line.tax_id.compute_all(price, line.currency_id, line.qty_en, product=line.product_en, partner=line.lead_line_id.partner_id)
+            line.update({
+                'price_tax': taxes['total_included'] - taxes['total_excluded'],
+                'total_price_en': taxes['total_included'],
+                'price_subtotal': taxes['total_excluded'],
+            })
+
         # PRODUCT PRICELISTINGt
     lead_line_id = fields.Many2one('crm.lead',string='Listing Line',index=True)
     product_en = fields.Many2one('product.product','Product')
@@ -183,12 +197,54 @@ class crm_lead_line(models.Model):
     unit_price_en = fields.Float('Unit Price')
     total_price_en = fields.Float('Total Price')
     part_number = fields.Char('Part Number')
+    tax_id = fields.Many2many('account.tax', string='Taxes', domain=['|', ('active', '=', False), ('active', '=', True)])
     internal_code_en = fields.Char('Internal Code')
     workpiece_material = fields.Many2one('workpiece.material','Workpiece Material')
     coating_en = fields.Many2one('coating.enquiry','Coating')
+    product_uom = fields.Many2one('product.uom', string='Unit of Measure', required=True)
     pricing_date = fields.Date('Pricing Date')
     remarks_en = fields.Text('Remarks')
+    currency_id = fields.Many2one(related='lead_line_id.partner_id.property_product_pricelist.currency_id', store=True, string='Currency', readonly=True)
+    discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Discount'), default=0.0)
+    price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True, store=True)
+    price_tax = fields.Monetary(compute='_compute_amount', string='Taxes', readonly=True, store=True)
+    total_price_en = fields.Monetary(compute='_compute_amount', string='Total', readonly=True, store=True)
 
+    @api.multi
+    def _get_display_price(self, product):
+        if self.lead_line_id.partner_id.property_product_pricelist.discount_policy == 'without_discount':
+            from_currency = self.currency_id
+            return from_currency.compute(product.lst_price, self.currency_id)
+        return product.with_context(pricelist=self.currency_id.id).price
+
+
+    @api.multi
+    @api.onchange('product_en')
+    def product_id_change(self):
+        vals = {}
+        
+        if not self.product_en:
+            return {'domain': {'product_uom': []}}
+
+        vals = {}
+        domain = {'product_uom': [('category_id', '=', self.product_en.uom_id.category_id.id)]}
+        if not self.product_uom or (self.product_en.uom_id.id != self.product_uom.id):
+            vals['product_uom'] = self.product_en.uom_id
+
+        product = self.product_en.with_context(
+            lang=self.lead_line_id.partner_id.lang,
+            partner=self.lead_line_id.partner_id.id,
+            pricelist=self.lead_line_id.partner_id.property_product_pricelist.id,
+            quantity=vals.get('qty_en') or self.qty_en,
+        )
+        vals['qty_en'] = 1.0
+        name =''
+        if product.description_sale:
+            name += '\n' + product.description_sale
+        vals['remarks_en'] = name
+        if product:
+            vals['unit_price_en'] = self.env['account.tax']._fix_tax_included_price(self._get_display_price(product), product.taxes_id, self.tax_id)
+        self.update(vals)
 
 class res_partner(models.Model):
     _inherit = 'res.partner'
@@ -250,3 +306,30 @@ class product_pricelist(models.Model):
     def create(self, vals):
         vals['name'] = vals['name'] + self.env['ir.sequence'].get('product.pricelist')
         return super(product_pricelist, self).create(vals)
+
+class sale_order(models.Model):
+    _inherit= 'sale.order'
+
+    @api.multi
+    @api.onchange('opportunity_id')
+    def onchange_opportunity_id(self):
+        res = {'value':{}}
+        order_lines = []
+        if self.opportunity_id and self.opportunity_id.lead_line_ids:
+            for op_line in self.opportunity_id.lead_line_ids:
+                taxlist = []
+                for itax in op_line.tax_id:
+                    taxlist.append(itax.id)
+                print ">>>>>>>>>>>>>>>>",taxlist
+                line_dict = {
+                    'product_id':op_line.product_en,
+                    'product_uom_qty':op_line.qty_en,
+                    'price_unit':op_line.unit_price_en,
+                    'discount':op_line.discount,
+                    'tax_id':(4,taxlist),
+                    'product_uom':op_line.product_uom,
+                    'currency_id':op_line.currency_id,
+                }
+                order_lines.append((0, 0, line_dict))
+                res['value']['order_line'] = order_lines
+        return res

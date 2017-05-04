@@ -37,6 +37,11 @@ class crm_askcode_partner(models.TransientModel):
                     'email':lead_obje.email_from,
                     'street':lead_obje.street,
                     'street2':lead_obje.street2,
+                    'city':lead_obje.city,
+                    'state_id':lead_obje.state_id.id,
+                    'mobile':lead_obje.mobile,
+                    'website':lead_obje.website,
+                    'fax':lead_obje.fax,
                     'country_id':lead_obje.country_id.id,
                     'zip':lead_obje.zip,
                     'property_product_pricelist':sale_pricelist_id.id,
@@ -46,7 +51,7 @@ class crm_askcode_partner(models.TransientModel):
                     'supplier':False,
                 }
                 partner_id = partner.create(vals_dict)
-                lead_obje.write({'partner_id':partner_id.id})
+                lead_obje.unlink()
                 models_data = self.env['ir.model.data']
 
                 # Get opportunity views

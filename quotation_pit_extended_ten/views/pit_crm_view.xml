@@ -52,8 +52,11 @@
                         <field name="en_stages"/>
                     </xpath>
                     <xpath expr="//notebook/page" position="replace"></xpath>
+                    <!-- <xpath expr="//notebook/page" position="replace"> -->
+                        <!-- <attribute name="invisible">True</attribute> -->
+                    <!-- </xpath> -->
                     <xpath expr="//notebook" position="inside">
-                        <page string="Additional Information">
+                        <page string="Additional Information" default_focus="1">
                             <group col="4">
                                 <field name="prospects_source_id"/>
                                 <field name="reason_enquiry"/>
@@ -91,12 +94,15 @@
                                         <field name="product_en"/>
                                         <field name="internal_code_en"/>
                                         <field name="qty_en"/>
+                                        <field name="product_uom"/>
                                         <field name="part_number"/>
                                         <field name="unit_price_en"/>
                                         <field name="workpiece_material"/>
                                         <field name="total_price_en"/>
                                         <field name="coating_en"/>
                                         <field name="pricing_date"/>
+                                        <field name="tax_id" widget="many2many_tags"/>
+                                        <field name="currency_id" invisible="1"/>
                                     </group>
                                     <group string="Remarks">
                                         <field name="remarks_en" nolabel="1" placeholder="Remarks..."/>
@@ -254,6 +260,12 @@
                 <data>
                     <xpath expr="//field[@name='name']" position="attributes">
                         <attribute name="string">Prospect</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='contact_name']" position="replace">
+                        <field name="partner_name" string="Name"/>
+                    </xpath>
+                    <xpath expr="//field[@name='team_id']" position="after">
+                        <field name="stage_new_pr"/>
                     </xpath>
                 </data>
             </field>
