@@ -326,10 +326,10 @@ class sale_order(models.Model):
                     'product_uom_qty':op_line.qty_en,
                     'price_unit':op_line.unit_price_en,
                     'discount':op_line.discount,
-                    'tax_id':(4,taxlist),
+                    'tax_id':[(6,0,taxlist)],
                     'product_uom':op_line.product_uom,
                     'currency_id':op_line.currency_id,
                 }
                 order_lines.append((0, 0, line_dict))
-                res['value']['order_line'] = order_lines
-        return res
+                self.order_line = order_lines
+        # return res
