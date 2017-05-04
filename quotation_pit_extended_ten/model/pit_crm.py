@@ -148,8 +148,8 @@ class crm_lead(models.Model):
     @api.multi
     def write(self, vals):
         # stage change: update date_last_stage_update
-        if 'stage_new_id' in vals:
-            vals['stage_id'] = vals.get('stage_new_id')
+        if 'en_stages' in vals:
+            vals['en_stages'] = vals.get('en_stages')
         return super(crm_lead, self).write(vals)
 
     @api.model
@@ -162,13 +162,14 @@ class crm_lead(models.Model):
     @api.model
     def _onchange_stage_id_values(self, stage_id):
         """ returns the new values when stage_id has changed """
+        vals = {}
         if not stage_id:
             return {}
         stage = self.env['crm.stage'].browse(stage_id)
         if stage.on_change:
             return {'probability': stage.probability}
-        if stage.id != self.browse(cr, uid, ids, context=context).stage_new_id.id:
-            vals['stage_new_id'] = stage.id
+        if stage.id != self.en_stages.id:
+            vals['en_stages'] = stage.id
         return {'value': vals}
 
 
@@ -257,7 +258,6 @@ class res_partner(models.Model):
     def _get_user_currency(self):
         currency_id = self.env['res.users'].browse(self._uid).company_id.currency_id
         return currency_id or self._get_euro()
-
 
     email_count = fields.Integer("Emails", compute='_compute_emails_count')
     partner_code = fields.Char('Code',required=True)
