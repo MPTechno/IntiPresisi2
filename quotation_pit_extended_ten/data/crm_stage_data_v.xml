@@ -7,7 +7,7 @@
             <field name="probability">0</field>
         </record>
         <record model="crm.stage" id="stage_lead_technical_check">
-            <field name="name">Technical Check</field>
+            <field name="name">Technical Drawing</field>
             <field name="probability">0</field>
         </record>
         <record model="crm.stage" id="stage_lead_pricing">

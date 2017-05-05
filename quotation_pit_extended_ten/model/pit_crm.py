@@ -149,7 +149,19 @@ class crm_lead(models.Model):
     def write(self, vals):
         # stage change: update date_last_stage_update
         if 'en_stages' in vals:
-            vals['en_stages'] = vals.get('en_stages')
+            vals['stage_id'] = vals.get('en_stages')
+        if self.stage_id:
+            stage = self.stage_id
+            res_group = self.env['res.groups'].search([('name','=','Sales Person')])
+            for use_id in res_group.users:
+                if self._uid == use_id.id:
+                    if stage.name not in ['New','Collect Data']:
+                        raise UserError(_('You Can Only Edit This Record If It is in Collect Data Stage. Please Contact Your Administrator.'))
+                    if 'stage_id' in vals:
+                        stagee = self.env['crm.stage'].browse(vals.get('stage_id'))
+                        if stagee.name != 'Technical Drawing':
+                            raise UserError(_('You Have Not Rights To Move This Record in This Stage. Please Contact Your Administrator.'))           
+
         return super(crm_lead, self).write(vals)
 
     @api.model
@@ -275,7 +287,6 @@ class res_partner(models.Model):
     zip2_delivery =  fields.Char('Zip')
     currency_new_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self._get_user_currency())
     customer_group_id = fields.Many2one('customer.group','Customer Group')
-    npwp_no = fields.Char('NPWP No')
     vat_code = fields.Char('Vat Code')
     vat_number = fields.Char('Vat Number')
     country_code = fields.Char('Country Code')

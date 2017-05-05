@@ -12,6 +12,8 @@
     'website': "http://www.hashmicro.com",
     'depends': ['sale','crm','sale_crm'],
     'data': [
+        'security/crm_access_group_enquiry.xml',
+        'security/ir.model.access.csv',
         'data/crm_stage_data_v.xml',
         'wizard/lead_ask_code_view.xml',
         'views/pit_crm_view.xml',
