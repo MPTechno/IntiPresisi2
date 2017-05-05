@@ -12,9 +12,10 @@
     'category': 'Sale',
     'sequence': 0,
     'images': [],
-    'depends': ['base','product','sale','quotation_pit_extended_ten'],
+    'depends': ['base','product','sale','sale_stock','sales_team','quotation_pit_extended_ten'],
     'demo': [],
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'views/product_view.xml',
         'views/sale_view.xml',
