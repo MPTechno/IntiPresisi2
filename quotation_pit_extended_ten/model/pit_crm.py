@@ -153,15 +153,35 @@ class crm_lead(models.Model):
         if self.stage_id:
             stage = self.stage_id
             res_group = self.env['res.groups'].search([('name','=','Sales Person')])
-            for use_id in res_group.users:
-                if self._uid == use_id.id:
-                    if stage.name not in ['New','Collect Data']:
-                        raise UserError(_('You Can Only Edit This Record If It is in Collect Data Stage. Please Contact Your Administrator.'))
-                    if 'stage_id' in vals:
-                        stagee = self.env['crm.stage'].browse(vals.get('stage_id'))
-                        if stagee.name != 'Technical Drawing':
-                            raise UserError(_('You Have Not Rights To Move This Record in This Stage. Please Contact Your Administrator.'))           
-
+            technical_res = self.env['res.groups'].search([('name','=','Technical Support')])
+            technical_users = []
+            if technical_res:
+                for i in technical_res.users:
+                    technical_users.append(i.partner_id.id)
+            for use_group in res_group:
+                for use_id in res_group.users:
+                    if self.env.user.id == use_id.id:
+                        if 'stage_id' in vals:
+                            stagee = self.env['crm.stage'].browse(vals.get('stage_id'))
+                            if stagee.name == 'Technical Drawing':
+                                recipient_links = [(4, technical_users)]
+                                message_data = {
+                                    'type': 'notification',
+                                    'subject': "Enquiry is in Technical Drawing Stage.",
+                                    'body': self.name ,
+                                    'partner_ids': recipient_links,
+                                }
+                                msg_obj = self.env['mail.message']
+                                msg_obj.create(message_data)
+            # for users_id in technical_res.users:
+            #     if self.env.user.id == users_id.id:
+            #         print ">>aiyaa kemmm..............",users_id.id , self._uid,self.env.user
+            #         if stage.name not in ['Technical Drawing']:
+            #             raise UserError(_('You Can Only Edit This Record If It is not in Technical Drawing Stage. Please Contact Your Administrator.'))
+            #         if 'stage_id' in vals:
+            #             stagee = self.env['crm.stage'].browse(vals.get('stage_id'))
+            #             if stagee.name not in ['No Offer','Pricing','Collect Data']:
+            #                 raise UserError(_('You Have Not Rights To Move This Record in This Stage. Please Contact Your Administrator.'))
         return super(crm_lead, self).write(vals)
 
     @api.model
