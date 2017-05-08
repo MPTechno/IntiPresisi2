@@ -20,6 +20,6 @@ access_coating_enquiry_for_sales_person,access.coating.enquiry.sales.person,quot
 access_crm_new_case_for_sales_person,access.crm.new.case.sales.person,quotation_pit_extended_ten.model_crm_new_case,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,0
 access_attachment_type_en_for_sales_person,access.attachment.type.en.sales.person,quotation_pit_extended_ten.model_attachment_type_en,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,0
 access_sale_report_for_sales_person,access.sale.report.sales.person,sale.model_sale_report,quotation_pit_extended_ten.group_sales_person_level_pit,1,0,0,0
-
-
+access_stock_move_for_sales_person,access.stock.move.sales.person,stock.model_stock_move,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,0,0
+access_stock_warehouse_orderpoint_for_sales_person,access.stock.warehouse.orderpoint.sales.person,stock.model_stock_warehouse_orderpoint,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,0,0
 

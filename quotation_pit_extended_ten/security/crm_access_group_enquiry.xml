@@ -25,6 +25,17 @@
     	<field name="implied_ids" eval="[(4, ref('sales_team.group_sale_manager')),(4, ref('quotation_pit_extended_ten.group_sales_person_level_pit')),(4, ref('quotation_pit_extended_ten.group_technical_support'))]"/>
     </record>
 
+    <record id="group_sales_director" model="res.groups">
+        <field name="name">Director</field>
+        <field name="category_id" ref="module_intiPresisi_rights"/>
+        <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_manager')),(4, ref('quotation_pit_extended_ten.group_sales_coordinator'))]"/>
+    </record>
+
+    <record id="group_sales_admin" model="res.groups">
+        <field name="name">Admin</field>
+        <field name="category_id" ref="module_intiPresisi_rights"/>
+        <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_manager')),(4, ref('quotation_pit_extended_ten.group_sales_director')),(4,ref('base.group_system')),(4,ref('stock.group_stock_manager'))]"/>
+    </record>
     <!-- IR.UI.MENU -->
     <record id="sales_team.menu_base_partner" model="ir.ui.menu">
         <field name="groups_id" eval="[(4,ref('quotation_pit_extended_ten.group_sales_person_level_pit'))]"/>
