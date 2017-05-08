@@ -19,10 +19,16 @@
         <field name="implied_ids" eval="[(4, ref('base.group_user')),(4, ref('product.group_sale_pricelist')),(4, ref('product.group_pricelist_item')),(4, ref('quotation_pit_extended_ten.group_sales_person_level_pit'))]"/>
     </record>
 
+    <record id="group_president" model="res.groups">
+    	<field name="name">President</field>
+    	<field name="category_id" ref="module_intiPresisi_rights"/>
+    	<field name="implied_ids" eval="[(4, ref('sales_team.group_sale_manager')),(4, ref('quotation_pit_extended_ten.group_sales_person_level_pit')),(4, ref('quotation_pit_extended_ten.group_technical_support'))]"/>
+    </record>
+    
     <record id="group_sales_coordinator" model="res.groups">
     	<field name="name">Sales Coordinator</field>
     	<field name="category_id" ref="module_intiPresisi_rights"/>
-    	<field name="implied_ids" eval="[(4, ref('sales_team.group_sale_manager')),(4, ref('quotation_pit_extended_ten.group_sales_person_level_pit')),(4, ref('quotation_pit_extended_ten.group_technical_support'))]"/>
+    	<field name="implied_ids" eval="[(4, ref('sales_team.group_sale_manager')),(4, ref('quotation_pit_extended_ten.group_sales_person_level_pit')),(4, ref('quotation_pit_extended_ten.group_technical_support')),(4, ref('quotation_pit_extended_ten.group_president'))]"/>
     </record>
 
     <record id="group_sales_director" model="res.groups">
