@@ -123,6 +123,47 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="quotation_per_opportunity_form_view_for_sales_person">
+            <field name="name">Quotation Per Enquiry</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+            <field name="groups_id" eval="[(4, ref('quotation_pit_extended_ten.group_sales_person_level_pit'))]"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='internal_code_en']" position="attributes">
+                        <attribute name="attrs">{'readonly':1}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='qty_en']" position="attributes">
+                        <attribute name="attrs">{'readonly':1}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='product_uom']" position="attributes">
+                        <attribute name="attrs">{'readonly':1}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='part_number']" position="attributes">
+                        <attribute name="attrs">{'readonly':1}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='unit_price_en']" position="attributes">
+                        <attribute name="attrs">{'readonly':1}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='workpiece_material']" position="attributes">
+                        <attribute name="attrs">{'readonly':1}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='total_price_en']" position="attributes">
+                        <attribute name="attrs">{'readonly':1}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='coating_en']" position="attributes">
+                        <attribute name="attrs">{'readonly':1}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='pricing_date']" position="attributes">
+                        <attribute name="attrs">{'readonly':1}</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='tax_id']" position="attributes">
+                        <attribute name="attrs">{'readonly':1}</attribute>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+        
         <record model="ir.ui.view" id="quotation_per_enquiry_another_tree_view">
             <field name="name">Enquiry</field>
             <field name="model">crm.lead</field>
@@ -227,7 +268,7 @@
                         </button>
                         <button class="oe_inline oe_stat_button" type="action"
                             name="%(quotation_pit_extended_ten.action_view_mail_mail0)d"
-                            icon="fa-phone"
+                            icon="fa-star"
                             context="{'search_default_partner_id': active_id}">
                             <field string="Emails" name="email_count" widget="statinfo"/>
                         </button>

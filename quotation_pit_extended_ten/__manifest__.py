@@ -10,7 +10,7 @@
     """,
     'author': "HashMicro / Parikshit Vaghasiya",
     'website': "http://www.hashmicro.com",
-    'depends': ['sale','crm','sale_crm'],
+    'depends': ['sale','crm','sale_crm','crm_phonecall'],
     'data': [
         'security/crm_access_group_enquiry.xml',
         'security/ir.model.access.csv',
