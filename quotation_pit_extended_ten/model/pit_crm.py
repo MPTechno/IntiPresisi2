@@ -244,11 +244,53 @@ class crm_lead_line(models.Model):
     total_price_en = fields.Monetary(compute='_compute_amount', string='Total', readonly=True, store=True)
 
     @api.multi
+    def create(self, vals):
+        if vals.get('product_en'):
+            pricelis_dict = {}
+            for priclist in self.env['crm.lead'].browse(vals.get('lead_line_id')).partner_id.property_product_pricelist.item_ids:
+                if priclist.product_id.id == vals.get('product_en'):
+                    pricelis_dict = {
+                        'item_ids': [(1, priclist.id, {'fixed_price': vals.get('unit_price_en')})]
+                    }
+            if not pricelis_dict:
+                pricelis_dict = {
+                    'item_ids': [(0, 0, {
+                            'applied_on': '0_product_variant',
+                            'compute_price': 'fixed',
+                            'product_id':vals.get('product_en'),
+                            'fixed_price': vals.get('unit_price_en'),
+                        })]
+                }
+            self.env['crm.lead'].browse(vals.get('lead_line_id')).partner_id.property_product_pricelist.write(pricelis_dict)
+        return super(crm_lead_line, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        if vals.get('unit_price_en'):
+            pricelis_dict = {}
+            for priclist in self.lead_line_id.partner_id.property_product_pricelist.item_ids:
+                if priclist.product_id.id == self.product_en.id:
+                    pricelis_dict = {
+                        'item_ids': [(1, priclist.id, {'fixed_price': vals.get('unit_price_en')})]
+                    }
+            if not pricelis_dict:
+                pricelis_dict = {
+                    'item_ids': [(0, 0, {
+                            'applied_on': '0_product_variant',
+                            'compute_price': 'fixed',
+                            'product_id':self.product_en.id,
+                            'fixed_price': vals.get('unit_price_en'),
+                        })]
+                }
+            self.lead_line_id.partner_id.property_product_pricelist.write(pricelis_dict)
+        return super(crm_lead_line, self).write(vals)
+
+    @api.multi
     def _get_display_price(self, product):
-        if self.lead_line_id.partner_id.property_product_pricelist.discount_policy == 'without_discount':
-            from_currency = self.currency_id
-            return from_currency.compute(product.lst_price, self.currency_id)
-        return product.with_context(pricelist=self.currency_id.id).price
+        product_context = {}
+        product_context['pricelist'] = self.lead_line_id.partner_id.property_product_pricelist.id
+        price = product.with_context(product_context).price
+        return price
 
 
     @api.multi
@@ -277,6 +319,7 @@ class crm_lead_line(models.Model):
         vals['remarks_en'] = name
         if product:
             vals['unit_price_en'] = self.env['account.tax']._fix_tax_included_price(self._get_display_price(product), product.taxes_id, self.tax_id)
+            # vals['unit_price_en'] = 0.0
         self.update(vals)
 
 class res_partner(models.Model):
@@ -352,7 +395,6 @@ class sale_order(models.Model):
                 taxlist = []
                 for itax in op_line.tax_id:
                     taxlist.append(itax.id)
-                print ">>>>>>>>>>>>>>>>",taxlist
                 line_dict = {
                     'product_id':op_line.product_en,
                     'product_uom_qty':op_line.qty_en,
@@ -365,3 +407,50 @@ class sale_order(models.Model):
                 order_lines.append((0, 0, line_dict))
                 self.order_line = order_lines
         # return res
+
+class sale_order_line(models.Model):
+    _inherit= 'sale.order.line'
+
+    @api.multi
+    def create(self, vals):
+        if not vals.get('name'):
+            vals.update({'name':self.env['product.product'].browse(vals.get('product_id')).name})
+        if vals.get('product_id'):
+            pricelis_dict = {}
+            for priclist in self.env['sale.order'].browse(vals.get('order_id')).partner_id.property_product_pricelist.item_ids:
+                if priclist.product_id.id == vals.get('product_id'):
+                    pricelis_dict = {
+                        'item_ids': [(1, priclist.id, {'fixed_price': vals.get('price_unit')})]
+                    }
+            if not pricelis_dict:
+                pricelis_dict = {
+                    'item_ids': [(0, 0, {
+                            'applied_on': '0_product_variant',
+                            'compute_price': 'fixed',
+                            'product_id':vals.get('product_id'),
+                            'fixed_price': vals.get('price_unit'),
+                        })]
+                }
+            self.env['sale.order'].browse(vals.get('order_id')).partner_id.property_product_pricelist.write(pricelis_dict)
+        return super(sale_order_line, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        if vals.get('price_unit'):
+            pricelis_dict = {}
+            for priclist in self.order_id.partner_id.property_product_pricelist.item_ids:
+                if priclist.product_id.id == self.product_id.id:
+                    pricelis_dict = {
+                        'item_ids': [(1, priclist.id, {'fixed_price': vals.get('price_unit')})]
+                    }
+            if not pricelis_dict:
+                pricelis_dict = {
+                    'item_ids': [(0, 0, {
+                            'applied_on': '0_product_variant',
+                            'compute_price': 'fixed',
+                            'product_id':self.product_id.id,
+                            'fixed_price': vals.get('price_unit'),
+                        })]
+                }
+            self.order_id.partner_id.property_product_pricelist.write(pricelis_dict)
+        return super(sale_order_line, self).write(vals)
