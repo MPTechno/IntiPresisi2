@@ -18,4 +18,7 @@
         'wizard/lead_ask_code_view.xml',
         'views/pit_crm_view.xml',
     ],
+    'qweb': [
+        "static/src/xml/sales_name_dashboard.xml",
+    ],
 }
