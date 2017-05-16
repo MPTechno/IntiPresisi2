@@ -5,3 +5,4 @@
 import product
 import sale
 import res_company
+import res_partner

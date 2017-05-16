@@ -23,17 +23,20 @@
 						<img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="width:170px;height:130px; margin-left:10px;"/>
 						<br/>
 						<strong>
+							<span style="font-size:14px; color:red; align: right; margin-left:150px;" t-if="company.rml_header1" t-field="company.rml_header1" />
+						</strong>
+						<strong>
 							<span style="font-size:16px;" t-if="company.name" t-field="company.name" /><br/>
 						</strong>
 						<strong>Your NPWP No:</strong> <span t-if="company.npwp_no" t-field="company.npwp_no" /> 
 						<br/>
-						<strong>Enquiry No:</strong> <span t-if="company.enquiry_number" t-field="company.enquiry_number" />
+						<strong>Enquiry No:</strong> <!--span t-if="company.enquiry_number" t-field="company.enquiry_number" /-->
 						
 						
 					</div>
 					<div class="col-xs-7 pull-right">
 						<div style="border:1px solid black; border-radius: 5px;">
-							<strong><span style="font-size:20px; margin-left:10px;">Quotation</span> <span style="font-size:14px; color:red; align: right; margin-left:150px;" t-if="company.rml_header1" t-field="company.rml_header1" /></strong><br/>
+							<strong><span style="font-size:20px; margin-left:10px;">Quotation</span></strong><br/>
 						</div>
 						<div class="col-xl-3 pull-left">
 							<strong>Quotation:</strong><br/> 
@@ -41,7 +44,7 @@
 							<strong>Quotation Date:</strong><br/>
 							<span t-field="o.date_order" /> <br/>
 							<strong>Our Reference:</strong><br/>
-							<span t-if="o.client_order_ref" t-field="o.client_order_ref" /> 
+							<span t-if="o.contact_id" t-field="o.contact_id.name" /> 
 						</div>
 						<div class="col-xl-3 pull-right">
 							<strong>Customer Code:</strong><br/>
@@ -50,7 +53,7 @@
 							<!--span t-esc="get_printout_date()" /><br/-->
 							<span t-field="o.date_order" /> <br/>
 							<strong>Your Reference:</strong><br/>
-							<span t-if="o.company_id.reference" t-field="o.company_id.reference" /><br/>
+							<span t-if="o.user_id" t-field="o.user_id.name" /><br/>
 							<strong>Page:</strong> <span class="page"/> <strong>of</strong> <span class="topage"/>
 						</div>
 					</div>
@@ -59,8 +62,11 @@
 		</template>
 
 		<template id="quotation_footer_layout">
-			<div class="footer" style="border-top:1px solid black;">
-				<div class="col-xs-12 pull-left">
+			<div class="footer">
+				<span>........................</span><br/>
+				Contact Name
+				<br/><br/>
+				<div class="col-xs-12 pull-left" style="border-top:1px solid black;">
 					<div class="col-xs-4 pull-left">
 						<strong>Mailing Address</strong><br/>
 						<span t-if="company.name" t-field="company.name" /><br/>
@@ -80,10 +86,10 @@
 						NPWP No.: <span t-if="company.npwp_no" t-field="company.npwp_no" /><br/>
 						Dom: <span t-if="company.dom" t-field="company.dom" /><br/>
 						Bank Acc No.: <span t-if="company.bank_acc_number" t-field="company.bank_acc_number" /><br/>
-						Bank BIN: <span t-if="company.bank_bin" t-field="company.bank_bin" /><br/>
-						Dok No.: <span t-if="company.dok_no" t-field="company.dok_no" />
+						Bank Name: <span t-if="company.bank_bin" t-field="company.bank_bin" /><br/>
 					</div>
 				</div>
+				<span style="margin-left:600px;"><strong>Dok No.: FR/IPT-SM-01/01/00</strong></span>
 			</div>
 		</template>
 		
@@ -118,13 +124,13 @@
 						<div class="col-xs-12 pull-left" style="margin-top:20px;">
 							<div class="col-xs-3 pull-left">
 								<strong>Terms Of Delivery</strong><br/><br/>
+								<strong>Delivery Method</strong><br/><br/><br/>
 								<strong>Valid Through</strong><br/><br/>
-								<strong>Delivery Method</strong><br/><br/>
 							</div>
 							<div class="col-xs-3 pull-left">
 								<span t-if="o.delivery_term_id" t-field="o.delivery_term_id.name"/><br/><br/>
-								<span t-if="o.validity_date" t-field="o.validity_date"/><br/><br/>
 								<span t-if="o.picking_policy" t-field="o.picking_policy"/><br/><br/>
+								<span t-if="o.validity_date" t-field="o.validity_date"/><br/><br/>
 							</div>
 							<div class="col-xs-3 pull-left">
 								<strong>Terms Of Payment</strong><br/><br/>
@@ -172,13 +178,6 @@
 						        </table>
 						    </div>
 						</div>
-						<br/>
-						<br/>
-						<br/>
-						<br/>
-						<br/>
-						<span>...........................</span><br/>
-						Contact Name
 					</div>
 				</t>
 			</t>

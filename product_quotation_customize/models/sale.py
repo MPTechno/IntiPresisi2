@@ -11,6 +11,7 @@ class sale_order(models.Model):
 	delivery_term_id = fields.Many2one('delivery.term','Delivery Term')
 	delivery_time = fields.Date('Delivery Time')
 	manual_sequence = fields.Char('Quote Number',required=True)
+	contact_id = fields.Many2one('res.partner','Our Reference')
 	
 	@api.model
 	def create(self, vals):
