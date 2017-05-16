@@ -74,7 +74,7 @@ class crm_new_case(models.Model):
 class crm_lead(models.Model):
     _inherit = 'crm.lead'
 
-    
+    email_count = fields.Integer("Emails", compute='_compute_emails_count')
     partner_name = fields.Char('Account Name',required=True)
     stage_new_pr = fields.Many2one('crm.new.case','Prospects Status')
     prospect_quality = fields.Selection([('a','A'),('b','B'),('c','C'),('d','D'),('e','E')], 'Prospect Quality')
@@ -144,6 +144,10 @@ class crm_lead(models.Model):
     lead_line_ids = fields.One2many('crm.lead.line','lead_line_id',string='CRM Lead Line')
 
 
+    @api.multi
+    def _compute_emails_count(self):
+        for partner in self:
+            partner.email_count = self.env['mail.mail'].search_count([('recipient_ids','in', [partner.partner_id.id])])
 
     @api.multi
     def write(self, vals):
@@ -351,7 +355,7 @@ class res_partner(models.Model):
     currency_new_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self._get_user_currency())
     customer_group_id = fields.Many2one('customer.group','Customer Group')
     vat_code = fields.Char('Vat Code')
-    vat_number = fields.Char('Vat Number')
+    vat_number = fields.Char('Vat Number (NPWP No.)')
     country_code = fields.Char('Country Code')
     state_id2 = fields.Many2one("res.country.state", 'State', ondelete='restrict')
     state_id2_delivery = fields.Many2one("res.country.state", 'State', ondelete='restrict')
@@ -360,6 +364,10 @@ class res_partner(models.Model):
     ref_phone = fields.Char('Phone')
     ref_mobile = fields.Char('Mobile')
     ref_email = fields.Char('Email')
+    short_name = fields.Char('Short Name', required=True)
+    acc_type = fields.Selection(string='Account Type',selection=[('local','Local'), ('international', 'International')],default="local")
+
+    _sql_constraints = [('partner_code_uniq', 'unique (partner_code)', "Account Code already exists !")]
 
     @api.multi
     def onchange_state_delivery(self, state_id):

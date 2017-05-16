@@ -17,7 +17,20 @@ class crm_askcode_partner(models.TransientModel):
     _name = 'crm.askcode.partner'
     _description = 'Lead To Partner'
 
+
+    short_name = fields.Char('Short Name', required=True)
     code_partner = fields.Char('Code',required=True)
+    acc_type = fields.Selection(string='Account Type',selection=[('local','Local'), ('international', 'International')],default="local")
+
+    @api.onchange('acc_type')
+    def onchange_acc_type(self):
+        for partner in self:
+            if self._context.get('active_id'):
+                lead_obje = self.env['crm.lead'].browse(self._context.get('active_id'))
+                if self.acc_type == 'local':
+                    self.code_partner = str(1330) + str(lead_obje.partner_name[:1])
+                else:
+                    self.code_partner = str(1337) + str(lead_obje.partner_name[:1])
 
     @api.v7
     def convert_to_part(self,context=None):
@@ -37,6 +50,8 @@ class crm_askcode_partner(models.TransientModel):
                 })
                 vals_dict = {
                     'partner_code': w.code_partner,
+                    'short_name':w.short_name,
+                    'acc_type':w.acc_type,
                     'name':lead_obje.partner_name,
                     'phone':lead_obje.phone,
                     'user_id': self._uid,

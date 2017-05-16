@@ -119,7 +119,18 @@
                             </field>
                         </page>
                     </xpath>
-                    <xpath expr="//field[@name='internal_code_en']" position="attributes">
+                </data>
+            </field>
+        </record>
+
+<!--         <record model="ir.ui.view" id="quotation_per_opportunity_form_view_for_one_group">
+            <field name="name">Quotation Per Enquiry Group</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
+            <field name="groups_id" eval="[(4, ref('quotation_pit_extended_ten.group_sales_person_level_pit'))]"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='lead_line_ids']/form/group//field[@name='internal_code_en']" position="attributes">
                         <attribute name="attrs">{'readonly':1}</attribute>
                     </xpath>
                     <xpath expr="//field[@name='qty_en']" position="attributes">
@@ -151,7 +162,7 @@
                     </xpath>
                 </data>
             </field>
-        </record>
+        </record> -->
 
         <record id="crm.crm_case_form_view_salesteams_lead" model="ir.actions.act_window">
             <field name="name">Prospects</field>
@@ -476,6 +487,23 @@
             <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
             <field name="arch" type="xml">
                 <data>
+                    <div name="button_box" position="inside">
+                        <button class="oe_stat_button" type="object"
+                            context="{'partner_id': partner_id}"
+                            name="action_schedule_meeting" icon="fa-calendar">
+                            <div class="o_stat_info">
+                                <field name="meeting_count" class="o_stat_value"/>
+                                <span class="o_stat_text" attrs="{'invisible': [('meeting_count', '&lt;', 2)]}"> Meetings</span>
+                                <span class="o_stat_text" attrs="{'invisible': [('meeting_count', '&gt;', 1)]}"> Meeting</span>
+                            </div>
+                        </button>
+                        <button class="oe_inline oe_stat_button" type="action"
+                            name="%(quotation_pit_extended_ten.action_view_mail_mail0)d"
+                            icon="fa-star"
+                            context="{'search_default_partner_id': active_id}">
+                            <field string="Emails" name="email_count" widget="statinfo"/>
+                        </button>
+                    </div>
                     <xpath expr="//label[@for='name']" position="attributes">
                         <attribute name="string">Prospect</attribute>
                     </xpath>
@@ -501,11 +529,7 @@
                     <xpath expr="//sheet/group/group/div[@class='o_row']" position="replace"></xpath>
                     <xpath expr="//field[@name='partner_name']" position="replace">
                         <field name="partner_id"/>
-                        <label for="partner_name" string="Name"/>
-                        <div class="o_row">
-                            <field name="partner_name"/>
-                            <field name="title" placeholder="Title" domain="[]" options='{"no_open": True}'/>
-                        </div>
+                        <field name="partner_name" string="Account Name"/>
                         <field name="comp_name"/>
                     </xpath>
                     <xpath expr="//field[@name='partner_id']" position="attributes">
@@ -572,7 +596,14 @@
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
                 <data>
+                    <xpath expr="//field[@name='name']" position="replace">
+                        <div class="o_row">
+                            <field name="short_name"/>
+                            <field name="name" default_focus="1" placeholder="Name" attrs="{'required' : [('type', '=', 'contact')]}"/>
+                        </div>
+                    </xpath>
                     <xpath expr="//field[@name='is_company']" position="after">
+                        <field name="acc_type" widget="radio" class="oe_edit_only" options="{'horizontal': true}"/>
                         <field name="partner_code" placeholder="Account Code"/>
                     </xpath>
                     <xpath expr="//label[@for='street']" position="attributes">
@@ -645,6 +676,12 @@
                                 <field name="partner_code"/>
                             </a>
                         </h4>
+                    </xpath>
+                    <xpath expr="//div[@class='oe_kanban_details']//strong[@class='oe_partner_heading']" position="replace">
+                        <strong class="oe_partner_heading">
+                            <span t-if="record.short_name.raw_value">[</span><field name="short_name"></field><span t-if="record.short_name.raw_value">]</span>
+                            <field name="display_name"/>
+                        </strong>
                     </xpath>
                 </data>
             </field>
