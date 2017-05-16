@@ -75,7 +75,8 @@ class crm_lead(models.Model):
     _inherit = 'crm.lead'
 
     email_count = fields.Integer("Emails", compute='_compute_emails_count')
-    partner_name = fields.Char('Account Name',required=True)
+    phonecall_count = fields.Integer(compute='_compute_phonecall_count',string="Phonecalls")
+    partner_name = fields.Char('Account Name')
     stage_new_pr = fields.Many2one('crm.new.case','Prospects Status')
     prospect_quality = fields.Selection([('a','A'),('b','B'),('c','C'),('d','D'),('e','E')], 'Prospect Quality')
     website = fields.Char('Website')
@@ -103,8 +104,8 @@ class crm_lead(models.Model):
     description_prospect = fields.Text('Description')
 
     # System Information:
-    created_by = fields.Char('Created By')
-    last_modified_by = fields.Char('Last Modified By')
+    created_by = fields.Many2one('res.users','Created By',default=lambda self: self.env.user)
+    last_modified_by = fields.Datetime('Last Modified By')
 
 
     # OPPORTUNITY FIELDS
@@ -118,9 +119,10 @@ class crm_lead(models.Model):
         group_expand='_read_group_stage_ids', default=lambda self: self._default_stage_id())
 
           # ADDITIONAL INFO
-    prospects_source_id = fields.Many2one('crm.lead', 'Prospect Source',domain="[('type', '=', 'lead')]")
+    prospects_source_id = fields.Many2one('prospect.source', 'Prospect Source')
     next_step = fields.Char('Next Step')
     reason_enquiry = fields.Char('Reason')
+    our_reference_ids = fields.Many2one('res.partner','Our Reference')
 
         # NEGOTITION INFORMATION 
 
@@ -131,29 +133,42 @@ class crm_lead(models.Model):
     description_te = fields.Text('Description')
 
         # SYSTEM INFORMATION
-    created_by_en = fields.Char('Created By')
-    last_modified_by_en = fields.Char('Last Modified By')
+    created_by_en = fields.Many2one('res.users','Created By',default=lambda self: self.env.user)
+    last_modified_by_en = fields.Datetime('Last Modified By')
 
         # Attachments
-
+    attachment_en = fields.Binary('Attachment')
     attachment_type_id = fields.Many2one('attachment.type.en','Type')
     title_attach = fields.Char('Title')
-    last_modified_attach = fields.Date('Last Modified')
-    created_by_attch = fields.Date('Created By')
+    last_modified_attach = fields.Datetime('Last Modified')
+    created_by_attch = fields.Many2one('res.users','Created By',default=lambda self: self.env.user)
 
     lead_line_ids = fields.One2many('crm.lead.line','lead_line_id',string='CRM Lead Line')
 
+    @api.multi
+    def _compute_phonecall_count(self):
+        for partner in self:
+            if partner.partner_id:
+                partner.phonecall_count = self.env['crm.phonecall'].search_count([('partner_id', '=', partner.partner_id.id)])
 
     @api.multi
     def _compute_emails_count(self):
         for partner in self:
-            partner.email_count = self.env['mail.mail'].search_count([('recipient_ids','in', [partner.partner_id.id])])
+            if partner.partner_id:
+                partner.email_count = self.env['mail.mail'].search_count([('recipient_ids','in', [partner.partner_id.id])])
 
     @api.multi
     def write(self, vals):
         # stage change: update date_last_stage_update
         if 'en_stages' in vals:
             vals['stage_id'] = vals.get('en_stages')
+        if self.type == 'lead':
+            vals['last_modified_by'] = fields.Datetime.now()
+        else:
+            vals['last_modified_by_en'] = fields.Datetime.now()
+        if 'attachment_en' in vals:
+            vals['created_by_attch'] = self._uid
+            vals['last_modified_attach'] = fields.Datetime.now()
         if self.stage_id:
             stage = self.stage_id
             res_group = self.env['res.groups'].search([('name','=','Sales Person')])
@@ -177,15 +192,6 @@ class crm_lead(models.Model):
                                 }
                                 msg_obj = self.env['mail.message']
                                 msg_obj.create(message_data)
-            # for users_id in technical_res.users:
-            #     if self.env.user.id == users_id.id:
-            #         print ">>aiyaa kemmm..............",users_id.id , self._uid,self.env.user
-            #         if stage.name not in ['Technical Drawing']:
-            #             raise UserError(_('You Can Only Edit This Record If It is not in Technical Drawing Stage. Please Contact Your Administrator.'))
-            #         if 'stage_id' in vals:
-            #             stagee = self.env['crm.stage'].browse(vals.get('stage_id'))
-            #             if stagee.name not in ['No Offer','Pricing','Collect Data']:
-            #                 raise UserError(_('You Have Not Rights To Move This Record in This Stage. Please Contact Your Administrator.'))
         return super(crm_lead, self).write(vals)
 
     @api.model
@@ -201,12 +207,8 @@ class crm_lead(models.Model):
         vals = {}
         if not stage_id:
             return {}
-        stage = self.env['crm.stage'].browse(stage_id)
-        if stage.on_change:
-            return {'probability': stage.probability}
-        if stage.id != self.en_stages.id:
-            vals['en_stages'] = stage.id
-        return {'value': vals}
+        vals['en_stages'] = stage_id
+        return vals
 
 
 class crm_lead_line(models.Model):
@@ -286,6 +288,7 @@ class crm_lead_line(models.Model):
                             'fixed_price': vals.get('unit_price_en'),
                         })]
                 }
+            vals.update({'pricing_date':fields.Datetime.now()})
             self.lead_line_id.partner_id.property_product_pricelist.write(pricelis_dict)
         return super(crm_lead_line, self).write(vals)
 
