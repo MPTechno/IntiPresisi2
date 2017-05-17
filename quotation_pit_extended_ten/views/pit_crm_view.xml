@@ -87,17 +87,17 @@
                         </page>
                         <page string="System Information">
                             <group col="4">
-                                <field name="created_by_en"/>
-                                <field name="last_modified_by_en"/>
+                                <field name="created_by_en" readonly="1"/>
+                                <field name="last_modified_by_en" readonly="1"/>
                             </group>
                         </page>
                         <page string="Attachments">
                             <group col="4">
                                 <field name="attachment_en"/>
                                 <field name="attachment_type_id"/>
-                                <field name="created_by_attch"/>
+                                <field name="created_by_attch" readonly="1"/>
                                 <field name="title_attach"/>
-                                <field name="last_modified_attach"/>
+                                <field name="last_modified_attach" readonly="1"/>
                             </group>
                         </page>
                         <page string="Product Pricelisting">
@@ -108,7 +108,7 @@
                                         <field name="internal_code_en" string="Drawing Number"/>
                                         <field name="qty_en"/>
                                         <field name="product_uom"/>
-                                        <field name="part_number"/>
+                                        <field name="part_number" domain="[('part_line_id', '=', id)]"/>
                                         <field name="unit_price_en"/>
                                         <field name="workpiece_material"/>
                                         <field name="total_price_en"/>
@@ -598,8 +598,8 @@
                         </page>
                         <page string="System Information">
                             <group>
-                                <field name="created_by"/>
-                                <field name="last_modified_by"/>
+                                <field name="created_by" readonly="1"/>
+                                <field name="last_modified_by" readonly="1"/>
                             </group>
                         </page>
                     </xpath>

@@ -199,6 +199,7 @@ class crm_lead(models.Model):
         if 'type' in vals:
             if vals['type'] == 'opportunity':
                 vals['en_number'] = self.env['ir.sequence'].get('crm.lead')
+        vals['stage_id'] = vals.get('en_stages')
         return super(crm_lead, self).create(vals)
 
     @api.model
@@ -210,6 +211,12 @@ class crm_lead(models.Model):
         vals['en_stages'] = stage_id
         return vals
 
+class part_number_line(models.Model):
+    _name = "part.number.line"
+
+    part_line_id = fields.Many2one('crm.lead.line','Line')
+    seq_price = fields.Float('Price')
+    name = fields.Char('Name')
 
 class crm_lead_line(models.Model):
     _name='crm.lead.line'
@@ -230,12 +237,13 @@ class crm_lead_line(models.Model):
             })
 
         # PRODUCT PRICELISTINGt
+    sequence_number = fields.Integer('Sequence',digits=4)
     lead_line_id = fields.Many2one('crm.lead',string='Listing Line',index=True)
     product_en = fields.Many2one('product.product','Product')
     qty_en = fields.Integer('Quantity')
     unit_price_en = fields.Float('Unit Price')
     total_price_en = fields.Float('Total Price')
-    part_number = fields.Char('Part Number')
+    part_number = fields.Many2one('part.number.line','Part Number')
     tax_id = fields.Many2many('account.tax', string='Taxes', domain=['|', ('active', '=', False), ('active', '=', True)])
     internal_code_en = fields.Char('Internal Code')
     workpiece_material = fields.Many2one('workpiece.material','Workpiece Material')
@@ -248,6 +256,12 @@ class crm_lead_line(models.Model):
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True, store=True)
     price_tax = fields.Monetary(compute='_compute_amount', string='Taxes', readonly=True, store=True)
     total_price_en = fields.Monetary(compute='_compute_amount', string='Total', readonly=True, store=True)
+
+    @api.multi
+    @api.onchange('part_number')
+    def part_number_change(self):
+        for part in self:
+            self.unit_price_en = part.part_number.seq_price
 
     @api.multi
     def create(self, vals):
@@ -290,7 +304,31 @@ class crm_lead_line(models.Model):
                 }
             vals.update({'pricing_date':fields.Datetime.now()})
             self.lead_line_id.partner_id.property_product_pricelist.write(pricelis_dict)
+            if vals.get('unit_price_en') != 0.0:
+                go_ahed = False
+                price_list = []
+                seq_price = self.env['part.number.line'].search([('part_line_id','=',self.id)]) 
+                if seq_price:
+                    for isd in seq_price:
+                        price_list.append(isd.seq_price)
+                if vals.get('unit_price_en') not in price_list:
+                    part_id = ''
+                    seq_dict = {
+                        'name': str(self.lead_line_id.partner_id.partner_code) + '-' + str(self.sequence_number + 1).zfill(4),
+                        'part_line_id':self.id,
+                        'seq_price':vals.get('unit_price_en'),
+                    }
+                    part_id = self.env['part.number.line'].create(seq_dict)
+                    vals.update({'sequence_number':self.sequence_number + 1,'part_number':part_id.id})
         return super(crm_lead_line, self).write(vals)
+
+    @api.multi
+    def unlink(self):
+        for un in self:
+            unlink_list = []
+            for isd in self.env['part.number.line'].search([('part_line_id','=',un.id)]):
+                isd.unlink()
+        return super(crm_lead_line, self).unlink()
 
     @api.multi
     def _get_display_price(self, product):

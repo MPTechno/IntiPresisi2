@@ -28,9 +28,9 @@ class crm_askcode_partner(models.TransientModel):
             if self._context.get('active_id'):
                 lead_obje = self.env['crm.lead'].browse(self._context.get('active_id'))
                 if self.acc_type == 'local':
-                    self.code_partner = str(1330) + str(lead_obje.partner_name[:1])
+                    self.code_partner = str(1330)+ '/' + str(lead_obje.partner_name[:1])
                 else:
-                    self.code_partner = str(1337) + str(lead_obje.partner_name[:1])
+                    self.code_partner = str(1337)+ '/' + str(lead_obje.partner_name[:1])
 
     @api.v7
     def convert_to_part(self,context=None):
