@@ -10,7 +10,7 @@ class sale_order(models.Model):
 	sale_order_name_id = fields.Many2one('sale.order.name','Quote Name')
 	delivery_term_id = fields.Many2one('delivery.term','Delivery Term')
 	delivery_time = fields.Date('Delivery Time')
-	manual_sequence = fields.Char('Quote Number',required=True)
+	manual_sequence = fields.Char('Quote Number')
 	contact_id = fields.Many2one('res.partner','Our Reference')
 	
 	@api.model
@@ -19,7 +19,7 @@ class sale_order(models.Model):
 			vals['name'] = self.env['ir.sequence'].next_by_code('sale.quotation.intipresisi') or 'New'
 		sale_order_obj = super(sale_order, self).create(vals)
 		name = sale_order_obj.name
-		latest_name = name.replace('XXX',sale_order_obj.manual_sequence)
+		latest_name = name.replace('XXX',sale_order_obj.partner_id.short_name)
 		sale_order_obj.write({'name':latest_name})
 		return sale_order_obj
 	

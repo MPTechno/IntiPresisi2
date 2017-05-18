@@ -719,6 +719,7 @@ class sale_order(models.Model):
                 line_dict = {
                     'product_id':op_line.product_en,
                     'product_uom_qty':op_line.qty_en,
+                    'part_number':op_line.part_number.id,
                     'price_unit':op_line.unit_price_en,
                     'discount':op_line.discount,
                     'tax_id':[(6,0,taxlist)],
@@ -731,6 +732,8 @@ class sale_order(models.Model):
 
 class sale_order_line(models.Model):
     _inherit= 'sale.order.line'
+
+    part_number = fields.Many2one('sequence.number.partner','Part Number')
 
     @api.multi
     def create(self, vals):

@@ -12,7 +12,7 @@
 		        	<field name="sale_order_name_id"/>
 		        </xpath>
 		        <xpath expr="//form/sheet/group/group/field[@name='payment_term_id']" position="after">
-		        	<field name="manual_sequence"/>
+		        	<field name="manual_sequence" invisible="1"/>
 		        	<field name="revision"/>
 		        	<field name="goods_label"/>
 		        </xpath>
