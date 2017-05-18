@@ -48,8 +48,8 @@
         <record id="seq_crm_lead" model="ir.sequence">
             <field name="name">CRM LEAD</field>
             <field name="code">crm.lead</field>
-            <field name="padding">5</field>
-            <field name="suffix"> - %(year)s</field>
+            <field name="padding">0</field>
+            <field name="suffix">-%(month)s-%(year)s</field>
         </record>
 
         <record id="seq_product_pricelist" model="ir.sequence">

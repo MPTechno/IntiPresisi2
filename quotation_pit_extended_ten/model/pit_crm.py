@@ -12,6 +12,179 @@ from odoo.tools.misc import formatLang
 from odoo.addons.base.res.res_partner import WARNING_MESSAGE, WARNING_HELP
 import odoo.addons.decimal_precision as dp
 
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+
+def int_to_roman(input):
+    """
+   Convert an integer to Roman numerals.
+
+   Examples:
+   >>> int_to_roman(0)
+   Traceback (most recent call last):
+   ValueError: Argument must be between 1 and 3999
+
+   >>> int_to_roman(-1)
+   Traceback (most recent call last):
+   ValueError: Argument must be between 1 and 3999
+
+   >>> int_to_roman(1.5)
+   Traceback (most recent call last):
+   TypeError: expected integer, got <type 'float'>
+
+   >>> for i in range(1, 21): print int_to_roman(i)
+   ...
+   I
+   II
+   III
+   IV
+   V
+   VI
+   VII
+   VIII
+   IX
+   X
+   XI
+   XII
+   XIII
+   XIV
+   XV
+   XVI
+   XVII
+   XVIII
+   XIX
+   XX
+   >>> print int_to_roman(2000)
+   MM
+   >>> print int_to_roman(1999)
+   MCMXCIX
+   """
+
+    if type(input) != type(1):
+        raise TypeError, 'expected integer, got %s' % type(input)
+    if not 0 < input < 4000:
+        raise ValueError, 'Argument must be between 1 and 3999'
+    ints = (
+        1000,
+        900,
+        500,
+        400,
+        100,
+        90,
+        50,
+        40,
+        10,
+        9,
+        5,
+        4,
+        1,
+        )
+    nums = (
+        'M',
+        'CM',
+        'D',
+        'CD',
+        'C',
+        'XC',
+        'L',
+        'XL',
+        'X',
+        'IX',
+        'V',
+        'IV',
+        'I',
+        )
+    result = ''
+    for i in range(len(ints)):
+        count = int(input / ints[i])
+        result += nums[i] * count
+        input -= ints[i] * count
+    return result
+
+
+def roman_to_int(input):
+    """
+   Convert a roman numeral to an integer.
+   
+   >>> r = range(1, 4000)
+   >>> nums = [int_to_roman(i) for i in r]
+   >>> ints = [roman_to_int(n) for n in nums]
+   >>> print r == ints
+   1
+
+   >>> roman_to_int('VVVIV')
+   Traceback (most recent call last):
+    ...
+   ValueError: input is not a valid roman numeral: VVVIV
+   >>> roman_to_int(1)
+   Traceback (most recent call last):
+    ...
+   TypeError: expected string, got <type 'int'>
+   >>> roman_to_int('a')
+   Traceback (most recent call last):
+    ...
+   ValueError: input is not a valid roman numeral: A
+   >>> roman_to_int('IL')
+   Traceback (most recent call last):
+    ...
+   ValueError: input is not a valid roman numeral: IL
+   """
+
+    if type(input) != type(''):
+        raise TypeError, 'expected string, got %s' % type(input)
+    input = input.upper()
+    nums = [
+        'M',
+        'D',
+        'C',
+        'L',
+        'X',
+        'V',
+        'I',
+        ]
+    ints = [
+        1000,
+        500,
+        100,
+        50,
+        10,
+        5,
+        1,
+        ]
+    places = []
+    for c in input:
+        if not c in nums:
+            raise ValueError, 'input is not a valid roman numeral: %s' \
+                % input
+    for i in range(len(input)):
+        c = input[i]
+        value = ints[nums.index(c)]
+
+      # If the next place holds a larger number, this value is negative.
+
+        try:
+            nextvalue = ints[nums.index(input[i + 1])]
+            if nextvalue > value:
+                value *= -1
+        except IndexError:
+
+         # there is no next place.
+
+            pass
+        places.append(value)
+    sum = 0
+    for n in places:
+        sum += n
+
+   # Easiest test for validity...
+
+    if int_to_roman(sum) == input:
+        return sum
+    else:
+        raise ValueError, 'input is not a valid roman numeral: %s' \
+            % input
+
 class prospect_source(models.Model):
     _name='prospect.source'
     
@@ -168,7 +341,7 @@ class crm_lead(models.Model):
             vals['last_modified_by_en'] = fields.Datetime.now()
         if 'attachment_en' in vals:
             vals['created_by_attch'] = self._uid
-            vals['last_modified_attach'] = fields.Datetime.now()
+            # vals['last_modified_attach'] = fields.Datetime.now()
         if self.stage_id:
             stage = self.stage_id
             res_group = self.env['res.groups'].search([('name','=','Sales Person')])
@@ -198,7 +371,8 @@ class crm_lead(models.Model):
     def create(self, vals):
         if 'type' in vals:
             if vals['type'] == 'opportunity':
-                vals['en_number'] = self.env['ir.sequence'].get('crm.lead')
+                seq_num = self.env['ir.sequence'].get('crm.lead').split('-')
+                vals['en_number'] =  '000' + str(seq_num[0]) + '/Enq-' + str(self.env['res.partner'].browse(vals.get('partner_id')).short_name or '') + '/IPT/' +str(int_to_roman(int(seq_num[1]))) + '/' + str(seq_num[2])
         vals['stage_id'] = vals.get('en_stages')
         return super(crm_lead, self).create(vals)
 
@@ -211,12 +385,23 @@ class crm_lead(models.Model):
         vals['en_stages'] = stage_id
         return vals
 
-class part_number_line(models.Model):
-    _name = "part.number.line"
+class sequence_number_partner(models.Model):
+    _name = "sequence.number.partner"
 
-    part_line_id = fields.Many2one('crm.lead.line','Line')
+    sequence_id = fields.Many2one('res.partner','Account')
+    product_id = fields.Many2one('product.product','Product')
+    sequence_number = fields.Integer('Sequence')
     seq_price = fields.Float('Price')
     name = fields.Char('Name')
+
+# class part_number_line(models.Model):
+#     _name = "part.number.line"
+
+#     part_line_id = fields.Many2one('crm.lead.line','Line')
+#     seq_price = fields.Float('Price')
+#     name = fields.Char('Name')
+#     product_id = fields.Many2one('product.product', 'Product')
+#     partner_id = fields.Many2one('res.partner', 'Account')
 
 class crm_lead_line(models.Model):
     _name='crm.lead.line'
@@ -236,14 +421,22 @@ class crm_lead_line(models.Model):
                 'price_subtotal': taxes['total_excluded'],
             })
 
+    @api.model
+    def _get_partner(self):
+        partner = False
+        context = self._context or {}
+        if context.get('partner_id'):
+            partner = context.get('partner_id')
+        return partner
+
         # PRODUCT PRICELISTINGt
-    sequence_number = fields.Integer('Sequence',digits=4)
+    
     lead_line_id = fields.Many2one('crm.lead',string='Listing Line',index=True)
     product_en = fields.Many2one('product.product','Product')
     qty_en = fields.Integer('Quantity')
     unit_price_en = fields.Float('Unit Price')
     total_price_en = fields.Float('Total Price')
-    part_number = fields.Many2one('part.number.line','Part Number')
+    part_number = fields.Many2one('sequence.number.partner','Part Number')
     tax_id = fields.Many2many('account.tax', string='Taxes', domain=['|', ('active', '=', False), ('active', '=', True)])
     internal_code_en = fields.Char('Internal Code')
     workpiece_material = fields.Many2one('workpiece.material','Workpiece Material')
@@ -251,6 +444,7 @@ class crm_lead_line(models.Model):
     product_uom = fields.Many2one('product.uom', string='Unit of Measure', required=True)
     pricing_date = fields.Date('Pricing Date')
     remarks_en = fields.Text('Remarks')
+    partner_id = fields.Many2one(string='Account' ,default=_get_partner,store=True, readonly=True)
     currency_id = fields.Many2one(related='lead_line_id.partner_id.property_product_pricelist.currency_id', store=True, string='Currency', readonly=True)
     discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Discount'), default=0.0)
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True, store=True)
@@ -281,8 +475,55 @@ class crm_lead_line(models.Model):
                             'fixed_price': vals.get('unit_price_en'),
                         })]
                 }
+            vals.update({'pricing_date':fields.Datetime.now()})
             self.env['crm.lead'].browse(vals.get('lead_line_id')).partner_id.property_product_pricelist.write(pricelis_dict)
-        return super(crm_lead_line, self).create(vals)
+        res = super(crm_lead_line, self).create(vals)
+        
+        if vals.get('unit_price_en') != 0.0 and not vals.get('part_number'):
+            part_id = ''
+            list_of_part = []
+            partner_obj = self.env['crm.lead'].browse(vals.get('lead_line_id')).partner_id
+            if partner_obj:
+                if partner_obj.sequence_ids:
+                    for pit in partner_obj.sequence_ids:
+                        if pit.product_id.id == vals.get('product_en') and pit.seq_price == vals.get('unit_price_en'):
+                            part_id = pit
+                            print "111111111111111111",pit.sequence_number , pit.name
+                        if pit.product_id.id == vals.get('product_en') and pit.seq_price != vals.get('unit_price_en'):
+                            print "222222222222222222",pit.sequence_number , pit.name
+                            list_of_part.append(pit.sequence_number)                            
+                        if pit.product_id.id != vals.get('product_en') and pit.seq_price != vals.get('unit_price_en'):
+                            print "3333333333333333333",vals.get('unit_price_en')
+                            seq_dict = {
+                                'name': str(partner_obj.partner_code) + '-000' + str(1),
+                                'sequence_id':partner_obj.id,
+                                'product_id':vals.get('product_en'),
+                                'seq_price':vals.get('unit_price_en'),
+                                'sequence_number': 1,
+                            }
+                            part_id = self.env['sequence.number.partner'].create(seq_dict)
+                else:
+                    print ">>>>>>>>>>>>>>>>>>>>>"
+                    seq_dict = {
+                        'name': str(partner_obj.partner_code) + '-000' + str(1),
+                        'sequence_id':partner_obj.id,
+                        'product_id':vals.get('product_en'),
+                        'seq_price':vals.get('unit_price_en'),
+                        'sequence_number': 1,
+                    }
+                    part_id = self.env['sequence.number.partner'].create(seq_dict)
+
+                if list_of_part:
+                    seq_dict = {
+                        'name': str(partner_obj.partner_code) + '-000' + str(max(list_of_part) + 1),
+                        'sequence_id':partner_obj.id,
+                        'product_id':vals.get('product_en'),
+                        'seq_price':vals.get('unit_price_en'),
+                        'sequence_number': max(list_of_part) + 1,
+                    }
+                    part_id = self.env['sequence.number.partner'].create(seq_dict)
+                res.write({'part_number':part_id.id})
+        return res
 
     @api.multi
     def write(self, vals):
@@ -304,31 +545,60 @@ class crm_lead_line(models.Model):
                 }
             vals.update({'pricing_date':fields.Datetime.now()})
             self.lead_line_id.partner_id.property_product_pricelist.write(pricelis_dict)
+            
             if vals.get('unit_price_en') != 0.0:
-                go_ahed = False
-                price_list = []
-                seq_price = self.env['part.number.line'].search([('part_line_id','=',self.id)]) 
-                if seq_price:
-                    for isd in seq_price:
-                        price_list.append(isd.seq_price)
-                if vals.get('unit_price_en') not in price_list:
-                    part_id = ''
-                    seq_dict = {
-                        'name': str(self.lead_line_id.partner_id.partner_code) + '-' + str(self.sequence_number + 1).zfill(4),
-                        'part_line_id':self.id,
-                        'seq_price':vals.get('unit_price_en'),
-                    }
-                    part_id = self.env['part.number.line'].create(seq_dict)
-                    vals.update({'sequence_number':self.sequence_number + 1,'part_number':part_id.id})
+                part_id = ''
+                list_of_part = []
+                partner_obj = self.lead_line_id.partner_id
+                if partner_obj:
+                    if partner_obj.sequence_ids:
+                        for pit in partner_obj.sequence_ids:
+                            if pit.product_id.id == self.product_en.id and pit.seq_price == vals.get('unit_price_en'):
+                                part_id = pit
+                                print "111111111111111111",pit.sequence_number , pit.name
+                            if pit.product_id.id == self.product_en.id and pit.seq_price != vals.get('unit_price_en'):
+                                print "222222222222222222",pit.sequence_number , pit.name
+                                list_of_part.append(pit.sequence_number)                            
+                            if pit.product_id.id != self.product_en.id and pit.seq_price != vals.get('unit_price_en'):
+                                print "3333333333333333333",vals.get('unit_price_en')
+                                seq_dict = {
+                                    'name': str(partner_obj.partner_code) + '-000' + str(1),
+                                    'sequence_id':partner_obj.id,
+                                    'product_id':self.product_en.id,
+                                    'seq_price':vals.get('unit_price_en'),
+                                    'sequence_number': 1,
+                                }
+                                part_id = self.env['sequence.number.partner'].create(seq_dict)
+                    else:
+                        print ">>>>>>>>>>>>>>>>>>>>>"
+                        seq_dict = {
+                            'name': str(partner_obj.partner_code) + '-000' + str(1),
+                            'sequence_id':partner_obj.id,
+                            'product_id':self.product_en.id,
+                            'seq_price':vals.get('unit_price_en'),
+                            'sequence_number': 1,
+                        }
+                        part_id = self.env['sequence.number.partner'].create(seq_dict)
+
+                    if list_of_part:
+                        seq_dict = {
+                            'name': str(partner_obj.partner_code) + '-000' + str(max(list_of_part) + 1),
+                            'sequence_id':partner_obj.id,
+                            'product_id':self.product_en.id,
+                            'seq_price':vals.get('unit_price_en'),
+                            'sequence_number': max(list_of_part) + 1,
+                        }
+                        part_id = self.env['sequence.number.partner'].create(seq_dict)
+                    vals.update({'part_number':part_id.id})
         return super(crm_lead_line, self).write(vals)
 
-    @api.multi
-    def unlink(self):
-        for un in self:
-            unlink_list = []
-            for isd in self.env['part.number.line'].search([('part_line_id','=',un.id)]):
-                isd.unlink()
-        return super(crm_lead_line, self).unlink()
+    # @api.multi
+    # def unlink(self):
+    #     for un in self:
+    #         unlink_list = []
+    #         for isd in self.env['part.number.line'].search([('part_line_id','=',un.id)]):
+    #             isd.unlink()
+    #     return super(crm_lead_line, self).unlink()
 
     @api.multi
     def _get_display_price(self, product):
@@ -379,6 +649,8 @@ class res_partner(models.Model):
         currency_id = self.env['res.users'].browse(self._uid).company_id.currency_id
         return currency_id or self._get_euro()
 
+
+    sequence_ids = fields.One2many('sequence.number.partner','sequence_id','Sequence')
     email_count = fields.Integer("Emails", compute='_compute_emails_count')
     partner_code = fields.Char('Code',required=True)
     street_delivery =  fields.Char('Street')
