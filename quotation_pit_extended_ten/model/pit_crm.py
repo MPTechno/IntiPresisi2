@@ -479,7 +479,7 @@ class crm_lead_line(models.Model):
             self.env['crm.lead'].browse(vals.get('lead_line_id')).partner_id.property_product_pricelist.write(pricelis_dict)
         res = super(crm_lead_line, self).create(vals)
         
-        if vals.get('unit_price_en') != 0.0 and not vals.get('part_number'):
+        if vals.get('unit_price_en') != 0.0:
             part_id = ''
             list_of_part = []
             partner_obj = self.env['crm.lead'].browse(vals.get('lead_line_id')).partner_id
