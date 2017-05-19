@@ -706,6 +706,9 @@ class product_pricelist(models.Model):
 class sale_order(models.Model):
     _inherit= 'sale.order'
 
+    hide_confirm = fields.Boolean('Hide')
+    or_sale_id = fields.Many2one('Origin')
+
     @api.multi
     @api.onchange('opportunity_id')
     def onchange_opportunity_id(self):
@@ -722,6 +725,7 @@ class sale_order(models.Model):
                     'part_number':op_line.part_number.id,
                     'price_unit':op_line.unit_price_en,
                     'discount':op_line.discount,
+                    'stat_line':'open',
                     'tax_id':[(6,0,taxlist)],
                     'product_uom':op_line.product_uom,
                     'currency_id':op_line.currency_id,
@@ -730,10 +734,99 @@ class sale_order(models.Model):
                 self.order_line = order_lines
         # return res
 
+    @api.multi
+    def action_confirm(self):
+        for order in self:
+            new_order  = ''
+            num_of_line = 0
+            line_list = []
+            for line in order.order_line:
+                if line.confirm_line_box == True and line.stat_line == 'open':
+                    taxlist = []
+                    for itax in line.tax_id:
+                        taxlist.append(itax.id)
+                    line_list.append((0, 0, {
+                        'product_id': line.product_id.id,
+                        'product_uom_qty': line.product_uom_qty,
+                        'price_unit':line.price_unit,
+                        'discount': line.discount,
+                        'name':line.name,
+                        'part_number':line.part_number.id,
+                        'stat_line':'so',
+                        'confirm_line_box':True,
+                        'layout_category_id':line.layout_category_id.id,
+                        'product_uom':line.product_uom.id,
+                        'customer_lead':line.customer_lead,
+                        'tax_id':[(6,0,taxlist)],
+                    }))
+                    line.write({'stat_line':'so'})
+            for line in order.order_line:
+                if line.stat_line == 'so':
+                    num_of_line += 1
+            if line_list:
+                order_name = self.search_count([('or_sale_id','=',order.id)])
+                if order_name == 0:
+                    order_name = 1
+                else:
+                    order_name += 1
+                sale_dict = {
+                    'name':order.name + '/SO' + str(order_name),
+                    'sale_order_name_id':order.sale_order_name_id.id,
+                    'partner_id':order.partner_id.id,
+                    'date_order':order.date_order,  
+                    'pricelist_id':order.pricelist_id.id,
+                    'user_id':order.user_id.id,
+                    'picking_policy':order.picking_policy,
+                    'opportunity_id':order.opportunity_id.id,
+                    'warehouse_id':order.warehouse_id.id,
+                    'team_id':order.team_id.id,
+                    'or_sale_id':order.id,
+                    'revision':order.revision,
+                    'goods_label':order.goods_label,
+                    'payment_term_id':order.payment_term_id.id,
+                    'hide_confirm':True,
+                    'order_line':line_list,
+                }
+                new_order = self.env['sale.order'].create(sale_dict)
+                new_order.state = 'sale'
+                new_order.confirmation_date = fields.Datetime.now()
+                new_order.order_line._action_procurement_create()
+                if self.env.context.get('send_email'):
+                    new_order.force_quotation_send()
+        
+                if self.env['ir.values'].get_default('sale.config.settings', 'auto_done_setting'):
+                    new_order.action_done()
+            if len(order.order_line) != 0:
+                if num_of_line == len(order.order_line):
+                    order.write({'hide_confirm':True})
+            if line_list:
+                models_data = self.env['ir.model.data']
+                # Get opportunity views
+                dummy, form_view = models_data.get_object_reference('sale', 'view_order_form')
+                dummy, tree_view = models_data.get_object_reference('sale', 'view_order_tree')
+                return {
+                    'name': _('Sale Order'),
+                    'view_type': 'form',
+                    'view_mode': 'tree, form',
+                    'res_model': 'sale.order',
+                    'res_id': int(new_order.id),
+                    'view_id': False,
+                    'views': [(form_view or False, 'form'),
+                              (tree_view or False, 'tree'),],
+                    'type': 'ir.actions.act_window',
+                    'context': {}
+                }
+            else:
+                raise UserError(_('Please Select Order Line Before Confirm Order.'))
+        return True
+
 class sale_order_line(models.Model):
     _inherit= 'sale.order.line'
 
     part_number = fields.Many2one('sequence.number.partner','Part Number')
+    confirm_line_box = fields.Boolean('.')
+    stat_line = fields.Selection([('so','SO'),('open','Open')],'Status',default='open')
+
 
     @api.multi
     def create(self, vals):
