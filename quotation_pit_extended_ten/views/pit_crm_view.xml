@@ -731,6 +731,7 @@
                     </xpath>
                     <xpath expr="//field[@name='order_line']/form/group/group//field[@name='product_id']" position="before">
                         <field name="confirm_line_box" string="Confirm Line" attrs="{'invisible': [('stat_line', '=', 'so')]}"/>
+                        <field name="stat_line" invisible="1"></field>
                     </xpath>
                     <xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="before">
                         <field name="confirm_line_box" nolabel="1"/>

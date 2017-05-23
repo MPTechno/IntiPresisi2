@@ -501,7 +501,7 @@ class crm_lead_line(models.Model):
                         if pit.product_id.id != vals.get('product_en') and pit.seq_price != vals.get('unit_price_en'):
                             print "3333333333333333333",vals.get('unit_price_en')
                             seq_dict = {
-                                'name': str(partner_obj.partner_code) +'0'+ str(1) + ' - PRICE 000' + str(1),
+                                'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
                                 'sequence_id':partner_obj.id,
                                 'product_id':vals.get('product_en'),
                                 'seq_price':vals.get('unit_price_en'),
@@ -511,7 +511,7 @@ class crm_lead_line(models.Model):
                 else:
                     print ">>>>>>>>>>>>>>>>>>>>>"
                     seq_dict = {
-                        'name': str(partner_obj.partner_code) +'0'+ str(1) + ' - PRICE 000' + str(1),
+                        'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
                         'sequence_id':partner_obj.id,
                         'product_id':vals.get('product_en'),
                         'seq_price':vals.get('unit_price_en'),
@@ -521,7 +521,7 @@ class crm_lead_line(models.Model):
 
                 if list_of_part:
                     seq_dict = {
-                        'name': str(partner_obj.partner_code) +'0'+ str(max(list_of_part) + 1) + ' - PRICE 000' + str(max(list_of_part) + 1),
+                        'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(max(list_of_part) + 1),
                         'sequence_id':partner_obj.id,
                         'product_id':vals.get('product_en'),
                         'seq_price':vals.get('unit_price_en'),
@@ -568,7 +568,7 @@ class crm_lead_line(models.Model):
                             if pit.product_id.id != self.product_en.id and pit.seq_price != vals.get('unit_price_en'):
                                 print "3333333333333333333",vals.get('unit_price_en')
                                 seq_dict = {
-                                    'name': str(partner_obj.partner_code) +'0'+ str(1) + ' - PRICE 000' + str(1),
+                                    'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
                                     'sequence_id':partner_obj.id,
                                     'product_id':self.product_en.id,
                                     'seq_price':vals.get('unit_price_en'),
@@ -578,7 +578,7 @@ class crm_lead_line(models.Model):
                     else:
                         print ">>>>>>>>>>>>>>>>>>>>>"
                         seq_dict = {
-                            'name': str(partner_obj.partner_code) +'0'+ str(1) + ' - PRICE 000' + str(1),
+                            'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
                             'sequence_id':partner_obj.id,
                             'product_id':self.product_en.id,
                             'seq_price':vals.get('unit_price_en'),
@@ -588,7 +588,7 @@ class crm_lead_line(models.Model):
 
                     if list_of_part:
                         seq_dict = {
-                            'name': str(partner_obj.partner_code) +'0'+ str(max(list_of_part) + 1) + ' - PRICE 000' + str(max(list_of_part) + 1),
+                            'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(max(list_of_part) + 1),
                             'sequence_id':partner_obj.id,
                             'product_id':self.product_en.id,
                             'seq_price':vals.get('unit_price_en'),
