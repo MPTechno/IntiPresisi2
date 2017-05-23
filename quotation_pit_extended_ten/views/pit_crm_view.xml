@@ -103,21 +103,26 @@
                         <page string="Product Pricelisting">
                             <field name="lead_line_ids" mode="tree" context="{'partner_id':partner_id}">
                                 <form string="Product Pricelisting">
-                                    <group col="4">
-                                        <field name="product_en"/>
-                                        <field name="internal_code_en" string="Drawing Number"/>
-                                        <field name="qty_en"/>
-                                        <field name="product_uom"/>
-                                        <field name="part_number" domain="[('product_id', '=', product_en),('sequence_id','=',partner_id)]"/>
-                                        <field name="unit_price_en"/>
-                                        <field name="workpiece_material"/>
-                                        <field name="total_price_en"/>
-                                        <field name="coating_en"/>
-                                        <field name="pricing_date"/>
-                                        <field name="tax_id" widget="many2many_tags"/>
-                                        <field name="currency_id" invisible="1"/>
-                                        <field name="partner_id" invisible="1"/>
+                                    <group>
+                                        <group>
+                                            <field name="product_en"/>
+                                            <field name="qty_en"/>
+                                            <field name="product_uom"/>
+                                            <field name="part_number" domain="[('product_id', '=', product_en),('sequence_id','=',partner_id)]"/>
+                                            <field name="unit_price_en"/>
+                                            <field name="total_price_en"/>
+                                        </group>
+                                        <group>
+                                            <field name="internal_code_en" string="Drawing Number"/>
+                                            <field name="workpiece_material"/>
+                                            <field name="coating_en"/>
+                                            <field name="tax_id" widget="many2many_tags"/>
+                                            <field name="pricing_date" readonly="1"/>
+                                            <field name="currency_id" invisible="1"/>
+                                            <field name="partner_id" invisible="1"/>
+                                        </group>
                                     </group>
+
                                     <group string="Remarks">
                                         <field name="remarks_en" nolabel="1" placeholder="Remarks..."/>
                                     </group>
@@ -618,7 +623,9 @@
                 <data>
                     <xpath expr="//field[@name='name']" position="replace">
                         <div class="o_row">
-                            <field name="short_name"/>
+                            <span>[</span>
+                                <field name="short_name"/>
+                            <span>]</span>
                             <field name="name" default_focus="1" placeholder="Name" attrs="{'required' : [('type', '=', 'contact')]}"/>
                         </div>
                     </xpath>
