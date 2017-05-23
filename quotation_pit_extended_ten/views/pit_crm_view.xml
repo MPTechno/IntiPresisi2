@@ -491,7 +491,7 @@
                         <attribute name="string">Prospect</attribute>
                     </xpath>
                     <xpath expr="//field[@name='contact_name']" position="replace">
-                        <field name="partner_name" string="Name"/>
+                        <field name="comp_name" string="Name"/>
                     </xpath>
                     <xpath expr="//field[@name='team_id']" position="after">
                         <field name="stage_new_pr"/>
@@ -511,9 +511,9 @@
                             context="{'partner_id': partner_id}"
                             name="action_schedule_meeting" icon="fa-calendar">
                             <div class="o_stat_info">
-                                <field name="meeting_count" class="o_stat_value"/>
-                                <span class="o_stat_text" attrs="{'invisible': [('meeting_count', '&lt;', 2)]}"> Meetings</span>
-                                <span class="o_stat_text" attrs="{'invisible': [('meeting_count', '&gt;', 1)]}"> Meeting</span>
+                                <field name="meeting_count_lead" class="o_stat_value"/>
+                                <span class="o_stat_text" attrs="{'invisible': [('meeting_count_lead', '&lt;', 2)]}"> Meetings</span>
+                                <span class="o_stat_text" attrs="{'invisible': [('meeting_count_lead', '&gt;', 1)]}"> Meeting</span>
                             </div>
                         </button>
                         <button class="oe_inline oe_stat_button" type="action"
@@ -529,11 +529,25 @@
                             <field string="Calls" name="phonecall_count" widget="statinfo"/>
                         </button>
                     </div>
-                    <xpath expr="//label[@for='name']" position="attributes">
+<!--                     <xpath expr="//label[@for='name']" position="attributes">
                         <attribute name="string">Prospect</attribute>
                     </xpath>
                     <xpath expr="//field[@name='name']" position="attributes">
                         <attribute name="placeholder">Describe the Prospect...</attribute>
+                    </xpath> -->
+                    <xpath expr="//field[@name='title']" position="replace"></xpath>
+                    <xpath expr="//field[@name='function']" position="replace"></xpath>
+                    <xpath expr="//form/sheet/div[@class='oe_title']" position="replace">
+                        <label for="name" class="oe_edit_only" string="Prospect"/>
+                        <div class="o_address_format">
+                            <h1>
+                                <field name="title" style="width:10%;"/>
+                                <field name="name" placeholder="Describe the Prospect..." style="width:60%;margin-left:10px;"/>
+                            </h1>
+                        </div>
+                        <group colspan="2">
+                            <field name="function" style="width:50%;"/>
+                        </group>
                     </xpath>
                     <xpath expr="//field[@name='partner_id']" position="replace">
                     </xpath>
@@ -546,16 +560,14 @@
                     </xpath>
                     <xpath expr="//sheet/group/group/label[@for='contact_name']" position="replace"></xpath>
                     <xpath expr="//field[@name='contact_name']" position="replace"></xpath>
-                    <xpath expr="//field[@name='title']" position="replace"></xpath>
-                    <xpath expr="//field[@name='function']" position="replace"></xpath>
+
                     <xpath expr="//field[@name='tag_ids']" position="attributes">
                         <attribute name="invisible">True</attribute>
                     </xpath>
                     <xpath expr="//sheet/group/group/div[@class='o_row']" position="replace"></xpath>
                     <xpath expr="//field[@name='partner_name']" position="replace">
-                        <field name="partner_id"/>
-                        <field name="partner_name" string="Account Name"  required="1"/>
-                        <field name="comp_name"/>
+                        <field name="partner_id" invisible="1"/>
+                        <field name="comp_name" required="1"/>
                     </xpath>
                     <xpath expr="//field[@name='partner_id']" position="attributes">
                         <attribute name="string">Account</attribute>
@@ -590,11 +602,11 @@
                                 <field name="quantity_of_machine"/>
                                 <field name="qty_per_month"/>
                                 <field name="prospect_production"/>
-                                <field name="special_carbide_tools_score"/>
-                                <field name="total_score"/>
-                                <field name="quantity_per_month_score"/>
-                                <field name="production_score"/>
-                                <field name="quantity_of_machine_score"/>
+                                <!-- <field name="special_carbide_tools_score"/> -->
+                                <!-- <field name="total_score"/> -->
+                                <!-- <field name="quantity_per_month_score"/> -->
+                                <!-- <field name="production_score"/> -->
+                                <!-- <field name="quantity_of_machine_score"/> -->
                             </group>
                         </page>
                         <page string="Description Information">
@@ -714,6 +726,21 @@
             </field>
         </record>  
 
+        <!-- CALENDER FORM VIEW -->
+
+        <record id="view_calendar_event_form_exttt" model="ir.ui.view">
+            <field name="name">calendar.event.form.exttt</field>
+            <field name="model">calendar.event</field>
+            <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='location']" position="after">
+                    <field name="location_cal_id"/>
+                </xpath>
+                <xpath expr="//field[@name='location']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
         <!-- SALE ORDER VIEW -->
 
         <record model="ir.ui.view" id="quotation_per_quotation_form_view">

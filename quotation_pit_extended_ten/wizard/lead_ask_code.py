@@ -28,9 +28,9 @@ class crm_askcode_partner(models.TransientModel):
             if self._context.get('active_id'):
                 lead_obje = self.env['crm.lead'].browse(self._context.get('active_id'))
                 if self.acc_type == 'local':
-                    self.code_partner = str(1130)+ '/' + str(lead_obje.partner_name[:1])
+                    self.code_partner = str(1130)+ '/' + str(lead_obje.comp_name[:1])
                 else:
-                    self.code_partner = str(1137)+ '/' + str(lead_obje.partner_name[:1])
+                    self.code_partner = str(1137)+ '/' + str(lead_obje.comp_name[:1])
 
     @api.v7
     def convert_to_part(self,context=None):
@@ -39,20 +39,39 @@ class crm_askcode_partner(models.TransientModel):
             lead_obje = self.env['crm.lead'].browse(context.get('active_id'))
             partner = self.env['res.partner']
             vals_dict = {}
-            if lead_obje.partner_name:
+            if lead_obje.comp_name:
                 sale_pricelist_id = self.env['product.pricelist'].create({
-                    'name':lead_obje.partner_name,
+                    'name':lead_obje.comp_name,
                     'item_ids': [(0, 0, {
                             'applied_on': '3_global',
                             'compute_price': 'fixed',
                             'fixed_price': 0.0,
                         })]
                 })
+                contact_dict = {
+                    'partner_code': w.code_partner + '/CON',
+                    'short_name':w.short_name,
+                    'acc_type':w.acc_type,
+                    'name':lead_obje.name,
+                    'phone':lead_obje.phone,
+                    'user_id': self._uid,
+                    'email':lead_obje.email_from,
+                    'mobile':lead_obje.mobile,
+                    'website':lead_obje.website,
+                    'fax':lead_obje.fax,
+                    'property_product_pricelist':sale_pricelist_id.id,
+                    'is_company': False,
+                    'company_type':'person',
+                    'type': 'contact',
+                    'customer':True,
+                    'supplier':False,
+                }
                 vals_dict = {
                     'partner_code': w.code_partner,
                     'short_name':w.short_name,
                     'acc_type':w.acc_type,
-                    'name':lead_obje.partner_name,
+                    'child_ids':[(0,0,contact_dict)],
+                    'name':lead_obje.comp_name,
                     'phone':lead_obje.phone,
                     'user_id': self._uid,
                     'partner_code':w.code_partner,
@@ -67,7 +86,8 @@ class crm_askcode_partner(models.TransientModel):
                     'country_id':lead_obje.country_id.id,
                     'zip':lead_obje.zip,
                     'property_product_pricelist':sale_pricelist_id.id,
-                    'is_company': False,
+                    'is_company': True,
+                    'company_type':'company',
                     'type': 'contact',
                     'customer':True,
                     'supplier':False,
