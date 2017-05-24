@@ -13,6 +13,11 @@ class sale_order(models.Model):
 	manual_sequence = fields.Char('Quote Number')
 	contact_id = fields.Many2one('res.partner','Our Reference')
 	
+	def get_printout_date(self):
+		currentDT = datetime.datetime.now()
+		date = currentDT.strftime("%m/%d/%Y %H:%M:%S")
+		return date
+	
 	@api.model
 	def create(self, vals):
 		if vals.get('name', 'New') == 'New':
