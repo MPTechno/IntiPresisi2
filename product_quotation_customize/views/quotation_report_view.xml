@@ -20,8 +20,10 @@
 			<div class="header">
 				<div class="col-xs-12 pull-left">
 					<div class="col-xs-5 pull-left">
-						<img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="width:200px;height:150px;"/>
-						<br/>
+						<img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="width:200px;height:150px;margin-top:-25px; margin-left:-45px;" />
+						<strong>
+							<span style="font-size:15px; color:red; align: right; margin-left:100px; margin-top:-40px; font-style: italic; display:inline-block;" t-if="company.rml_header1" t-field="company.rml_header1" /><br/>
+						</strong>
 						<strong>
 							<span style="font-size:16px;" t-if="company.name" t-field="company.name" /><br/>
 						</strong>
