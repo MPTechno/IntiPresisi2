@@ -40,7 +40,7 @@
 							<strong>Quotation:</strong><br/> 
 							<span t-field="o.name" /><br/>
 							<strong>Quotation Date:</strong><br/>
-							<span t-field="o.date_order" /> <br/>
+							<span t-esc="o.get_date_order(o.date_order)" /><br/>
 							<strong>Our Reference:</strong><br/>
 							<span t-if="o.contact_id" t-field="o.contact_id.name" /> 
 						</div>
@@ -77,6 +77,7 @@
 						<span t-if="company.phone" t-field="company.phone" /><br/>
 						<span t-if="company.fax" t-field="company.fax" /><br/>
 						<span t-if="company.email" t-field="company.email" />
+						<span t-if="company.website" t-field="company.website" />
 					</div>
 					<div class="col-xs-4 pull-right">
 						<br/>

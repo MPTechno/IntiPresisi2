@@ -13,9 +13,18 @@ class sale_order(models.Model):
 	manual_sequence = fields.Char('Quote Number')
 	contact_id = fields.Many2one('res.partner','Our Reference')
 	
+	def get_date_order(self,order_date):
+		if order_date:
+			date_str = str(order_date).split(' ')
+			date_str_split = str(date_str[0]).split('-')
+			date = date_str_split[1] +'/'+date_str_split[2]+'/'+date_str_split[0]
+			return date
+		else:
+			return ' '
+	
 	def get_printout_date(self):
 		currentDT = datetime.datetime.now()
-		date = currentDT.strftime("%m/%d/%Y %H:%M:%S")
+		date = currentDT.strftime("%m/%d/%Y")
 		return date
 	
 	@api.model
