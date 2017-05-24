@@ -109,11 +109,14 @@
                                             <field name="qty_en"/>
                                             <field name="product_uom"/>
                                             <field name="part_number" domain="[('product_id', '=', product_en),('sequence_id','=',partner_id)]"/>
+                                            <field name="part_number_product"></field>
                                             <field name="unit_price_en"/>
                                             <field name="total_price_en"/>
                                         </group>
                                         <group>
                                             <field name="internal_code_en" string="Drawing Number"/>
+                                            <field name="workpiece_grade"/>
+                                            <field name="kind_of_machine"/>
                                             <field name="workpiece_material"/>
                                             <field name="coating_en"/>
                                             <field name="tax_id" widget="many2many_tags"/>
@@ -141,6 +144,41 @@
                 </data>
             </field>
         </record>
+
+        <record id="product_template_extfor_ned_view_intipresisi" model="ir.ui.view">
+            <field name="name">product.template.ned.common.form.intipresisi</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field eval="15" name="priority"/>
+            <field name="arch" type="xml">
+                <data>
+                    <field name="list_price" position="after">
+                        <field name="workpiece_grade"/>
+                        <field name="kind_of_machine"/>
+                    </field>
+                </data>
+            </field>
+        </record>
+
+
+        <!-- USERS VIEW -->
+        <record id="view_users_form_extended_for_intiprs" model="ir.ui.view">
+            <field name="name">res.users.form.extended.intpris</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <group col="4">
+                        <field name="sales_person_b"/>
+                        <field name="sales_coordinator_b"/>
+                        <field name="technical_support_b"/>
+                        <field name="director_b"/>
+                        <field name="admin_b"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
 
 <!--         <record model="ir.ui.view" id="quotation_per_opportunity_form_view_for_one_group">
             <field name="name">Quotation Per Enquiry Group</field>
@@ -541,8 +579,8 @@
                         <label for="name" class="oe_edit_only" string="Prospect"/>
                         <div class="o_address_format">
                             <h1>
-                                <field name="title" style="width:10%;"/>
-                                <field name="name" placeholder="Describe the Prospect..." style="width:60%;margin-left:10px;"/>
+                                <field name="title" style="width:10%;" required="1"/>
+                                <field name="name" placeholder="Describe the Prospect..." style="width:30%;margin-left:10px;"/>
                             </h1>
                         </div>
                         <group colspan="2">
@@ -749,6 +787,9 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <data>
+                    <xpath expr='//notebook/page[2]/group/group/field[@name="user_id"]' position="replace">
+                        <field name="user_id" string="Our Referece"/>
+                    </xpath>
                     <xpath expr="//button[@name='action_confirm']" position="replace"></xpath>
                     <xpath expr="//button[@name='action_confirm']" position="replace">
                         <button name="action_confirm" attrs="{'invisible': [('hide_confirm', '=', True)]}"  string="Confirm Sale" class="btn-primary o_sale_confirm" type="object" />
@@ -772,6 +813,7 @@
                 </data>
             </field>
         </record>
+    
 
         <record model="ir.actions.act_window" id="crm.crm_case_category_act_leads_all">
             <field name="name">Prospects</field>

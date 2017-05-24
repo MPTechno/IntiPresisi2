@@ -239,10 +239,32 @@ class attachment_type_en(models.Model):
 	name = fields.Char('Name')
 	# attachment_type_en_ids = fields.One2many('crm.lead','attachment_type_id','Type')
 
+class workpiece_grade(models.Model):
+	_name = 'workpiece.grade'
+
+	name = fields.Char('Name')
+
+class kind_of_machine(models.Model):
+	_name = 'kind.of.machine'
+
+	name = fields.Char('Name')
+
 class crm_new_case(models.Model):
 	_name = 'crm.new.case'
 	
 	name = fields.Char('Name')
+
+class MailTemplate(models.Model):
+	_inherit = "mail.template"
+	_description = 'Email Templates'
+	
+	@api.multi
+	def send_mail(self, res_id, force_send=False, raise_exception=False, email_values=None):
+		email_values = email_values or {}
+		if isinstance(force_send, list):
+			email_values['recipient_ids'] = [(4, pid) for pid in force_send]
+			force_send = False
+		return super(MailTemplate,self).send_mail(res_id, force_send, raise_exception,email_values)
 
 class crm_lead(models.Model):
 	_inherit = 'crm.lead'
@@ -295,7 +317,7 @@ class crm_lead(models.Model):
 	prospects_source_id = fields.Many2one('prospect.source', 'Prospect Source')
 	next_step = fields.Char('Next Step')
 	reason_enquiry = fields.Char('Reason')
-	our_reference_ids = fields.Many2one('res.partner','Our Reference')
+	our_reference_ids = fields.Many2one('res.partner','Your Reference')
 
 		# NEGOTITION INFORMATION 
 
@@ -341,6 +363,7 @@ class crm_lead(models.Model):
 
 	@api.multi
 	def write(self, vals):
+		res = super(crm_lead, self).write(vals)
 		# stage change: update date_last_stage_update
 		if 'en_stages' in vals:
 			vals['stage_id'] = vals.get('en_stages')
@@ -352,29 +375,55 @@ class crm_lead(models.Model):
 			vals['created_by_attch'] = self._uid
 			# vals['last_modified_attach'] = fields.Datetime.now()
 		if self.stage_id:
-			stage = self.stage_id
-			res_group = self.env['res.groups'].search([('name','=','Sales Person')])
-			technical_res = self.env['res.groups'].search([('name','=','Technical Support')])
-			technical_users = []
-			if technical_res:
-				for i in technical_res.users:
-					technical_users.append(i.partner_id.id)
-			for use_group in res_group:
-				for use_id in res_group.users:
-					if self.env.user.id == use_id.id:
-						if 'stage_id' in vals:
-							stagee = self.env['crm.stage'].browse(vals.get('stage_id'))
-							if stagee.name == 'Technical Drawing':
-								recipient_links = [(4, technical_users)]
-								message_data = {
-									'type': 'notification',
-									'subject': "Enquiry is in Technical Drawing Stage.",
-									'body': self.name ,
-									'partner_ids': recipient_links,
-								}
-								msg_obj = self.env['mail.message']
-								msg_obj.create(message_data)
-		return super(crm_lead, self).write(vals)
+			if 'stage_id' in vals:
+				stage = self.stage_id
+				collect_data_list = []
+				collect_list = self.env['res.users'].search(['|',('sales_person_b','=',True),('sales_coordinator_b','=',True)])
+				if collect_list:
+					for i in collect_list:
+						collect_data_list.append(i.partner_id.id)
+				
+				technical_checking_list = []
+				technical_list = self.env['res.users'].search([('technical_support_b','=',True)])
+				if technical_list:
+					for j in technical_list:
+						technical_checking_list.append(j.partner_id.id)
+
+				pricing_list = []
+				pricing_list_ext = self.env['res.users'].search([('director_b','=',True)])
+				if pricing_list_ext:
+					for k in pricing_list_ext:
+						pricing_list.append(k.partner_id.id)
+
+				quotation_list = []
+				quotation_list_ext = self.env['res.users'].search([('admin_b','=',True)])
+				if quotation_list_ext:
+					for l in quotation_list_ext:
+						quotation_list.append(l.partner_id.id)
+
+				print "WWWWWWWWW",vals
+				collect_stage = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_collect_data')
+				if vals['stage_id'] and collect_stage and vals['stage_id'] == collect_stage[1]:
+					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False)
+					template.send_mail(self.id,collect_data_list)
+
+				stage_lead_technical_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_technical_check')
+				if vals['stage_id'] and stage_lead_technical_check and vals['stage_id'] == stage_lead_technical_check[1]:
+					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False)
+					template.send_mail(self.id,technical_checking_list)
+					
+
+				pricing_list_ext_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_pricing')
+				if vals['stage_id'] and pricing_list_ext_check and vals['stage_id'] == pricing_list_ext_check[1]:
+					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False)
+					template.send_mail(self.id,pricing_list)
+					
+
+				quotation_list_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_quotations')
+				if vals['stage_id'] and quotation_list_check and vals['stage_id'] == quotation_list_check[1]:
+					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False)
+					template.send_mail(self.id,quotation_list)
+		return res
 
 	@api.model
 	def create(self, vals):
@@ -441,7 +490,7 @@ class crm_lead_line(models.Model):
 		# PRODUCT PRICELISTINGt
 	
 	lead_line_id = fields.Many2one('crm.lead',string='Listing Line',index=True)
-	product_en = fields.Many2one('product.product','Product')
+	product_en = fields.Many2one('product.product','Product Name')
 	qty_en = fields.Integer('Quantity')
 	unit_price_en = fields.Float('Unit Price')
 	total_price_en = fields.Float('Total Price')
@@ -459,6 +508,10 @@ class crm_lead_line(models.Model):
 	price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True, store=True)
 	price_tax = fields.Monetary(compute='_compute_amount', string='Taxes', readonly=True, store=True)
 	total_price_en = fields.Monetary(compute='_compute_amount', string='Total', readonly=True, store=True)
+
+	workpiece_grade = fields.Many2one('workpiece.grade','Workpiece Grade')
+	kind_of_machine = fields.Many2one('kind.of.machine','Kind of Machine')
+	part_number_product = fields.Char('Part Number')
 
 	@api.multi
 	@api.onchange('unit_price_en')
@@ -644,6 +697,11 @@ class crm_lead_line(models.Model):
 		)
 		vals['qty_en'] = 1.0
 		name =''
+		if product:
+			vals['part_number_product'] = product.part_number
+			vals['workpiece_grade'] = product.workpiece_grade.id
+			vals['kind_of_machine'] = product.kind_of_machine.id
+			vals['internal_code_en'] = product.drawing_no
 		if product.description_sale:
 			name += '\n' + product.description_sale
 		vals['remarks_en'] = name
@@ -651,6 +709,13 @@ class crm_lead_line(models.Model):
 			vals['unit_price_en'] = self.env['account.tax']._fix_tax_included_price(self._get_display_price(product), product.taxes_id, self.tax_id)
 			# vals['unit_price_en'] = 0.0
 		self.update(vals)
+
+class product_template(models.Model):
+	_inherit = 'product.template'
+
+	workpiece_grade = fields.Many2one('workpiece.grade','Workpiece Grade')
+	kind_of_machine = fields.Many2one('kind.of.machine','Kind of Machine')
+
 
 class res_partner(models.Model):
 	_inherit = 'res.partner'
@@ -760,6 +825,7 @@ class sale_order(models.Model):
 					'part_number':op_line.part_number.id,
 					'price_unit':op_line.unit_price_en,
 					'discount':op_line.discount,
+					'contact_id':op_line.our_reference_ids.id,
 					'stat_line':'open',
 					'tax_id':[(6,0,taxlist)],
 					'product_uom':op_line.product_uom,
@@ -906,3 +972,14 @@ class sale_order_line(models.Model):
 				}
 			self.order_id.partner_id.property_product_pricelist.write(pricelis_dict)
 		return super(sale_order_line, self).write(vals)
+
+
+
+class res_users(models.Model):
+	_inherit = 'res.users'
+
+	sales_person_b = fields.Boolean('Sales Person')
+	sales_coordinator_b = fields.Boolean('Sales Coordinator')
+	technical_support_b = fields.Boolean('Technical Support')
+	director_b = fields.Boolean('Director')
+	admin_b = fields.Boolean('Admin')
