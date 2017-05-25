@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+    	<!-- SALE ORDER VIEW -->
+
+    	<record model="ir.ui.view" id="quotation_per_quotation_form_view">
+    	    <field name="name">Quotation</field>
+    	    <field name="model">sale.order</field>
+    	    <field name="inherit_id" ref="sale.view_order_form"/>
+    	    <field name="arch" type="xml">
+    	        <data>
+    	            <xpath expr='//notebook/page[2]/group/group/field[@name="user_id"]' position="replace">
+    	                <field name="user_id" string="Our Referece"/>
+    	            </xpath>
+    	            <xpath expr="//button[@name='action_confirm']" position="replace"></xpath>
+    	            <xpath expr="//button[@name='action_confirm']" position="replace">
+    	                <button name="action_confirm" attrs="{'invisible': [('hide_confirm', '=', True)]}"  string="Confirm Sale" class="btn-primary o_sale_confirm" type="object" />
+    	                <button name="%(action_pricelist_line_by_partner)d" type="action" string="Pricelist Orderline" class="oe_highlight" attrs="{'invisible': [('partner_id', '=', False)]}" context="{'partner_id':partner_id,'pricelist_id':pricelist_id}"/>
+    	            </xpath>
+    	            <xpath expr="//field[@name='partner_id']" position="attributes">
+    	                <attribute name="domain">[('supplier','!=',True)]</attribute>
+    	            </xpath>
+    	            <xpath expr="//field[@name='order_line']/form/group/group//field[@name='product_id']" position="before">
+    	                <field name="confirm_line_box" string="Confirm Line" attrs="{'invisible': [('stat_line', '=', 'so')]}"/>
+    	                <field name="stat_line" invisible="1"></field>
+    	            </xpath>
+    	            <xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="before">
+    	                <field name="confirm_line_box" nolabel="1"/>
+    	            </xpath>
+    	            <xpath expr="//field[@name='order_line']/tree//field[@name='price_total']" position="after">
+    	                <field name="stat_line"/>
+    	            </xpath>
+    	            <xpath expr="//field[@name='partner_shipping_id']" position="after">
+    	                <field name="hide_confirm" invisible="1"/>
+    	            </xpath>
+    	        </data>
+    	    </field>
+    	</record>
+
+    </data>
+</openerp>

@@ -346,47 +346,47 @@ class crm_lead(models.Model):
 	pricelist_id = fields.Many2one('product.pricelist','Pricelist')
 
 
-	@api.multi
-	def pricelist_quota(self):
-		print ">>>>>>>>>>>>>>>",self
-		if self.partner_id and self.pricelist_id:
-			line_list = []
-			for line in self.pricelist_id.item_ids:
-				if line.confirm_line_box == True:
-					line_list.append((0, 0, {
-						'product_id': line.product_id.id,
-						'price_unit':line.fixed_price,
-					}))
-			if line_list:
-				sale_dict = {
-					'partner_id':self.partner_id.id,
-					'date_order':fields.datetime.now(),  
-					'pricelist_id':self.pricelist_id.id,
-					'user_id':self.user_id.id,
-					'opportunity_id':self.id,
-					'order_line':line_list,
-				}
-				new_order = self.env['sale.order'].create(sale_dict)
-				if self.env['ir.values'].get_default('sale.config.settings', 'auto_done_setting'):
-					new_order.action_done()
+	# @api.multi
+	# def pricelist_quota(self):
+	# 	print ">>>>>>>>>>>>>>>",self
+	# 	if self.partner_id and self.pricelist_id:
+	# 		line_list = []
+	# 		for line in self.pricelist_id.item_ids:
+	# 			if line.confirm_line_box == True:
+	# 				line_list.append((0, 0, {
+	# 					'product_id': line.product_id.id,
+	# 					'price_unit':line.fixed_price,
+	# 				}))
+	# 		if line_list:
+	# 			sale_dict = {
+	# 				'partner_id':self.partner_id.id,
+	# 				'date_order':fields.datetime.now(),  
+	# 				'pricelist_id':self.pricelist_id.id,
+	# 				'user_id':self.user_id.id,
+	# 				'opportunity_id':self.id,
+	# 				'order_line':line_list,
+	# 			}
+	# 			new_order = self.env['sale.order'].create(sale_dict)
+	# 			if self.env['ir.values'].get_default('sale.config.settings', 'auto_done_setting'):
+	# 				new_order.action_done()
 			
-				models_data = self.env['ir.model.data']
-				# Get opportunity views
-				dummy, form_view = models_data.get_object_reference('sale', 'view_order_form')
-				dummy, tree_view = models_data.get_object_reference('sale', 'view_order_tree')
-				return {
-					'name': _('Sale Order'),
-					'view_type': 'form',
-					'view_mode': 'tree, form',
-					'res_model': 'sale.order',
-					'res_id': int(new_order.id),
-					'view_id': False,
-					'views': [(form_view or False, 'form'),
-							  (tree_view or False, 'tree'),],
-					'type': 'ir.actions.act_window',
-					'context': {}
-				}
-		return True
+	# 			models_data = self.env['ir.model.data']
+	# 			# Get opportunity views
+	# 			dummy, form_view = models_data.get_object_reference('sale', 'view_order_form')
+	# 			dummy, tree_view = models_data.get_object_reference('sale', 'view_order_tree')
+	# 			return {
+	# 				'name': _('Sale Order'),
+	# 				'view_type': 'form',
+	# 				'view_mode': 'tree, form',
+	# 				'res_model': 'sale.order',
+	# 				'res_id': int(new_order.id),
+	# 				'view_id': False,
+	# 				'views': [(form_view or False, 'form'),
+	# 						  (tree_view or False, 'tree'),],
+	# 				'type': 'ir.actions.act_window',
+	# 				'context': {}
+	# 			}
+	# 	return True
 
 	@api.multi
 	def _compute_phonecall_count(self):
@@ -577,7 +577,14 @@ class crm_lead(models.Model):
 class product_pricelist_item(models.Model):
 	_inherit = 'product.pricelist.item'
 
-	confirm_line_box = fields.Boolean('Quotation')
+	quantity_new = fields.Integer('Quantity',default=0)
+
+	@api.multi
+	@api.onchange('quantity_new')
+	def on_changeunit_quantity_new(self):
+		for ob in self:
+			print "########",ob.id ,self.quantity_new
+			ob.write({'quantity_new':self.quantity_new})
 
 class sequence_number_partner(models.Model):
 	_name = "sequence.number.partner"
