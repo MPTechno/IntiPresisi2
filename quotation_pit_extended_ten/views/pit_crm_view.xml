@@ -24,6 +24,9 @@
                             <field string="Calls" name="phonecall_count" widget="statinfo"/>
                         </button>
                     </div>
+                    <xpath expr="//button[@name='action_set_won']" position="before">
+                        <button string="Pricelist Quotation" name="pricelist_quota" type="object" class="oe_highlight"/>
+                    </xpath>
                     <xpath expr="//field[@name='partner_id']" position="attributes">
                         <attribute name="string">Account Name</attribute>
                     </xpath>
@@ -46,6 +49,7 @@
                     <xpath expr="//field[@name='priority']" position="replace"></xpath>
                     <xpath expr="//field[@name='partner_id']" position="after">
                         <field name="enquiry_type"/>
+                        <field name="pricelist_id"/>
                     </xpath>
                     <xpath expr="//field[@name='user_id']" position="replace"></xpath>
                     <xpath expr="//field[@name='team_id']" position="replace"></xpath>
@@ -160,6 +164,18 @@
             </field>
         </record>
 
+        <record id="product_pricelisydned_view_intipresisi" model="ir.ui.view">
+            <field name="name">product.tpricelisy.common.form.intipresisi</field>
+            <field name="model">product.pricelist.item</field>
+            <field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
+            <field name="arch" type="xml">
+                <data>
+                    <field name="min_quantity" position="after">
+                        <field name="confirm_line_box"/>
+                    </field>
+                </data>
+            </field>
+        </record>
 
         <!-- USERS VIEW -->
         <record id="view_users_form_extended_for_intiprs" model="ir.ui.view">

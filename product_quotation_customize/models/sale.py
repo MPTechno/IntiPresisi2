@@ -11,7 +11,7 @@ class sale_order(models.Model):
 	delivery_term_id = fields.Many2one('delivery.term','Delivery Term')
 	delivery_time = fields.Date('Delivery Time')
 	manual_sequence = fields.Char('Quote Number')
-	contact_id = fields.Many2one('res.partner','Our Reference')
+	contact_id = fields.Many2one('res.partner','Your Reference')
 	
 	def get_date_order(self,order_date):
 		if order_date:

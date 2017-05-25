@@ -8,9 +8,13 @@
 		<field name="inherit_id" ref="sale.view_order_form"/>
 		<field name="arch" type="xml">
 		    <data>
+		    	<xpath expr="//form/sheet/group/group/field[@name='partner_id']" position="attributes">
+		    		<attribute name="string">Account Name</attribute>
+		    	</xpath>
 		        <xpath expr="//form/sheet/group/group/field[@name='partner_id']" position="before">
-		        	<field name="sale_order_name_id"/>
+		        	<field name="sale_order_name_id" invisible="1"/>
 		        </xpath>
+
 		        <xpath expr="//form/sheet/group/group/field[@name='payment_term_id']" position="after">
 		        	<field name="manual_sequence" invisible="1"/>
 		        	<field name="revision"/>

@@ -41,7 +41,7 @@ class crm_askcode_partner(models.TransientModel):
             vals_dict = {}
             if lead_obje.comp_name:
                 sale_pricelist_id = self.env['product.pricelist'].create({
-                    'name':lead_obje.comp_name,
+                    'name':str(w.short_name) + '_' + str(w.code_partner),
                     'item_ids': [(0, 0, {
                             'applied_on': '3_global',
                             'compute_price': 'fixed',

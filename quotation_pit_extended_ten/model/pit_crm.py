@@ -342,11 +342,92 @@ class crm_lead(models.Model):
 
 	meeting_count_lead = fields.Integer('# Meetings', compute='_compute_meeting_count_lead')
 
+
+	pricelist_id = fields.Many2one('product.pricelist','Pricelist')
+
+
+	@api.multi
+	def pricelist_quota(self):
+		print ">>>>>>>>>>>>>>>",self
+		if self.partner_id and self.pricelist_id:
+			line_list = []
+			for line in self.pricelist_id.item_ids:
+				if line.confirm_line_box == True:
+					line_list.append((0, 0, {
+						'product_id': line.product_id.id,
+						'price_unit':line.fixed_price,
+					}))
+			if line_list:
+				sale_dict = {
+					'partner_id':self.partner_id.id,
+					'date_order':fields.datetime.now(),  
+					'pricelist_id':self.pricelist_id.id,
+					'user_id':self.user_id.id,
+					'opportunity_id':self.id,
+					'order_line':line_list,
+				}
+				new_order = self.env['sale.order'].create(sale_dict)
+				if self.env['ir.values'].get_default('sale.config.settings', 'auto_done_setting'):
+					new_order.action_done()
+			
+				models_data = self.env['ir.model.data']
+				# Get opportunity views
+				dummy, form_view = models_data.get_object_reference('sale', 'view_order_form')
+				dummy, tree_view = models_data.get_object_reference('sale', 'view_order_tree')
+				return {
+					'name': _('Sale Order'),
+					'view_type': 'form',
+					'view_mode': 'tree, form',
+					'res_model': 'sale.order',
+					'res_id': int(new_order.id),
+					'view_id': False,
+					'views': [(form_view or False, 'form'),
+							  (tree_view or False, 'tree'),],
+					'type': 'ir.actions.act_window',
+					'context': {}
+				}
+		return True
+
 	@api.multi
 	def _compute_phonecall_count(self):
 		for partner in self:
 			if partner.partner_id:
 				partner.phonecall_count = self.env['crm.phonecall'].search_count([('partner_id', '=', partner.partner_id.id)])
+
+	def _onchange_partner_id_values(self, partner_id):
+		""" returns the new values when partner_id has changed """
+		if partner_id:
+			partner = self.env['res.partner'].browse(partner_id)
+
+			partner_name = partner.parent_id.name
+			if not partner_name and partner.is_company:
+				partner_name = partner.name
+			value = {
+				'partner_name': partner_name,
+				'contact_name': partner.name if not partner.is_company else False,
+				'title': partner.title.id,
+				'street': partner.street,
+				'street2': partner.street2,
+				'city': partner.city,
+				'state_id': partner.state_id.id,
+				'country_id': partner.country_id.id,
+				'email_from': partner.email,
+				'phone': partner.phone,
+				'mobile': partner.mobile,
+				'fax': partner.fax,
+				'zip': partner.zip,
+				'function': partner.function,
+			}
+			if self._context:
+				if self._context['default_type'] == 'opportunity':
+					value.update({'pricelist_id':partner.property_product_pricelist.id})
+			return value
+		return {}
+
+	@api.onchange('partner_id')
+	def _onchange_partner_id(self):
+		values = self._onchange_partner_id_values(self.partner_id.id if self.partner_id else False)
+		self.update(values)
 
 	@api.multi
 	def _compute_emails_count(self):
@@ -356,10 +437,10 @@ class crm_lead(models.Model):
 
 	@api.multi
 	def _compute_meeting_count_lead(self):
-	    meeting_data = self.env['calendar.event'].read_group([('lead_id', 'in', self.ids)], ['lead_id'], ['lead_id'])
-	    mapped_data = {m['lead_id'][0]: m['lead_id_count'] for m in meeting_data}
-	    for lead in self:
-	        lead.meeting_count_lead = mapped_data.get(lead.id, 0)
+		meeting_data = self.env['calendar.event'].read_group([('lead_id', 'in', self.ids)], ['lead_id'], ['lead_id'])
+		mapped_data = {m['lead_id'][0]: m['lead_id_count'] for m in meeting_data}
+		for lead in self:
+			lead.meeting_count_lead = mapped_data.get(lead.id, 0)
 
 	@api.multi
 	def write(self, vals):
@@ -401,7 +482,6 @@ class crm_lead(models.Model):
 					for l in quotation_list_ext:
 						quotation_list.append(l.partner_id.id)
 
-				print "WWWWWWWWW",vals
 				collect_stage = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_collect_data')
 				if vals['stage_id'] and collect_stage and vals['stage_id'] == collect_stage[1]:
 					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False)
@@ -442,6 +522,11 @@ class crm_lead(models.Model):
 			return {}
 		vals['en_stages'] = stage_id
 		return vals
+
+class product_pricelist_item(models.Model):
+	_inherit = 'product.pricelist.item'
+
+	confirm_line_box = fields.Boolean('Quotation')
 
 class sequence_number_partner(models.Model):
 	_name = "sequence.number.partner"
@@ -774,14 +859,6 @@ class res_partner(models.Model):
 		for partner in self:
 			partner.email_count = self.env['mail.mail'].search_count([('recipient_ids','in', [partner.id])])
 
-
-class product_pricelist(models.Model):
-	_inherit = 'product.pricelist'
-
-	@api.model
-	def create(self, vals):
-		vals['name'] = vals['name'] + self.env['ir.sequence'].get('product.pricelist')
-		return super(product_pricelist, self).create(vals)
 
 class location_calnder(models.Model):
 	_name = 'location.calnder'
