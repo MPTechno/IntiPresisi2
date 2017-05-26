@@ -444,7 +444,7 @@ class crm_lead(models.Model):
 
 	@api.multi
 	def write(self, vals):
-		res = super(crm_lead, self).write(vals)
+		
 		# stage change: update date_last_stage_update
 		if 'en_stages' in vals:
 			vals['stage_id'] = vals.get('en_stages')
@@ -455,6 +455,7 @@ class crm_lead(models.Model):
 		if 'attachment_en' in vals:
 			vals['created_by_attch'] = self._uid
 			# vals['last_modified_attach'] = fields.Datetime.now()
+		res = super(crm_lead, self).write(vals)
 		if self.stage_id:
 			if 'stage_id' in vals:
 				stage = self.stage_id
@@ -960,7 +961,6 @@ class sale_order(models.Model):
 					'part_number':op_line.part_number.id,
 					'price_unit':op_line.unit_price_en,
 					'discount':op_line.discount,
-					'contact_id':op_line.our_reference_ids.id,
 					'stat_line':'open',
 					'tax_id':[(6,0,taxlist)],
 					'product_uom':op_line.product_uom,
@@ -968,6 +968,7 @@ class sale_order(models.Model):
 				}
 				order_lines.append((0, 0, line_dict))
 				self.order_line = order_lines
+				self.contact_id = self.opportunity_id.our_reference_ids.id,
 		# return res
 
 	@api.multi
