@@ -12,6 +12,10 @@ class sale_order(models.Model):
 	delivery_time = fields.Date('Delivery Time')
 	manual_sequence = fields.Char('Quote Number')
 	contact_id = fields.Many2one('res.partner','Your Reference')
+	buyer_comment = fields.Text(string='Buyer Comment')#Field for XML export report
+	transport_payer = fields.Char(string='Transport Payer')#Field for XML export report
+	customer_transport_time_days = fields.Char(string='Customer Transport Time Days')#Field for XML export report
+	customer_invoice_code = fields.Char(string='Customer Invoice Code')#Field for XML export report
 	
 	def get_date_order(self,order_date):
 		if order_date:
@@ -46,3 +50,11 @@ class sale_order_name(models.Model):
 class delivery_term(models.Model):
 	_name = 'delivery.term'
 	name = fields.Char('Name',required=True)
+	
+#Code for #Fields for XML export report
+class SaleOrderLineExt(models.Model):
+    _inherit = 'sale.order.line'
+    
+    each = fields.Char(string='Each')#Field for XML export report
+    setup = fields.Char(string='Setup')#Field for XML export report
+    alloy = fields.Char(string='Alloy')#Field for XML export report

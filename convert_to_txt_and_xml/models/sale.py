@@ -71,12 +71,13 @@ class SaleOrder(models.Model):
                     
                 References = SubElement(head, 'References')#References    
                 BuyerReference = SubElement(References, 'BuyerReference')
-                BuyerReference.text = ''#FixMe
+                BuyerReference.text = ustr(order.contact_id.name or '')
                 
                 BuyerComment = SubElement(References, 'BuyerComment')
-                BuyerComment.text = ''#FixMe
+                BuyerComment.text = ustr(order.buyer_comment or '')
                 
-                GoodsLabeling = SubElement(References, 'GoodsLabeling')#FixMe
+                GoodsLabeling = SubElement(References, 'GoodsLabeling')
+                GoodsLabeling.text = ustr(order.goods_label or '')
                 
                 DeliveryAddress = SubElement(head, 'DeliveryAddress')#Delivery Address #FixMe: Need to confirm which value?
                 DeliveryAddress_name = SubElement(DeliveryAddress, 'Name')
@@ -101,17 +102,22 @@ class SaleOrder(models.Model):
                 Country = SubElement(DeliveryAddress, 'Country')
                 if order.partner_shipping_id.country_id:
                     Country.text = ustr(order.partner_shipping_id.country_id.name)
-                CompanyAdressFlag = SubElement(DeliveryAddress, 'CompanyAdressFlag')#FixMe
+                CompanyAdressFlag = SubElement(DeliveryAddress, 'CompanyAdressFlag')
+                CompanyAdressFlag.text = ustr(order.partner_shipping_id.company_type or '')
                 
                 Terms = SubElement(head, 'Terms')#Terms
                 DeliveryTerms = SubElement(Terms, 'DeliveryTerms')
                 IncoTermCombiTerm = SubElement(DeliveryTerms, 'IncoTermCombiTerm')
                 if order.incoterm:
-                    IncoTermCombiTerm.text = ustr(order.incoterm.name)
+                    IncoTermCombiTerm.text = ustr(order.incoterm.name or '')
                 DeliveryMethod = SubElement(DeliveryTerms, 'DeliveryMethod')
+                DeliveryMethod.text = ustr(order.carrier_id.name or '')
                 TransportPayer = SubElement(DeliveryTerms, 'TransportPayer')
+                TransportPayer.text = ustr(order.transport_payer or '')
                 CustomerTransportTimeDays = SubElement(DeliveryTerms, 'CustomerTransportTimeDays')
+                CustomerTransportTimeDays.text = ustr(order.customer_transport_time_days or '')
                 CustomerInvoiceCode = SubElement(Terms, 'CustomerInvoiceCode')
+                CustomerInvoiceCode.text = ustr(order.customer_invoice_code or '')
                 OrderDate = SubElement(Terms, 'OrderDate')
                 if order.date_order:
                     OrderDate.text = ustr(order.date_order).split(' ')[0]
@@ -158,19 +164,19 @@ class SaleOrder(models.Model):
                     Unit.text = ustr(line.product_uom.name)
                     
                     DeliveryPeriod = SubElement(Row,'DeliveryPeriod')
-                    DeliveryPeriod.text = ''#FixMe
+                    DeliveryPeriod.text = ustr(str(line.customer_lead) + '(Days)')
                     
                     Each = SubElement(Row,'Each')
-                    Each.text = ''#FixMe
+                    Each.text = ustr(line.each or '')
                     
                     Discount = SubElement(Row,'Discount')
-                    Discount.text = ''#FixMe
+                    Discount.text = ustr(str(line.discount)+ '(%)')
                     
                     Setup = SubElement(Row,'Setup')
-                    Setup.text = ''#FixMe
+                    Setup.text = ustr(line.setup or '')
                     
                     Alloy = SubElement(Row,'Alloy')
-                    Alloy.text = ''#FixMe
+                    Alloy.text = ustr(line.alloy or '')
                     
             filename = '/opt/odoo/Sale Order XML.xml'
             f = open(filename, 'w')

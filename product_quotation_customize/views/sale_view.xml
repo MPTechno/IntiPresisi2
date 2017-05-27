@@ -28,9 +28,25 @@
 		        </xpath>
 		        <xpath expr='//notebook/page[2]/group/group/field[@name="client_order_ref"]' position="before">
 		        	<field name="contact_id" context="{'is_contact':True, 'partner_id': partner_id}"/>
+		        	<!--Field for XML export report-->
+		        	<field name="buyer_comment"/>
+		        	<field name="transport_payer"/>
+		        	<field name="customer_transport_time_days"/>
+		        	<field name="customer_invoice_code"/>
 		        </xpath>
 		        <xpath expr='//notebook/page[2]/group/group/field[@name="client_order_ref"]' position="attributes">
 		        	<attribute name='invisible'>1</attribute>
+		        </xpath>
+		        <!--Field for XML export report-->
+		        <xpath expr='//notebook/page[1]/field/tree/field[@name="price_total"]' position="after">
+		        	<field name="each"/>
+		        	<field name="setup"/>
+		        	<field name="alloy"/>
+		        </xpath>
+		        <xpath expr='//notebook/page[1]/field/form/group/group/field[@name="price_subtotal"]' position="after">
+		        	<field name="each"/>
+		        	<field name="setup"/>
+		        	<field name="alloy"/>
 		        </xpath>
 		    </data>
 		</field>
