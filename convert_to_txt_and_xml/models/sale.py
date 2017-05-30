@@ -10,6 +10,8 @@ from odoo.tools.misc import ustr
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+    buyer_comment = fields.Char('Buyer Comment')
+
     def download_xml(self):
         order_ids = self._context.get('active_ids',[])
         if order_ids:

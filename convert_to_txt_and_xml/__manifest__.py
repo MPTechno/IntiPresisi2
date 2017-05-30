@@ -44,7 +44,8 @@ Features:
     'data': [
             "wizard/export_product_wizard.xml",
             "wizard/export_customer_wizard.xml",
-            "wizard/export_so_wizard.xml",            
+            "wizard/export_so_wizard.xml",
+            "views/convert_to_xml_view.xml",         
     ],
     'installable': True,
     

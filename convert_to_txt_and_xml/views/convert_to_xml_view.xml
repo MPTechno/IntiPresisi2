@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+    	<!-- SALE ORDER VIEW -->
+
+    	<record model="ir.ui.view" id="quotation_per_quotation_form_view_convertxml">
+    	    <field name="name">Quotation</field>
+    	    <field name="model">sale.order</field>
+    	    <field name="inherit_id" ref="sale.view_order_form"/>
+    	    <field name="arch" type="xml">
+    	        <data>
+    	            <xpath expr='//notebook/page[2]' position="after">
+    	                <page string="Additional ERP Information">
+    	                	<group>
+    	                		<field name="buyer_comment"/>
+    	                	</group>
+    	                </page>
+    	            </xpath>
+    	        </data>
+    	    </field>
+    	</record>
+
+    </data>
+</openerp>
