@@ -9,7 +9,14 @@ class ProductProduct(models.Model):
         if product_ids:
             content = ''
             for product in self.env['product.product'].browse(product_ids):
-                content += str(product.default_code or '') + '	' + str(product.name) + '\n'
+                content += str(product.part_number or '') + '	' + str(product.name) + '   ' + str(product.part_type_id and product.part_type_id.name or '') + '   ' +\
+                str(product.uom_id and product.uom_id.name or '') + '   ' + str(product.alternative_uom_id and product.alternative_uom_id.name or '') + '   '+ \
+                str(product.part_code or '') + '   ' + str(product.product_group or '') + '    ' + \
+                str(product.drawing_no or '') + '   ' + str(product.revision or '') + '    ' + \
+                str(product.add_name_1 or '') + '   ' + str(product.add_name_2 or '') + '   ' + \
+                str(product.add_name_3 or '') + '   ' + str(product.add_name_4 or '') + '   ' + \
+                str(product.customer_code or '') + '   ' + str(product.lst_price or '') + '   ' + \
+                str(product.customer_part_no or '') + '   ' + '\n'
             filename = '/opt/odoo/Products.txt'
             f = open(filename, 'w')
             f.write(content)

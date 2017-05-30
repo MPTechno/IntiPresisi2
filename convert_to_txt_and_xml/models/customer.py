@@ -11,10 +11,14 @@ class ResPartner(models.Model):
         if customer_ids:
             content = ''
             for customer in self.env['res.partner'].browse(customer_ids):
-                content += customer.partner_code + '	' +customer.name + '	'+\
-                (customer.street or '')+ '	'+(customer.city or '') + '	'+\
-                (customer.state_id and customer.state_id.name or '')+ '	'+\
-                (customer.zip or '')+ '	'+'\n' 
+                content += customer.partner_code + '	' +customer.name + '	'+ str(customer.mailing_address_name or '') +'    '+\
+                str(customer.street or '')+ '	'+str(customer.street2 or '')+ '    '+str(customer.city or '') + '	'+(customer.city2_mailing or '') + '  '+\
+                str(customer.delivery_address_name or '')+ ' '+ (customer.street_delivery or '')+ '  '+(customer.street2_delivery or '')+ '  '+\
+                str(customer.zip_delivery or '')+ ' '+ (customer.zip2_delivery or '')+ '  '+str(customer.lang or '')+ '  '+\
+                str(customer.currency_new_id and customer.currency_new_id.name or '')+ '	'+str(customer.customer_group_id and customer.customer_group_id.name or '')+ '  ' +\
+                str(customer.vat_code or '')+ '   ' +str(customer.vat_number or '')+ '   ' + str(customer.country_id and customer.country_id.code or '') + '    ' + \
+                (customer.phone or '')+ '   ' +(customer.fax or '') + '   ' +(customer.email or '')+ '   ' +\
+                (customer.ref_name or '')+ '   ' +(customer.ref_phone or '') + '   ' +(customer.ref_mobile or '')+ '   ' +(customer.ref_email or '')+'\n' 
             filename = '/opt/odoo/Customers.txt'
             f = open(filename, 'w')
             f.write(content)
