@@ -7,6 +7,13 @@ from xml.etree.ElementTree import Element,SubElement
 from xml.dom import minidom
 from odoo.tools.misc import ustr
 
+class SaleOrderLine(models.Model):
+    _inherit = "sale.order.line"
+
+    each = fields.Char("Each")
+    setup = fields.Char("setup")
+    alloy = fields.Char("Alloy")
+
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 

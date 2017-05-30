@@ -20,6 +20,11 @@
     	                	</group>
     	                </page>
     	            </xpath>
+    	            <xpath expr="//field[@name='order_line']/form//field[@name='name']" position="after">
+    	            	<field name="setup" invisible="1"/>
+    	            	<field name="alloy" invisible="1"/>
+    	            	<field name="each" invisible="1"/>
+    	            </xpath>
     	        </data>
     	    </field>
     	</record>
