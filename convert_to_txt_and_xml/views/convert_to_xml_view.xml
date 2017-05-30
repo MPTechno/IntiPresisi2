@@ -13,7 +13,10 @@
     	            <xpath expr='//notebook/page[2]' position="after">
     	                <page string="Additional ERP Information">
     	                	<group>
+    	                		<field name="transport_payer"/>
     	                		<field name="buyer_comment"/>
+    	                		<field name="customer_transport_time_days"/>
+    	                		<field name="customer_invoice_code"/>
     	                	</group>
     	                </page>
     	            </xpath>

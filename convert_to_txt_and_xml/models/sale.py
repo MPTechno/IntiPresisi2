@@ -11,6 +11,9 @@ class SaleOrder(models.Model):
     _inherit = "sale.order"
 
     buyer_comment = fields.Char('Buyer Comment')
+    transport_payer = fields.Char('Transport Payer')
+    customer_transport_time_days = fields.Char('Customer Transport time Days')
+    customer_invoice_code = fields.Char('Customer Invoice Code')
 
     def download_xml(self):
         order_ids = self._context.get('active_ids',[])
