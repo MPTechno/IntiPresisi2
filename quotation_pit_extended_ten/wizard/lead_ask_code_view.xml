@@ -32,5 +32,31 @@
             <field name="target">new</field>
         </record>
 
+        <record id="view_crm_lcrm_askcode_po_number_popup" model="ir.ui.view">
+            <field name="name">crm.askcode.po.number.form</field>
+            <field name="model">crm.askcode.ponumber</field>
+            <field name="arch" type="xml">
+                <form string="Confirm Sale">
+                    <group name="Po Number">
+                        <field name="po_num" class="oe_inline" placeholder="PO Number .." string="PO Number"/>
+                    </group>
+                    <footer>
+                        <button name="confirm_sale" string="Confirm Sale" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_crm_crm_askcode_ponumber_action" model="ir.actions.act_window">
+            <field name="name">Confirm Sale</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">crm.askcode.ponumber</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_crm_lcrm_askcode_po_number_popup"/>
+            <field name="target">new</field>
+        </record>
+
     </data>
 </openerp>

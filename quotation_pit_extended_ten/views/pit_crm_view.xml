@@ -190,6 +190,7 @@
                         <field name="technical_support_b"/>
                         <field name="director_b"/>
                         <field name="admin_b"/>
+                        <field name="president_director_b"/>
                     </group>
                 </xpath>
             </field>
@@ -580,7 +581,7 @@
                             name="%(crm_phonecall.crm_case_categ_phone_incoming0)d"
                             icon="fa-phone"
                             context="{'search_default_partner_id': partner_id}">
-                            <field string="Calls" name="phonecall_count" widget="statinfo"/>
+                            <field string="Calls" name="phonecall_count_lead" widget="statinfo"/>
                         </button>
                     </div>
 <!--                     <xpath expr="//label[@for='name']" position="attributes">

@@ -266,14 +266,28 @@ class MailTemplate(models.Model):
 			force_send = False
 		return super(MailTemplate,self).send_mail(res_id, force_send, raise_exception,email_values)
 
+class crm_phonecall(models.Model):
+	_inherit = 'crm.phonecall'
+
+	prospect_id = fields.Many2one('crm.lead','Lead')
+	contact_name = fields.Char('Contact')
+
+	@api.model
+	def create(self, vals):
+		if 'stage_type' in self._context:
+			if self._context['stage_type'] == 'lead':
+				vals.update({'prospect_id':self._context['active_id']})
+		return super(crm_phonecall, self).create(vals)
+
 class crm_lead(models.Model):
 	_inherit = 'crm.lead'
 
 	email_count = fields.Integer("Emails", compute='_compute_emails_count')
 	phonecall_count = fields.Integer(compute='_compute_phonecall_count',string="Phonecalls")
+	phonecall_count_lead = fields.Integer(compute='_compute_phonecall_count_lead',string="Phonecalls")
 	partner_name = fields.Char('Account Name')
 	stage_new_pr = fields.Many2one('crm.new.case','Prospects Status')
-	prospect_quality = fields.Selection([('a','A'),('b','B'),('c','C'),('d','D'),('e','E')], 'Prospect Quality')
+	prospect_quality = fields.Selection([('a','$'),('b','$$'),('c','$$$'),('d','$$$$'),('e','$$$$$')], 'Prospect Quality')
 	website = fields.Char('Website')
 	comp_name = fields.Char('Company')
 	planned_revenue = fields.Float('Expected Revenue (Amount)', track_visibility='always')
@@ -286,7 +300,7 @@ class crm_lead(models.Model):
 
 	# Prospect Scoring:
 	special_carbide_tools = fields.Boolean('Special Carbide Tools')
-	qty_per_month = fields.Integer('Quantity Per Month')
+	qty_per_month = fields.Selection([('a','1 - 5'),('b','6 - 10'),('c','11 - 20'),('d','21 - 50'),('e',' = > 50')],'Quantity Per Month')
 	quantity_of_machine = fields.Many2one('qty.machine','Quantity of Machine')
 	prospect_production = fields.Many2one('prospect.production','Production')
 	special_carbide_tools_score = fields.Integer('Special Carbide Tools Score')
@@ -389,6 +403,12 @@ class crm_lead(models.Model):
 	# 	return True
 
 	@api.multi
+	def _compute_phonecall_count_lead(self):
+		for partner in self:
+			partner.phonecall_count_lead = self.env['crm.phonecall'].search_count([('prospect_id','=',self.id)])
+
+
+	@api.multi
 	def _compute_phonecall_count(self):
 		for partner in self:
 			if partner.partner_id:
@@ -423,6 +443,11 @@ class crm_lead(models.Model):
 					value.update({'pricelist_id':partner.property_product_pricelist.id})
 			return value
 		return {}
+
+	@api.onchange('prospect_quality')
+	def _onchange_prospect_quality(self):
+		for lead in self:
+			lead.qty_per_month = self.prospect_quality
 
 	@api.onchange('partner_id')
 	def _onchange_partner_id(self):
@@ -472,13 +497,13 @@ class crm_lead(models.Model):
 						technical_checking_list.append(j.partner_id.id)
 
 				pricing_list = []
-				pricing_list_ext = self.env['res.users'].search([('director_b','=',True)])
+				pricing_list_ext = self.env['res.users'].search([('president_director_b','=',True)])
 				if pricing_list_ext:
 					for k in pricing_list_ext:
 						pricing_list.append(k.partner_id.id)
 
 				quotation_list = []
-				quotation_list_ext = self.env['res.users'].search([('admin_b','=',True)])
+				quotation_list_ext = self.env['res.users'].search([('sales_coordinator_b','=',True)])
 				if quotation_list_ext:
 					for l in quotation_list_ext:
 						quotation_list.append(l.partner_id.id)
@@ -530,13 +555,13 @@ class crm_lead(models.Model):
 					technical_checking_list.append(j.partner_id.id)
 
 			pricing_list = []
-			pricing_list_ext = self.env['res.users'].search([('director_b','=',True)])
+			pricing_list_ext = self.env['res.users'].search([('president_director_b','=',True)])
 			if pricing_list_ext:
 				for k in pricing_list_ext:
 					pricing_list.append(k.partner_id.id)
 
 			quotation_list = []
-			quotation_list_ext = self.env['res.users'].search([('admin_b','=',True)])
+			quotation_list_ext = self.env['res.users'].search([('sales_coordinator_b','=',True)])
 			if quotation_list_ext:
 				for l in quotation_list_ext:
 					quotation_list.append(l.partner_id.id)
@@ -938,12 +963,18 @@ class CalendarEvent(models.Model):
 		event = super(CalendarEvent, self).create(vals)
 		return event
 
+class validate_new_date(models.Model):
+	_name = 'validate.new.date'
+
+	name = fields.Char('Name')
 
 class sale_order(models.Model):
-	_inherit= 'sale.order'
+	_inherit = 'sale.order'
 
 	hide_confirm = fields.Boolean('Hide')
 	or_sale_id = fields.Many2one('Origin')
+	validity_new_date = fields.Many2one('validate.new.date','Expiration Date')
+	po_num = fields.Char('PO Number')
 
 	@api.multi
 	@api.onchange('opportunity_id')
@@ -974,6 +1005,7 @@ class sale_order(models.Model):
 	@api.multi
 	def action_confirm(self):
 		for order in self:
+			print "###########",self , self._context
 			new_order  = ''
 			num_of_line = 0
 			line_list = []
@@ -988,6 +1020,7 @@ class sale_order(models.Model):
 						'price_unit':line.price_unit,
 						'discount': line.discount,
 						'name':line.name,
+						'po_num':self._context.get('po_num'),
 						'part_number':line.part_number.id,
 						'stat_line':'so',
 						'confirm_line_box':True,
@@ -1017,6 +1050,7 @@ class sale_order(models.Model):
 					'opportunity_id':order.opportunity_id.id,
 					'warehouse_id':order.warehouse_id.id,
 					'team_id':order.team_id.id,
+					'po_num':self._context.get('po_num'),
 					'or_sale_id':order.id,
 					'revision':order.revision,
 					'goods_label':order.goods_label,
@@ -1037,22 +1071,7 @@ class sale_order(models.Model):
 				if num_of_line == len(order.order_line):
 					order.write({'hide_confirm':True})
 			if line_list:
-				models_data = self.env['ir.model.data']
-				# Get opportunity views
-				dummy, form_view = models_data.get_object_reference('sale', 'view_order_form')
-				dummy, tree_view = models_data.get_object_reference('sale', 'view_order_tree')
-				return {
-					'name': _('Sale Order'),
-					'view_type': 'form',
-					'view_mode': 'tree, form',
-					'res_model': 'sale.order',
-					'res_id': int(new_order.id),
-					'view_id': False,
-					'views': [(form_view or False, 'form'),
-							  (tree_view or False, 'tree'),],
-					'type': 'ir.actions.act_window',
-					'context': {}
-				}
+				return new_order
 			else:
 				raise UserError(_('Please Select Order Line Before Confirm Order.'))
 		return True
@@ -1118,4 +1137,5 @@ class res_users(models.Model):
 	sales_coordinator_b = fields.Boolean('Sales Coordinator')
 	technical_support_b = fields.Boolean('Technical Support')
 	director_b = fields.Boolean('Director')
+	president_director_b = fields.Boolean('President Director')
 	admin_b = fields.Boolean('Admin')

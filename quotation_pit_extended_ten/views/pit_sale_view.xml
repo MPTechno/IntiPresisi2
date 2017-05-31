@@ -15,7 +15,7 @@
     	            </xpath>
     	            <xpath expr="//button[@name='action_confirm']" position="replace"></xpath>
     	            <xpath expr="//button[@name='action_confirm']" position="replace">
-    	                <button name="action_confirm" attrs="{'invisible': [('hide_confirm', '=', True)]}"  string="Confirm Sale" class="btn-primary o_sale_confirm" type="object" />
+    	                <button name="%(action_crm_crm_askcode_ponumber_action)d" attrs="{'invisible': [('hide_confirm', '=', True)]}"  string="Confirm Sale" class="btn-primary o_sale_confirm" type="action" />
     	                <button name="%(action_pricelist_line_by_partner)d" type="action" string="Pricelist Orderline" class="oe_highlight" attrs="{'invisible': [('partner_id', '=', False)]}" context="{'partner_id':partner_id,'pricelist_id':pricelist_id}"/>
     	            </xpath>
     	            <xpath expr="//field[@name='partner_id']" position="attributes">
@@ -34,9 +34,36 @@
     	            <xpath expr="//field[@name='partner_shipping_id']" position="after">
     	                <field name="hide_confirm" invisible="1"/>
     	            </xpath>
+                    <xpath expr="//field[@name='date_order']" position="after">
+                        <field name="validity_new_date"/>
+                    </xpath>
+                    <xpath expr="//field[@name='validity_date']" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                    </xpath>
+                    <xpath expr="//field[@name='partner_id']" position="before">
+                        <field name="po_num" attrs="{'invisible': [('state','!=','sale')]}"/>
+                    </xpath>
     	        </data>
     	    </field>
     	</record>
+
+
+        <record model="ir.ui.view" id="quotation_per_quotation_trre_crm_phonecall_view">
+            <field name="name">Phonecall</field>
+            <field name="model">crm.phonecall</field>
+            <field name="inherit_id" ref="crm_phonecall.crm_case_inbound_phone_tree_view"/>
+            <field name="arch" type="xml">
+                <data>
+                    <field name="partner_id" position="after">
+                        <field name="contact_name"/>
+                        <field name="prospect_id" invisible="1"/>
+                    </field>
+                    <field name="partner_id" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                    </field>
+                </data>
+            </field>
+        </record>
 
     </data>
 </openerp>
