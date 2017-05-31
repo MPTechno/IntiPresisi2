@@ -555,6 +555,17 @@
             </field>
         </record>
 
+        <record model="ir.actions.act_window" id="crm_case_categ_phone_incoming0123">
+            <field name="name">Logged Calls</field>
+            <field name="res_model">crm.phonecall</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,calendar</field>
+            <field name="view_id" ref="crm_phonecall.crm_case_inbound_phone_tree_view"/>
+            <field name="domain">[('prospect_id','=',active_id)]</field>
+            <field name="context">{'search_default_state': 'done', 'default_state': 'done'}</field>
+            <field name="search_view_id" ref="crm_phonecall.view_crm_case_phonecalls_filter"/>
+        </record>
+
         <record model="ir.ui.view" id="quotation_per_opportunity_form_view_lead_view">
             <field name="name">quotation.per.opportunity.form.view.lead.view</field>
             <field name="model">crm.lead</field>
@@ -578,7 +589,7 @@
                             <field string="Emails" name="email_count" widget="statinfo"/>
                         </button>
                         <button class="oe_inline oe_stat_button" type="action"
-                            name="%(crm_phonecall.crm_case_categ_phone_incoming0)d"
+                            name="%(crm_case_categ_phone_incoming0123)d"
                             icon="fa-phone"
                             context="{'search_default_partner_id': partner_id}">
                             <field string="Calls" name="phonecall_count_lead" widget="statinfo"/>
