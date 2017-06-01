@@ -731,15 +731,7 @@ class crm_lead_line(models.Model):
 							list_of_part.append(pit.sequence_number)                            
 						if pit.product_id.id != vals.get('product_en') and pit.seq_price != vals.get('unit_price_en'):
 							print "3333333333333333333",vals.get('unit_price_en')
-							seq_dict = {
-								'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
-								'sequence_id':partner_obj.id,
-								'product_id':vals.get('product_en'),
-								'seq_price':vals.get('unit_price_en'),
-								'sequence_number': 1,
-							}
-							part_id = self.env['sequence.number.partner'].create(seq_dict)
-				else:
+				if not part_id:
 					print ">>>>>>>>>>>>>>>>>>>>>"
 					seq_dict = {
 						'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
@@ -798,15 +790,8 @@ class crm_lead_line(models.Model):
 								list_of_part.append(pit.sequence_number)                            
 							if pit.product_id.id != self.product_en.id and pit.seq_price != vals.get('unit_price_en'):
 								print "3333333333333333333",vals.get('unit_price_en')
-								seq_dict = {
-									'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
-									'sequence_id':partner_obj.id,
-									'product_id':self.product_en.id,
-									'seq_price':vals.get('unit_price_en'),
-									'sequence_number': 1,
-								}
-								part_id = self.env['sequence.number.partner'].create(seq_dict)
-					else:
+
+					if not part_id:
 						print ">>>>>>>>>>>>>>>>>>>>>"
 						seq_dict = {
 							'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
@@ -1082,7 +1067,7 @@ class sale_order_line(models.Model):
 	part_number = fields.Many2one('sequence.number.partner','Part Number')
 	confirm_line_box = fields.Boolean('.')
 	stat_line = fields.Selection([('so','SO'),('open','Open')],'Status',default='open')
-
+	
 
 	@api.multi
 	def create(self, vals):
