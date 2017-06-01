@@ -658,6 +658,7 @@ class crm_lead_line(models.Model):
 
 		# PRODUCT PRICELISTINGt
 	
+
 	lead_line_id = fields.Many2one('crm.lead',string='Listing Line',index=True)
 	product_en = fields.Many2one('product.product','Product Name')
 	qty_en = fields.Integer('Quantity')
@@ -671,7 +672,7 @@ class crm_lead_line(models.Model):
 	product_uom = fields.Many2one('product.uom', string='Unit of Measure', required=True)
 	pricing_date = fields.Date('Pricing Date')
 	remarks_en = fields.Text('Remarks')
-	partner_id = fields.Many2one(string='Account' ,default=_get_partner,store=True, readonly=True)
+	partner_id = fields.Many2one('res.partner',string='Account' ,default=_get_partner,store=True)
 	currency_id = fields.Many2one(related='lead_line_id.partner_id.property_product_pricelist.currency_id', store=True, string='Currency', readonly=True)
 	discount = fields.Float(string='Discount (%)', digits=dp.get_precision('Discount'), default=0.0)
 	price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', readonly=True, store=True)
@@ -723,24 +724,35 @@ class crm_lead_line(models.Model):
 			if partner_obj:
 				if partner_obj.sequence_ids:
 					for pit in partner_obj.sequence_ids:
-						if pit.product_id.id == vals.get('product_en') and pit.seq_price == vals.get('unit_price_en'):
-							part_id = pit
-							print "111111111111111111",pit.sequence_number , pit.name
-						if pit.product_id.id == vals.get('product_en') and pit.seq_price != vals.get('unit_price_en'):
-							print "222222222222222222",pit.sequence_number , pit.name
-							list_of_part.append(pit.sequence_number)                            
-						if pit.product_id.id != vals.get('product_en') and pit.seq_price != vals.get('unit_price_en'):
-							print "3333333333333333333",vals.get('unit_price_en')
-				if not part_id:
-					print ">>>>>>>>>>>>>>>>>>>>>"
-					seq_dict = {
-						'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
-						'sequence_id':partner_obj.id,
-						'product_id':vals.get('product_en'),
-						'seq_price':vals.get('unit_price_en'),
-						'sequence_number': 1,
-					}
-					part_id = self.env['sequence.number.partner'].create(seq_dict)
+						if not vals.get('part_number'):
+							if pit.product_id.id == vals.get('product_en') and pit.seq_price == vals.get('unit_price_en'):
+								part_id = pit
+								print "111111111111111111",pit.sequence_number , pit.name
+							if pit.product_id.id == vals.get('product_en') and pit.seq_price != vals.get('unit_price_en'):
+								print "222222222222222222",pit.sequence_number , pit.name
+								list_of_part.append(pit.sequence_number)                            
+							if pit.product_id.id != vals.get('product_en') and pit.seq_price != vals.get('unit_price_en'):
+								print "3333333333333333333",vals.get('unit_price_en')
+				
+						if vals.get('part_number'):
+							if pit.id == vals.get('part_number') and pit.seq_price == vals.get('unit_price_en'):
+								print "4444444444444444444",pit
+								part_id = pit
+
+							if pit.id == vals.get('part_number') and pit.seq_price != vals.get('unit_price_en'):
+								list_of_part.append(pit.sequence_number)
+								print "5555555555555555555",list_of_part
+
+					if not part_id and not list_of_part:
+						print ">>>>>>>>>>>>>>>>>>>>>"
+						seq_dict = {
+							'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
+							'sequence_id':partner_obj.id,
+							'product_id':vals.get('product_en'),
+							'seq_price':vals.get('unit_price_en'),
+							'sequence_number': 1,
+						}
+						part_id = self.env['sequence.number.partner'].create(seq_dict)
 
 				if list_of_part:
 					seq_dict = {
@@ -781,26 +793,36 @@ class crm_lead_line(models.Model):
 				partner_obj = self.lead_line_id.partner_id
 				if partner_obj:
 					if partner_obj.sequence_ids:
+						print " >SSSSSSSSSS>>>",vals 
 						for pit in partner_obj.sequence_ids:
-							if pit.product_id.id == self.product_en.id and pit.seq_price == vals.get('unit_price_en'):
-								part_id = pit
-								print "111111111111111111",pit.sequence_number , pit.name
-							if pit.product_id.id == self.product_en.id and pit.seq_price != vals.get('unit_price_en'):
-								print "222222222222222222",pit.sequence_number , pit.name
-								list_of_part.append(pit.sequence_number)                            
-							if pit.product_id.id != self.product_en.id and pit.seq_price != vals.get('unit_price_en'):
-								print "3333333333333333333",vals.get('unit_price_en')
+							if self.part_number and not vals.get('part_number'):
+								if pit.product_id.id == self.product_en.id and pit.seq_price == vals.get('unit_price_en'):
+									part_id = pit
+									print "111111111111111111",pit.sequence_number , pit.name
+								if pit.product_id.id == self.product_en.id and pit.seq_price != vals.get('unit_price_en'):
+									print "222222222222222222",pit.sequence_number , pit.name
+									list_of_part.append(pit.sequence_number)                            
+								if self.part_number.id == pit.id and pit.product_id.id != self.product_en.id and pit.seq_price != vals.get('unit_price_en'):
+									print "3333333333333333333",vals.get('unit_price_en')
+							
+							if vals.get('part_number'):
+								if pit.id == vals.get('part_number') and pit.seq_price == vals.get('unit_price_en'):
+									print "4444444444444444444",pit
+									part_id = pit
+								if pit.id == vals.get('part_number') and pit.seq_price != vals.get('unit_price_en'):
+									list_of_part.append(pit.sequence_number)
+									print "5555555555555555555",list_of_part
 
-					if not part_id:
-						print ">>>>>>>>>>>>>>>>>>>>>"
-						seq_dict = {
-							'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
-							'sequence_id':partner_obj.id,
-							'product_id':self.product_en.id,
-							'seq_price':vals.get('unit_price_en'),
-							'sequence_number': 1,
-						}
-						part_id = self.env['sequence.number.partner'].create(seq_dict)
+						if not part_id and not list_of_part:
+							print ">>>>>>>>>>>>>>>>>>>>>"
+							seq_dict = {
+								'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
+								'sequence_id':partner_obj.id,
+								'product_id':self.product_en.id,
+								'seq_price':vals.get('unit_price_en'),
+								'sequence_number': 1,
+							}
+							part_id = self.env['sequence.number.partner'].create(seq_dict)
 
 					if list_of_part:
 						seq_dict = {

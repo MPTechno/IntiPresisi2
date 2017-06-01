@@ -109,6 +109,7 @@
                                 <form string="Product Pricelisting">
                                     <group>
                                         <group>
+                                            <field name="partner_id" invisible="1"/>
                                             <field name="product_en"/>
                                             <field name="qty_en"/>
                                             <field name="product_uom"/>
@@ -126,7 +127,7 @@
                                             <field name="tax_id" widget="many2many_tags"/>
                                             <field name="pricing_date" readonly="1"/>
                                             <field name="currency_id" invisible="1"/>
-                                            <field name="partner_id" invisible="1"/>
+                                            
                                         </group>
                                     </group>
 
