@@ -754,15 +754,16 @@ class crm_lead_line(models.Model):
 						}
 						part_id = self.env['sequence.number.partner'].create(seq_dict)
 
-				else partner_obj.sequence_ids:
-					seq_dict = {
-						'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
-						'sequence_id':partner_obj.id,
-						'product_id':vals.get('product_en'),
-						'seq_price':vals.get('unit_price_en'),
-						'sequence_number': 1,
-					}
-					part_id = self.env['sequence.number.partner'].create(seq_dict)
+				else:
+					if not partner_obj.sequence_ids:
+						seq_dict = {
+							'name': str(partner_obj.partner_code) + ' - PRICE 000' + str(1),
+							'sequence_id':partner_obj.id,
+							'product_id':vals.get('product_en'),
+							'seq_price':vals.get('unit_price_en'),
+							'sequence_number': 1,
+						}
+						part_id = self.env['sequence.number.partner'].create(seq_dict)
 
 				if list_of_part:
 					seq_dict = {
