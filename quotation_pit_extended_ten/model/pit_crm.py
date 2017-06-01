@@ -469,7 +469,17 @@ class crm_lead(models.Model):
 
 	@api.multi
 	def write(self, vals):
-		
+		access_stage_list = []
+		stage_lead_technical_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_technical_check')[1]
+		if stage_lead_technical_check:
+			access_stage_list.append(stage_lead_technical_check)
+		quotation_list_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_quotations')[1]
+		if quotation_list_check:
+			access_stage_list.append(quotation_list_check)
+		stage_lead_no_offers = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_no_offers')[1]
+		if stage_lead_no_offers:
+			access_stage_list.append(stage_lead_no_offers)
+
 		# stage change: update date_last_stage_update
 		if 'en_stages' in vals:
 			vals['stage_id'] = vals.get('en_stages')
@@ -480,6 +490,14 @@ class crm_lead(models.Model):
 		if 'attachment_en' in vals:
 			vals['created_by_attch'] = self._uid
 			# vals['last_modified_attach'] = fields.Datetime.now()
+
+		login_user = self.env['res.users'].browse(self._uid)
+		if login_user.president_director_b == True:
+			if vals['stage_id'] and vals['stage_id'] in access_stage_list:
+				pass
+			else:
+				raise UserError(_('You Can Only Move Enquiry to Technical Checking, Quotation and No Offer.'))
+
 		res = super(crm_lead, self).write(vals)
 		if self.stage_id:
 			if 'stage_id' in vals:
@@ -535,11 +553,28 @@ class crm_lead(models.Model):
 
 	@api.model
 	def create(self, vals):
+		access_stage_list = []
+		stage_lead_technical_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_technical_check')[1]
+		if stage_lead_technical_check:
+			access_stage_list.append(stage_lead_technical_check)
+		quotation_list_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_quotations')[1]
+		if quotation_list_check:
+			access_stage_list.append(quotation_list_check)
+		stage_lead_no_offers = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_no_offers')[1]
+		if stage_lead_no_offers:
+			access_stage_list.append(stage_lead_no_offers)
+
 		if 'type' in vals:
 			if vals['type'] == 'opportunity':
 				seq_num = self.env['ir.sequence'].get('crm.lead').split('-')
 				vals['en_number'] =  '000' + str(seq_num[0]) + '/Enq-' + str(self.env['res.partner'].browse(vals.get('partner_id')).short_name or '') + '/IPT/' +str(int_to_roman(int(seq_num[1]))) + '/' + str(seq_num[2])
 		vals['stage_id'] = vals.get('en_stages')
+		login_user = self.env['res.users'].browse(self._uid)
+		if login_user.president_director_b == True:
+			if vals['stage_id'] and vals['stage_id'] in access_stage_list:
+				pass
+			else:
+				raise UserError(_('You Can Only Move Enquiry to Technical Checking, Quotation and No Offer.'))
 		res = super(crm_lead, self).create(vals)
 		if 'stage_id' in vals:
 			collect_data_list = []
