@@ -1,9 +1,9 @@
 	# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
+from odoo.osv.orm import setup_modifiers
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-
+from lxml import etree
 from odoo import api, fields, models, SUPERUSER_ID, _
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from odoo.tools.float_utils import float_is_zero, float_compare
@@ -356,9 +356,7 @@ class crm_lead(models.Model):
 
 	meeting_count_lead = fields.Integer('# Meetings', compute='_compute_meeting_count_lead')
 
-
 	pricelist_id = fields.Many2one('product.pricelist','Pricelist')
-
 
 	# @api.multi
 	# def pricelist_quota(self):
@@ -470,6 +468,7 @@ class crm_lead(models.Model):
 	@api.multi
 	def write(self, vals):
 		access_stage_list = []
+		access_stage_list_tech = []
 		stage_lead_technical_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_technical_check')[1]
 		if stage_lead_technical_check:
 			access_stage_list.append(stage_lead_technical_check)
@@ -479,6 +478,15 @@ class crm_lead(models.Model):
 		stage_lead_no_offers = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_no_offers')[1]
 		if stage_lead_no_offers:
 			access_stage_list.append(stage_lead_no_offers)
+			access_stage_list_tech.append(stage_lead_no_offers)
+
+		stage_lead_collect_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_collect_data')[1]
+		if stage_lead_collect_check:
+			access_stage_list_tech.append(stage_lead_collect_check)
+
+		stage_lead_pricing_Check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_pricing')[1]
+		if stage_lead_pricing_Check:
+			access_stage_list_tech.append(stage_lead_pricing_Check)
 
 		# stage change: update date_last_stage_update
 		if 'en_stages' in vals:
@@ -497,6 +505,12 @@ class crm_lead(models.Model):
 				pass
 			else:
 				raise UserError(_('You Can Only Move Enquiry to Technical Checking, Quotation and No Offer.'))
+
+		if login_user.technical_support_b == True:
+			if vals['stage_id'] and vals['stage_id'] in access_stage_list_tech: 
+				pass
+			else:
+				raise UserError(_('You Can Only Edit Enquiry to Collect Date , Pricing , No Offer Stage. Please Contact your Administrator.'))
 
 		res = super(crm_lead, self).write(vals)
 		if self.stage_id:
@@ -554,6 +568,7 @@ class crm_lead(models.Model):
 	@api.model
 	def create(self, vals):
 		access_stage_list = []
+		access_stage_list_tech = []
 		stage_lead_technical_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_technical_check')[1]
 		if stage_lead_technical_check:
 			access_stage_list.append(stage_lead_technical_check)
@@ -563,6 +578,16 @@ class crm_lead(models.Model):
 		stage_lead_no_offers = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_no_offers')[1]
 		if stage_lead_no_offers:
 			access_stage_list.append(stage_lead_no_offers)
+			access_stage_list_tech.append(stage_lead_no_offers)
+
+		stage_lead_collect_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_collect_data')[1]
+		if stage_lead_collect_check:
+			access_stage_list_tech.append(stage_lead_collect_check)
+
+		stage_lead_pricing_Check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_pricing')[1]
+		if stage_lead_pricing_Check:
+			access_stage_list_tech.append(stage_lead_pricing_Check)
+
 
 		if 'type' in vals:
 			if vals['type'] == 'opportunity':
@@ -575,6 +600,13 @@ class crm_lead(models.Model):
 				pass
 			else:
 				raise UserError(_('You Can Only Move Enquiry to Technical Checking, Quotation and No Offer.'))
+		
+		if login_user.technical_support_b == True:
+			if vals['stage_id'] and vals['stage_id'] in access_stage_list_tech: 
+				pass
+			else:
+				raise UserError(_('You Can Only Edit Enquiry to Collect Date , Pricing , No Offer Stage. Please Contact your Administrator.'))
+
 		res = super(crm_lead, self).create(vals)
 		if 'stage_id' in vals:
 			collect_data_list = []
@@ -693,7 +725,6 @@ class crm_lead_line(models.Model):
 
 		# PRODUCT PRICELISTINGt
 	
-
 	lead_line_id = fields.Many2one('crm.lead',string='Listing Line',index=True)
 	product_en = fields.Many2one('product.product','Product Name')
 	qty_en = fields.Integer('Quantity')
@@ -717,6 +748,14 @@ class crm_lead_line(models.Model):
 	workpiece_grade = fields.Many2one('workpiece.grade','Workpiece Grade')
 	kind_of_machine = fields.Many2one('kind.of.machine','Kind of Machine')
 	part_number_product = fields.Char('Part Number')
+	check_uid = fields.Boolean('Users')
+
+	@api.model
+	def default_get(self, fields):
+	    res = super(crm_lead_line, self).default_get(fields)
+	    if self.env.user.director_b == True or self.env.user.technical_support_b:
+	    	res.update({'check_uid':True})
+	    return res
 
 	@api.multi
 	@api.onchange('unit_price_en')
@@ -1135,7 +1174,14 @@ class sale_order_line(models.Model):
 	part_number = fields.Many2one('sequence.number.partner','Part Number')
 	confirm_line_box = fields.Boolean('.')
 	stat_line = fields.Selection([('so','SO'),('open','Open')],'Status',default='open')
-	
+	check_uid = fields.Boolean('Users')
+
+	@api.model
+	def default_get(self, fields):
+	    res = super(sale_order_line, self).default_get(fields)
+	    if self.env.user.director_b == True or self.env.user.technical_support_b:
+	    	res.update({'check_uid':True})
+	    return res
 
 	@api.multi
 	def create(self, vals):

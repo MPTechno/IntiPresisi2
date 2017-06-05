@@ -1,69 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-    <data>
+	<data>
 
-    	<!-- SALE ORDER VIEW -->
+		<!-- SALE ORDER VIEW -->
 
-    	<record model="ir.ui.view" id="quotation_per_quotation_form_view">
-    	    <field name="name">Quotation</field>
-    	    <field name="model">sale.order</field>
-    	    <field name="inherit_id" ref="sale.view_order_form"/>
-    	    <field name="arch" type="xml">
-    	        <data>
-    	            <xpath expr='//notebook/page[2]/group/group/field[@name="user_id"]' position="replace">
-    	                <field name="user_id" string="Our Referece"/>
-    	            </xpath>
-    	            <xpath expr="//button[@name='action_confirm']" position="replace"></xpath>
-    	            <xpath expr="//button[@name='action_confirm']" position="replace">
-    	                <button name="%(action_crm_crm_askcode_ponumber_action)d" attrs="{'invisible': [('hide_confirm', '=', True)]}"  string="Confirm Sale" class="btn-primary o_sale_confirm" type="action" />
-    	                <button name="%(action_pricelist_line_by_partner)d" type="action" string="Pricelist Orderline" class="oe_highlight" attrs="{'invisible': [('partner_id', '=', False)]}" context="{'partner_id':partner_id,'pricelist_id':pricelist_id}"/>
-    	            </xpath>
-    	            <xpath expr="//field[@name='partner_id']" position="attributes">
-    	                <attribute name="domain">[('supplier','!=',True)]</attribute>
-    	            </xpath>
-    	            <xpath expr="//field[@name='order_line']/form/group/group//field[@name='product_id']" position="before">
-    	                <field name="confirm_line_box" string="Confirm Line" attrs="{'invisible': [('stat_line', '=', 'so')]}"/>
-    	                <field name="stat_line" invisible="1"></field>
-    	            </xpath>
-    	            <xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="before">
-    	                <field name="confirm_line_box" nolabel="1"/>
-    	            </xpath>
-    	            <xpath expr="//field[@name='order_line']/tree//field[@name='price_total']" position="after">
-    	                <field name="stat_line"/>
-    	            </xpath>
-    	            <xpath expr="//field[@name='partner_shipping_id']" position="after">
-    	                <field name="hide_confirm" invisible="1"/>
-    	            </xpath>
-                    <xpath expr="//field[@name='date_order']" position="after">
-                        <field name="validity_new_date"/>
-                    </xpath>
-                    <xpath expr="//field[@name='validity_date']" position="attributes">
-                        <attribute name="invisible">1</attribute>
-                    </xpath>
-                    <xpath expr="//field[@name='partner_id']" position="before">
-                        <field name="po_num" attrs="{'invisible': [('state','!=','sale')]}"/>
-                    </xpath>
-    	        </data>
-    	    </field>
-    	</record>
+		<record model="ir.ui.view" id="quotation_per_quotation_form_view">
+			<field name="name">Quotation</field>
+			<field name="model">sale.order</field>
+			<field name="inherit_id" ref="sale.view_order_form"/>
+			<field name="arch" type="xml">
+				<data>
+					<xpath expr='//notebook/page[2]/group/group/field[@name="user_id"]' position="replace">
+						<field name="user_id" string="Our Referece"/>
+					</xpath>
+					<xpath expr="//button[@name='action_confirm']" position="replace"></xpath>
+					<xpath expr="//button[@name='action_confirm']" position="replace">
+						<button name="%(action_crm_crm_askcode_ponumber_action)d" attrs="{'invisible': [('hide_confirm', '=', True)]}"  string="Confirm Sale" class="btn-primary o_sale_confirm" type="action" />
+						<button name="%(action_pricelist_line_by_partner)d" type="action" string="Pricelist Orderline" class="oe_highlight" attrs="{'invisible': [('partner_id', '=', False)]}" context="{'partner_id':partner_id,'pricelist_id':pricelist_id}"/>
+					</xpath>
+					<xpath expr="//field[@name='partner_id']" position="attributes">
+						<attribute name="domain">[('supplier','!=',True)]</attribute>
+					</xpath>
+					<xpath expr="//field[@name='order_line']/form/group/group//field[@name='product_id']" position="before">
+						<field name="check_uid" invisible="1"/>
+						<field name="confirm_line_box" string="Confirm Line" attrs="{'invisible': [('stat_line', '=', 'so')]}"/>
+						<field name="stat_line" invisible="1"></field>
+					</xpath>
+					<xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="before">
+						<field name="confirm_line_box" nolabel="1"/>
+					</xpath>
+					<xpath expr="//field[@name='order_line']/tree//field[@name='price_total']" position="after">
+						<field name="stat_line"/>
+						<field name="check_uid" invisible="1"/>
+					</xpath>
+					<xpath expr="//field[@name='partner_shipping_id']" position="after">
+						<field name="hide_confirm" invisible="1"/>
+					</xpath>
+					<xpath expr="//field[@name='date_order']" position="after">
+						<field name="validity_new_date"/>
+					</xpath>
+					<xpath expr="//field[@name='validity_date']" position="attributes">
+						<attribute name="invisible">1</attribute>
+					</xpath>
+					<xpath expr="//field[@name='partner_id']" position="before">
+						<field name="po_num" attrs="{'invisible': [('state','!=','sale')]}"/>
+					</xpath>
+					<xpath expr="//field[@name='order_line']/form/group/group//field[@name='price_unit']" position="replace">
+						<field name="price_unit" attrs="{'readonly':[('check_uid','=',True)]}"></field>
+					</xpath>
+					<xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="replace">
+						<field name="price_unit" attrs="{'readonly':[('check_uid','=',True)]}"></field>
+					</xpath>
+				</data>
+			</field>
+		</record>
 
 
-        <record model="ir.ui.view" id="quotation_per_quotation_trre_crm_phonecall_view">
-            <field name="name">Phonecall</field>
-            <field name="model">crm.phonecall</field>
-            <field name="inherit_id" ref="crm_phonecall.crm_case_inbound_phone_tree_view"/>
-            <field name="arch" type="xml">
-                <data>
-                    <field name="partner_id" position="after">
-                        <field name="contact_name"/>
-                        <field name="prospect_id" invisible="1"/>
-                    </field>
-                    <field name="partner_id" position="attributes">
-                        <attribute name="invisible">1</attribute>
-                    </field>
-                </data>
-            </field>
-        </record>
+		<record model="ir.ui.view" id="quotation_per_quotation_trre_crm_phonecall_view">
+			<field name="name">Phonecall</field>
+			<field name="model">crm.phonecall</field>
+			<field name="inherit_id" ref="crm_phonecall.crm_case_inbound_phone_tree_view"/>
+			<field name="arch" type="xml">
+				<data>
+					<field name="partner_id" position="after">
+						<field name="contact_name"/>
+						<field name="prospect_id" invisible="1"/>
+					</field>
+					<field name="partner_id" position="attributes">
+						<attribute name="invisible">1</attribute>
+					</field>
+				</data>
+			</field>
+		</record>
 
-    </data>
+	</data>
 </openerp>

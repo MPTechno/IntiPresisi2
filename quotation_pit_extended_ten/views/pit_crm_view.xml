@@ -113,9 +113,9 @@
                                             <field name="product_en"/>
                                             <field name="qty_en"/>
                                             <field name="product_uom"/>
-                                            <field name="part_number" domain="[('product_id', '=', product_en),('sequence_id','=',partner_id)]"/>
+                                            <field name="part_number" domain="[('product_id', '=', product_en),('sequence_id','=',partner_id)]" attrs="{'readonly':[('check_uid','=',True)]}"/>
                                             <field name="part_number_product"></field>
-                                            <field name="unit_price_en"/>
+                                            <field name="unit_price_en" attrs="{'readonly':[('check_uid','=',True)]}"/>
                                             <field name="total_price_en"/>
                                         </group>
                                         <group>
@@ -127,7 +127,7 @@
                                             <field name="tax_id" widget="many2many_tags"/>
                                             <field name="pricing_date" readonly="1"/>
                                             <field name="currency_id" invisible="1"/>
-                                            
+                                            <field name="check_uid" invisible="1"/>
                                         </group>
                                     </group>
 
@@ -165,19 +165,6 @@
             </field>
         </record>
 
-<!--         <record id="product_pricelisydned_view_intipresisi" model="ir.ui.view">
-            <field name="name">product.tpricelisy.common.form.intipresisi</field>
-            <field name="model">product.pricelist.item</field>
-            <field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
-            <field name="arch" type="xml">
-                <data>
-                    <field name="min_quantity" position="after">
-                        <field name="confirm_line_box"/>
-                    </field>
-                </data>
-            </field>
-        </record> -->
-
         <!-- USERS VIEW -->
         <record id="view_users_form_extended_for_intiprs" model="ir.ui.view">
             <field name="name">res.users.form.extended.intpris</field>
@@ -196,48 +183,6 @@
                 </xpath>
             </field>
         </record>
-
-
-<!--         <record model="ir.ui.view" id="quotation_per_opportunity_form_view_for_one_group">
-            <field name="name">Quotation Per Enquiry Group</field>
-            <field name="model">crm.lead</field>
-            <field name="inherit_id" ref="crm.crm_case_form_view_oppor"/>
-            <field name="groups_id" eval="[(4, ref('quotation_pit_extended_ten.group_sales_person_level_pit'))]"/>
-            <field name="arch" type="xml">
-                <data>
-                    <xpath expr="//field[@name='lead_line_ids']/form/group//field[@name='internal_code_en']" position="attributes">
-                        <attribute name="attrs">{'readonly':1}</attribute>
-                    </xpath>
-                    <xpath expr="//field[@name='qty_en']" position="attributes">
-                        <attribute name="attrs">{'readonly':1}</attribute>
-                    </xpath>
-                    <xpath expr="//field[@name='product_uom']" position="attributes">
-                        <attribute name="attrs">{'readonly':1}</attribute>
-                    </xpath>
-                    <xpath expr="//field[@name='part_number']" position="attributes">
-                        <attribute name="attrs">{'readonly':1}</attribute>
-                    </xpath>
-                    <xpath expr="//field[@name='unit_price_en']" position="attributes">
-                        <attribute name="attrs">{'readonly':1}</attribute>
-                    </xpath>
-                    <xpath expr="//field[@name='workpiece_material']" position="attributes">
-                        <attribute name="attrs">{'readonly':1}</attribute>
-                    </xpath>
-                    <xpath expr="//field[@name='total_price_en']" position="attributes">
-                        <attribute name="attrs">{'readonly':1}</attribute>
-                    </xpath>
-                    <xpath expr="//field[@name='coating_en']" position="attributes">
-                        <attribute name="attrs">{'readonly':1}</attribute>
-                    </xpath>
-                    <xpath expr="//field[@name='pricing_date']" position="attributes">
-                        <attribute name="attrs">{'readonly':1}</attribute>
-                    </xpath>
-                    <xpath expr="//field[@name='tax_id']" position="attributes">
-                        <attribute name="attrs">{'readonly':1}</attribute>
-                    </xpath>
-                </data>
-            </field>
-        </record> -->
 
         <record id="crm.crm_case_form_view_salesteams_lead" model="ir.actions.act_window">
             <field name="name">Prospects</field>
@@ -914,6 +859,10 @@
 
         <menuitem id="crm.crm_lead_menu_activities" name="Enquiry" parent="sales_team.menu_sales" sequence="5"
                     action="crm.crm_lead_action_activities" />
+
+        <menuitem id="sale.menu_sale_quotations" action="sale.action_quotations" parent="sales_team.menu_sales" sequence="11" groups="quotation_pit_extended_ten.group_sales_admin"/>
+
+        <!-- <menuitem id="crm.menu_crm_opportunities" action="crm.action_your_pipeline" parent="sales_team.menu_sales" sequence="4" groups=""/> -->
 
     </data>
 </openerp>
