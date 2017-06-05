@@ -469,9 +469,11 @@ class crm_lead(models.Model):
 	def write(self, vals):
 		access_stage_list = []
 		access_stage_list_tech = []
+		access_stage_list_coordinate = []
 		stage_lead_technical_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_technical_check')[1]
 		if stage_lead_technical_check:
 			access_stage_list.append(stage_lead_technical_check)
+			access_stage_list_coordinate.append(stage_lead_technical_check)
 		quotation_list_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_quotations')[1]
 		if quotation_list_check:
 			access_stage_list.append(quotation_list_check)
@@ -479,6 +481,7 @@ class crm_lead(models.Model):
 		if stage_lead_no_offers:
 			access_stage_list.append(stage_lead_no_offers)
 			access_stage_list_tech.append(stage_lead_no_offers)
+			access_stage_list_coordinate.append(stage_lead_no_offers)
 
 		stage_lead_collect_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_collect_data')[1]
 		if stage_lead_collect_check:
@@ -512,6 +515,10 @@ class crm_lead(models.Model):
 			else:
 				raise UserError(_('You Can Only Edit Enquiry to Collect Date , Pricing , No Offer Stage. Please Contact your Administrator.'))
 
+		if login_user.sales_coordinator_b == True:
+			if vals['stage_id'] and vals['stage_id'] in access_stage_list_coordinate:
+				raise UserError(_('You Dont have Rights to Edit Record in Technical Drawing , No Offer Stage. Please Contact your Administrator.'))
+		
 		res = super(crm_lead, self).write(vals)
 		if self.stage_id:
 			if 'stage_id' in vals:
@@ -569,9 +576,11 @@ class crm_lead(models.Model):
 	def create(self, vals):
 		access_stage_list = []
 		access_stage_list_tech = []
+		access_stage_list_coordinate = []
 		stage_lead_technical_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_technical_check')[1]
 		if stage_lead_technical_check:
 			access_stage_list.append(stage_lead_technical_check)
+			access_stage_list_coordinate.append(stage_lead_technical_check)
 		quotation_list_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_quotations')[1]
 		if quotation_list_check:
 			access_stage_list.append(quotation_list_check)
@@ -579,6 +588,7 @@ class crm_lead(models.Model):
 		if stage_lead_no_offers:
 			access_stage_list.append(stage_lead_no_offers)
 			access_stage_list_tech.append(stage_lead_no_offers)
+			access_stage_list_coordinate.append(stage_lead_no_offers)
 
 		stage_lead_collect_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_collect_data')[1]
 		if stage_lead_collect_check:
@@ -606,6 +616,10 @@ class crm_lead(models.Model):
 				pass
 			else:
 				raise UserError(_('You Can Only Edit Enquiry to Collect Date , Pricing , No Offer Stage. Please Contact your Administrator.'))
+
+		if login_user.sales_coordinator_b == True:
+			if vals['stage_id'] and vals['stage_id'] in access_stage_list_coordinate:
+				raise UserError(_('You Dont have Rights to Edit Record in Technical Drawing , No Offer Stage. Please Contact your Administrator.'))
 
 		res = super(crm_lead, self).create(vals)
 		if 'stage_id' in vals:
@@ -753,7 +767,7 @@ class crm_lead_line(models.Model):
 	@api.model
 	def default_get(self, fields):
 	    res = super(crm_lead_line, self).default_get(fields)
-	    if self.env.user.director_b == True or self.env.user.technical_support_b:
+	    if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_coordinator_b == True:
 	    	res.update({'check_uid':True})
 	    return res
 
@@ -1179,7 +1193,7 @@ class sale_order_line(models.Model):
 	@api.model
 	def default_get(self, fields):
 	    res = super(sale_order_line, self).default_get(fields)
-	    if self.env.user.director_b == True or self.env.user.technical_support_b:
+	    if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_coordinator_b == True:
 	    	res.update({'check_uid':True})
 	    return res
 
