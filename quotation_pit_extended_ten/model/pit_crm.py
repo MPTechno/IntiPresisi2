@@ -470,6 +470,7 @@ class crm_lead(models.Model):
 		access_stage_list = []
 		access_stage_list_tech = []
 		access_stage_list_coordinate = []
+
 		stage_lead_technical_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_technical_check')[1]
 		if stage_lead_technical_check:
 			access_stage_list.append(stage_lead_technical_check)
@@ -519,6 +520,10 @@ class crm_lead(models.Model):
 			if vals['stage_id'] and vals['stage_id'] in access_stage_list_coordinate:
 				raise UserError(_('You Dont have Rights to Edit Record in Technical Drawing , No Offer Stage. Please Contact your Administrator.'))
 		
+		if login_user.sales_supervisor_b == True:
+			if vals['stage_id'] and vals['stage_id'] not in access_stage_list_tech:
+				raise UserError(_('You Dont have Rights to Edit Record in Collect Data and Pricing Stage. Please Contact your Administrator.'))
+
 		res = super(crm_lead, self).write(vals)
 		if self.stage_id:
 			if 'stage_id' in vals:
@@ -598,7 +603,6 @@ class crm_lead(models.Model):
 		if stage_lead_pricing_Check:
 			access_stage_list_tech.append(stage_lead_pricing_Check)
 
-
 		if 'type' in vals:
 			if vals['type'] == 'opportunity':
 				seq_num = self.env['ir.sequence'].get('crm.lead').split('-')
@@ -620,6 +624,12 @@ class crm_lead(models.Model):
 		if login_user.sales_coordinator_b == True:
 			if vals['stage_id'] and vals['stage_id'] in access_stage_list_coordinate:
 				raise UserError(_('You Dont have Rights to Edit Record in Technical Drawing , No Offer Stage. Please Contact your Administrator.'))
+
+		if login_user.sales_supervisor_b == True:
+			if vals['stage_id'] and vals['stage_id'] not in access_stage_list_tech:
+				raise UserError(_('You Dont have Rights to Edit Record in Collect Data and Pricing Stage. Please Contact your Administrator.'))
+
+
 
 		res = super(crm_lead, self).create(vals)
 		if 'stage_id' in vals:
@@ -767,7 +777,7 @@ class crm_lead_line(models.Model):
 	@api.model
 	def default_get(self, fields):
 	    res = super(crm_lead_line, self).default_get(fields)
-	    if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_coordinator_b == True:
+	    if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_coordinator_b == True or self.env.user.sales_supervisor_b == True:
 	    	res.update({'check_uid':True})
 	    return res
 
@@ -1193,7 +1203,7 @@ class sale_order_line(models.Model):
 	@api.model
 	def default_get(self, fields):
 	    res = super(sale_order_line, self).default_get(fields)
-	    if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_coordinator_b == True:
+	    if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_supervisor_b == True or self.env.user.sales_coordinator_b == True:
 	    	res.update({'check_uid':True})
 	    return res
 
@@ -1252,3 +1262,4 @@ class res_users(models.Model):
 	director_b = fields.Boolean('Director')
 	president_director_b = fields.Boolean('President Director')
 	admin_b = fields.Boolean('Admin')
+	sales_supervisor_b = fields.Boolean('Sales Supervisor')
