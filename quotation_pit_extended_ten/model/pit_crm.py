@@ -471,11 +471,13 @@ class crm_lead(models.Model):
 		access_stage_list_tech = []
 		access_stage_list_coordinate = []
 		access_stage_list_person = []
+		access_stage_list_supervisor = []
 		stage_lead_technical_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_technical_check')[1]
 		if stage_lead_technical_check:
 			access_stage_list.append(stage_lead_technical_check)
 			access_stage_list_coordinate.append(stage_lead_technical_check)
 			access_stage_list_person.append(stage_lead_technical_check)
+			access_stage_list_supervisor.append(stage_lead_technical_check)
 
 		quotation_list_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_quotations')[1]
 		if quotation_list_check:
@@ -490,6 +492,7 @@ class crm_lead(models.Model):
 		if stage_lead_collect_check:
 			access_stage_list_tech.append(stage_lead_collect_check)
 			access_stage_list_person.append(stage_lead_collect_check)
+			access_stage_list_supervisor.append(stage_lead_collect_check)
 
 		stage_lead_pricing_Check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_pricing')[1]
 		if stage_lead_pricing_Check:
@@ -524,8 +527,8 @@ class crm_lead(models.Model):
 				raise UserError(_('You Dont have Rights to Edit Record in Technical Drawing , No Offer Stage. Please Contact your Administrator.'))
 		
 		if login_user.sales_supervisor_b == True:
-			if vals['stage_id'] and vals['stage_id'] not in access_stage_list_tech:
-				raise UserError(_('You Dont have Rights to Edit Record in Collect Data and Pricing Stage. Please Contact your Administrator.'))
+			if vals['stage_id'] and vals['stage_id'] not in access_stage_list_supervisor:
+				raise UserError(_('You have Only Rights to Edit Record in Collect Data and Pricing Stage. Please Contact your Administrator.'))
 
 		if login_user.sales_person_b == True:
 			if vals['stage_id'] and vals['stage_id'] not in access_stage_list_person:
@@ -590,11 +593,13 @@ class crm_lead(models.Model):
 		access_stage_list_tech = []
 		access_stage_list_coordinate = []
 		access_stage_list_person = []
+		access_stage_list_supervisor = []
 		stage_lead_technical_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_technical_check')[1]
 		if stage_lead_technical_check:
 			access_stage_list.append(stage_lead_technical_check)
 			access_stage_list_coordinate.append(stage_lead_technical_check)
 			access_stage_list_person.append(stage_lead_technical_check)
+			access_stage_list_supervisor.append(stage_lead_technical_check)
 
 		quotation_list_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_quotations')[1]
 		if quotation_list_check:
@@ -608,6 +613,7 @@ class crm_lead(models.Model):
 		stage_lead_collect_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_collect_data')[1]
 		if stage_lead_collect_check:
 			access_stage_list_tech.append(stage_lead_collect_check)
+			access_stage_list_person.append(stage_lead_collect_check)
 			access_stage_list_person.append(stage_lead_collect_check)
 
 		stage_lead_pricing_Check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_pricing')[1]
@@ -637,8 +643,8 @@ class crm_lead(models.Model):
 				raise UserError(_('You Dont have Rights to Edit Record in Technical Drawing , No Offer Stage. Please Contact your Administrator.'))
 
 		if login_user.sales_supervisor_b == True:
-			if vals['stage_id'] and vals['stage_id'] not in access_stage_list_tech:
-				raise UserError(_('You Dont have Rights to Edit Record in Collect Data and Pricing Stage. Please Contact your Administrator.'))
+			if vals['stage_id'] and vals['stage_id'] not in access_stage_list_supervisor:
+				raise UserError(_('You Dont have Rights to Edit Record in Collect Data and Technical Drawing Stage. Please Contact your Administrator.'))
 
 		if login_user.sales_person_b == True:
 			if vals['stage_id'] and vals['stage_id'] not in access_stage_list_person:
