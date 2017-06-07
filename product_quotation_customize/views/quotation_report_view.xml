@@ -74,6 +74,7 @@
 
 		<template id="quotation_footer_layout">
 			<div class="footer">
+				<span t-if="company" t-field="company.sign_line_text"/><br/>
 				<span>........................</span><br/>
 				Contact Name
 				<br/><br/>

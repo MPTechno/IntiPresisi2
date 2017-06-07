@@ -37,3 +37,9 @@ sale.access_sale_order,sale.order,model_sale_order,sales_team.group_sale_salesma
 sale.access_sale_order_line,sale.order.line,model_sale_order_line,sales_team.group_sale_salesman,1,1,1,1
 sale.access_res_partner_sale_user,res.partner.sale.user,base.model_res_partner,sales_team.group_sale_salesman,1,0,0,0
 crm.access_res_partner,res.partner.crm.user,base.model_res_partner,sales_team.group_sale_salesman,1,0,0,0
+
+
+access_pricelist_line_partner_sales_person,access.pricelist.line.partner.sales.person,quotation_pit_extended_ten.model_pricelist_line_partner,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
+access_validate_new_date_sales_person,access.validate.new.date.sales.person,quotation_pit_extended_ten.model_validate_new_date,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
+access_phonecall_contact_sales_person,access.phonecall.contact.sales.person,quotation_pit_extended_ten.model_phonecall_contact,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
+access_part_number_line_sales_person,access.part.number.line,quotation_pit_extended_ten.model_part_number_line,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1

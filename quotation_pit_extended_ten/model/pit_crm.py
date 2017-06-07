@@ -12,9 +12,6 @@ from odoo.tools.misc import formatLang
 from odoo.addons.base.res.res_partner import WARNING_MESSAGE, WARNING_HELP
 import odoo.addons.decimal_precision as dp
 
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 
 def int_to_roman(input):
 	"""
@@ -254,6 +251,11 @@ class crm_new_case(models.Model):
 	
 	name = fields.Char('Name')
 
+class phonecall_contact(models.Model):
+	_name='phonecall.contact'
+
+	name = fields.Char('Contact')
+
 class MailTemplate(models.Model):
 	_inherit = "mail.template"
 	_description = 'Email Templates'
@@ -270,7 +272,7 @@ class crm_phonecall(models.Model):
 	_inherit = 'crm.phonecall'
 
 	prospect_id = fields.Many2one('crm.lead','Lead')
-	contact_name = fields.Char('Contact')
+	contact_name = fields.Many2one('phonecall.contact','Contact')
 
 	@api.model
 	def create(self, vals):
@@ -358,47 +360,6 @@ class crm_lead(models.Model):
 
 	pricelist_id = fields.Many2one('product.pricelist','Pricelist')
 
-	# @api.multi
-	# def pricelist_quota(self):
-	# 	print ">>>>>>>>>>>>>>>",self
-	# 	if self.partner_id and self.pricelist_id:
-	# 		line_list = []
-	# 		for line in self.pricelist_id.item_ids:
-	# 			if line.confirm_line_box == True:
-	# 				line_list.append((0, 0, {
-	# 					'product_id': line.product_id.id,
-	# 					'price_unit':line.fixed_price,
-	# 				}))
-	# 		if line_list:
-	# 			sale_dict = {
-	# 				'partner_id':self.partner_id.id,
-	# 				'date_order':fields.datetime.now(),  
-	# 				'pricelist_id':self.pricelist_id.id,
-	# 				'user_id':self.user_id.id,
-	# 				'opportunity_id':self.id,
-	# 				'order_line':line_list,
-	# 			}
-	# 			new_order = self.env['sale.order'].create(sale_dict)
-	# 			if self.env['ir.values'].get_default('sale.config.settings', 'auto_done_setting'):
-	# 				new_order.action_done()
-			
-	# 			models_data = self.env['ir.model.data']
-	# 			# Get opportunity views
-	# 			dummy, form_view = models_data.get_object_reference('sale', 'view_order_form')
-	# 			dummy, tree_view = models_data.get_object_reference('sale', 'view_order_tree')
-	# 			return {
-	# 				'name': _('Sale Order'),
-	# 				'view_type': 'form',
-	# 				'view_mode': 'tree, form',
-	# 				'res_model': 'sale.order',
-	# 				'res_id': int(new_order.id),
-	# 				'view_id': False,
-	# 				'views': [(form_view or False, 'form'),
-	# 						  (tree_view or False, 'tree'),],
-	# 				'type': 'ir.actions.act_window',
-	# 				'context': {}
-	# 			}
-	# 	return True
 
 	@api.multi
 	def _compute_phonecall_count_lead(self):
@@ -442,10 +403,10 @@ class crm_lead(models.Model):
 			return value
 		return {}
 
-	@api.onchange('prospect_quality')
+	@api.onchange('qty_per_month')
 	def _onchange_prospect_quality(self):
 		for lead in self:
-			lead.qty_per_month = self.prospect_quality
+			lead.prospect_quality = self.qty_per_month
 
 	@api.onchange('partner_id')
 	def _onchange_partner_id(self):
@@ -1280,16 +1241,3 @@ class sale_order_line(models.Model):
 				}
 			self.order_id.partner_id.property_product_pricelist.write(pricelis_dict)
 		return super(sale_order_line, self).write(vals)
-
-
-
-class res_users(models.Model):
-	_inherit = 'res.users'
-
-	sales_person_b = fields.Boolean('Sales Person')
-	sales_coordinator_b = fields.Boolean('Sales Coordinator')
-	technical_support_b = fields.Boolean('Technical Support')
-	director_b = fields.Boolean('Director')
-	president_director_b = fields.Boolean('President Director')
-	admin_b = fields.Boolean('Admin')
-	sales_supervisor_b = fields.Boolean('Sales Supervisor')

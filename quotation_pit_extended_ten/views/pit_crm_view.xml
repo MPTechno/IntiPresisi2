@@ -571,6 +571,9 @@
                     <xpath expr="//field[@name='user_id']" position="attributes">
                         <attribute name="string">Prospect Owner</attribute>
                     </xpath>
+                    <xpath expr="//field[@name='user_id']" position="attributes">
+                        <attribute name="readonly">1</attribute>
+                    </xpath>
                     <xpath expr="//sheet/group/group/label[@for='contact_name']" position="replace"></xpath>
                     <xpath expr="//field[@name='contact_name']" position="replace"></xpath>
 
@@ -587,7 +590,7 @@
                     </xpath>
                     <xpath expr='//field[@name="priority"]' position='replace'>
                         <field name="stage_new_pr" string="Prospect Status"/>
-                        <field name="prospect_quality"/>
+                        <field name="prospect_quality" readonly="1"/>
                     </xpath>
                     <xpath expr="//form/sheet/group/group/div[@class='o_address_format']" position="after">
                         <field name="website" widget="url" placeholder="Website..."></field>
