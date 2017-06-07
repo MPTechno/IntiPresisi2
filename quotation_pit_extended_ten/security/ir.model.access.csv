@@ -12,6 +12,11 @@ access_prospect_production_for_sales_person,access.rospect.production.sales.pers
 access_customer_group_sales_person,access.customer.group.sales.person,quotation_pit_extended_ten.model_customer_group,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,0
 access_prospect_source_for_sales_person,access.prospect.source.sales.person,quotation_pit_extended_ten.model_prospect_source,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,0
 
+access_location_calnder_sales_person,access.location.calender.sales.parson,quotation_pit_extended_ten.model_location_calnder,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
+access_kind_of_machine_sales_person,access.kind.of.machine.sales.parson,quotation_pit_extended_ten.model_kind_of_machine,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
+access_workpiece_grade_sales_person,access.workpiece.grade.sales.parson,quotation_pit_extended_ten.model_workpiece_grade,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
+
+
 access_enquiry_status_for_sales_person,access.enquiry.status.sales.person,quotation_pit_extended_ten.model_enquiry_status,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,0
 access_qty_machine_for_sales_person,access.qty.machine.sales.person,quotation_pit_extended_ten.model_qty_machine,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,0
 access_industry_source_for_sales_person,access.industry.source.sales.person,quotation_pit_extended_ten.model_industry_source,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,0
@@ -29,6 +34,6 @@ access_crm_phonecall_person,access.crm.phonecall.person,crm_phonecall.model_crm_
 access_res_users_person,access.res.users.person,base.model_res_users,,1,1,1,1
 
 sale.access_sale_order,sale.order,model_sale_order,sales_team.group_sale_salesman,1,0,0,0
-sale.access_sale_order_line,sale.order.line,model_sale_order_line,sales_team.group_sale_salesman,1,0,0,0
+sale.access_sale_order_line,sale.order.line,model_sale_order_line,sales_team.group_sale_salesman,1,1,1,1
 sale.access_res_partner_sale_user,res.partner.sale.user,base.model_res_partner,sales_team.group_sale_salesman,1,0,0,0
 crm.access_res_partner,res.partner.crm.user,base.model_res_partner,sales_team.group_sale_salesman,1,0,0,0
