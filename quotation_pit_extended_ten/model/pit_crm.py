@@ -509,36 +509,35 @@ class crm_lead(models.Model):
 			vals['created_by_attch'] = self._uid
 			# vals['last_modified_attach'] = fields.Datetime.now()
 
-		if 'type' in vals:
-			if vals['type'] == 'opportunity':
-				login_user = self.env['res.users'].browse(self._uid)
-				if login_user.president_director_b == True:
-					if vals['stage_id'] and vals['stage_id'] in access_stage_list:
-						pass
-					else:
-						raise UserError(_('You Can Only Move Enquiry to Technical Checking, Quotation and No Offer.'))
+		if vals['stage_id']:
+			login_user = self.env['res.users'].browse(self._uid)
+			if login_user.president_director_b == True:
+				if vals['stage_id'] and vals['stage_id'] in access_stage_list:
+					pass
+				else:
+					raise UserError(_('You Can Only Move Enquiry to Technical Checking, Quotation and No Offer.'))
 
-				if login_user.technical_support_b == True:
-					if vals['stage_id'] and vals['stage_id'] in access_stage_list_tech: 
-						pass
-					else:
-						raise UserError(_('You Can Only Edit Enquiry to Collect Date , Pricing , No Offer Stage. Please Contact your Administrator.'))
+			if login_user.technical_support_b == True:
+				if vals['stage_id'] and vals['stage_id'] in access_stage_list_tech: 
+					pass
+				else:
+					raise UserError(_('You Can Only Edit Enquiry to Collect Date , Pricing , No Offer Stage. Please Contact your Administrator.'))
 
-				if login_user.sales_coordinator_b == True:
-					if vals['stage_id'] and vals['stage_id'] in access_stage_list_coordinate:
-						raise UserError(_('You Dont have Rights to Edit Record in Technical Drawing , No Offer Stage. Please Contact your Administrator.'))
-				
-				if login_user.sales_supervisor_b == True:
-					if vals['stage_id'] and vals['stage_id'] in access_stage_list_supervisor:
-						pass
-					else:
-						raise UserError(_('You have Only Rights to Edit Record in Collect Data and Technical Drawing Stage. Please Contact your Administrator.'))
+			if login_user.sales_coordinator_b == True:
+				if vals['stage_id'] and vals['stage_id'] in access_stage_list_coordinate:
+					raise UserError(_('You Dont have Rights to Edit Record in Technical Drawing , No Offer Stage. Please Contact your Administrator.'))
+			
+			if login_user.sales_supervisor_b == True:
+				if vals['stage_id'] and vals['stage_id'] in access_stage_list_supervisor:
+					pass
+				else:
+					raise UserError(_('You have Only Rights to Edit Record in Collect Data and Technical Drawing Stage. Please Contact your Administrator.'))
 
-				if login_user.sales_person_b == True:
-					if vals['stage_id'] and vals['stage_id'] in access_stage_list_person:
-						pass
-					else:
-						raise UserError(_('You have Only Rights to Edit Record in Collect Data and Technical Drawing Stage. Please Contact your Administrator.'))
+			if login_user.sales_person_b == True:
+				if vals['stage_id'] and vals['stage_id'] in access_stage_list_person:
+					pass
+				else:
+					raise UserError(_('You have Only Rights to Edit Record in Collect Data and Technical Drawing Stage. Please Contact your Administrator.'))
 
 		res = super(crm_lead, self).write(vals)
 		if self.stage_id:
