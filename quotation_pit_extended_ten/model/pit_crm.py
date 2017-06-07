@@ -509,7 +509,7 @@ class crm_lead(models.Model):
 			vals['created_by_attch'] = self._uid
 			# vals['last_modified_attach'] = fields.Datetime.now()
 
-		if vals['stage_id']:
+		if vals.get('stage_id', False):
 			login_user = self.env['res.users'].browse(self._uid)
 			if login_user.president_director_b == True:
 				if vals['stage_id'] and vals['stage_id'] in access_stage_list:
