@@ -1006,6 +1006,7 @@ class res_partner(models.Model):
 		return currency_id or self._get_euro()
 
 
+	user_id = fields.Many2one('res.users','Account Owner',default=lambda self: self.env.user)
 	sequence_ids = fields.One2many('sequence.number.partner','sequence_id','Sequence')
 	email_count = fields.Integer("Emails", compute='_compute_emails_count')
 	partner_code = fields.Char('Code',required=True)

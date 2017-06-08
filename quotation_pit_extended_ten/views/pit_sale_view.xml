@@ -10,9 +10,6 @@
 			<field name="inherit_id" ref="sale.view_order_form"/>
 			<field name="arch" type="xml">
 				<data>
-					<xpath expr='//notebook/page[2]/group/group/field[@name="user_id"]' position="replace">
-						<field name="user_id" string="Our Referece"/>
-					</xpath>
 					<xpath expr="//button[@name='action_confirm']" position="replace"></xpath>
 					<xpath expr="//button[@name='action_confirm']" position="replace">
 						<button name="%(action_crm_crm_askcode_ponumber_action)d" attrs="{'invisible': [('hide_confirm', '=', True)]}"  string="Confirm Sale" class="btn-primary o_sale_confirm" type="action" />
@@ -86,15 +83,73 @@
 			</field>
 		</record>
 
-		<record id="view_crm_prospect_cust_ref_readonly" model="ir.ui.view">
-		    <field name="name">crm.lead.form.readonly.cust</field>
+		<!-- FOR LEAD FIELD READONLY -->
+
+		<record id="view_crm_prospect_sales_person_ref_readonly" model="ir.ui.view">
+		    <field name="name">crm.lead.sales.person.readonly.cust</field>
 		    <field name="model">crm.lead</field>
+		    <field name="priority" eval="20"/>
 		    <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
-		    <field name="groups_id" eval="[(6, 0, [ref('quotation_pit_extended_ten.group_sales_president_director') ])]"/>
+		    <field name="groups_id" eval="[(6, 0, [ref('quotation_pit_extended_ten.group_field_readonly_forad')])]"/>
 		    <field name="arch" type="xml">
 		        <field name='user_id' position="attributes">
 		            <attribute name="readonly">0</attribute>
 		        </field>
+		    </field>
+		</record>
+
+		<!-- FOR ACCOUTN FIELD READONLY -->
+
+		<record id="view_res_paerner_sales_manager_ref_readonly" model="ir.ui.view">
+		    <field name="name">res.partner.sales.manager.readonly.cust</field>
+		    <field name="model">res.partner</field>
+		    <field name="priority" eval="20"/>
+		    <field name="inherit_id" ref="base.view_partner_form"/>
+		    <field name="groups_id" eval="[(6, 0, [ref('quotation_pit_extended_ten.group_field_readonly_forad')])]"/>
+		    <field name="arch" type="xml">
+		        <field name='user_id' position="attributes">
+		            <attribute name="readonly">0</attribute>
+		        </field>
+		    </field>
+		</record>
+
+		<!-- FOR ENQUIRY FIELD READONLY -->
+
+		<record id="view_crm_enquiry_sales_manager_ref_readonly" model="ir.ui.view">
+		    <field name="name">crm.lead.sales.manager.readonly.cust</field>
+		    <field name="model">crm.lead</field>
+		    <field name="inherit_id" ref="quotation_pit_extended_ten.quotation_per_opportunity_form_view"/>
+		    <field name="groups_id" eval="[(6, 0, [ref('quotation_pit_extended_ten.group_field_readonly_forad')])]"/>
+		    <field name="arch" type="xml">
+		        <field name='user_id' position="attributes">
+		            <attribute name="readonly">0</attribute>
+		        </field>
+		    </field>
+		</record>
+
+		<!-- FOR QUOTATION FIELD READONLY -->
+
+		<record id="view_quotation_cust_ref_readonly" model="ir.ui.view">
+		    <field name="name">quotation.form.readonly.cust</field>
+		    <field name="model">sale.order</field>
+		    <field name="inherit_id" ref="sale.view_order_form"/>
+		    <field name="arch" type="xml">
+		    	<xpath expr='//notebook/page[2]/group/group/field[@name="user_id"]' position="replace">
+		    		<field name="user_id" string="Our Referece" readonly="1"/>
+		    	</xpath>
+		    </field>
+		</record>
+
+		<record id="view_quotation_sales_manager_ref_readonly" model="ir.ui.view">
+		    <field name="name">quotation.sales.manager.readonly.cust</field>
+		    <field name="model">sale.order</field>
+		    <field name="priority" eval="20"/>
+		    <field name="inherit_id" ref="quotation_pit_extended_ten.view_quotation_cust_ref_readonly"/>
+		    <field name="groups_id" eval="[(6, 0, [ref('quotation_pit_extended_ten.group_field_readonly_forad')])]"/>
+		    <field name="arch" type="xml">
+		    	<xpath expr='//notebook/page[2]/group/group/field[@name="user_id"]' position="replace">
+		    		<field name="user_id" string="Our Referece" readonly="0"/>
+		    	</xpath>
 		    </field>
 		</record>
 
