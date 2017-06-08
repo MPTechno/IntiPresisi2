@@ -762,7 +762,7 @@ class crm_lead_line(models.Model):
 
 	workpiece_grade = fields.Many2one('workpiece.grade','Workpiece Grade')
 	kind_of_machine = fields.Many2one('kind.of.machine','Kind of Machine')
-	part_number_product = fields.Char('Part Number')
+	part_number_product = fields.Many2one('sequence.number.product','Part Number')
 	check_uid = fields.Boolean('Users')
 
 	@api.model
@@ -783,6 +783,12 @@ class crm_lead_line(models.Model):
 	def part_number_change(self):
 		for part in self:
 			self.unit_price_en = part.part_number.seq_price
+
+	@api.multi
+	@api.onchange('part_number_product')
+	def part_number_product_change(self):
+		for part in self:
+			self.internal_code_en = part.part_number_product.drawing_number
 
 	@api.multi
 	def create(self, vals):
@@ -974,10 +980,8 @@ class crm_lead_line(models.Model):
 		vals['qty_en'] = 1.0
 		name =''
 		if product:
-			vals['part_number_product'] = product.part_number
 			vals['workpiece_grade'] = product.workpiece_grade.id
 			vals['kind_of_machine'] = product.kind_of_machine.id
-			vals['internal_code_en'] = product.drawing_no
 		if product.description_sale:
 			name += '\n' + product.description_sale
 		vals['remarks_en'] = name
@@ -1008,6 +1012,7 @@ class res_partner(models.Model):
 
 	user_id = fields.Many2one('res.users','Account Owner',default=lambda self: self.env.user)
 	sequence_ids = fields.One2many('sequence.number.partner','sequence_id','Sequence')
+	drawing_ids = fields.One2many('sequence.number.product','partner_id','Drawing')
 	email_count = fields.Integer("Emails", compute='_compute_emails_count')
 	partner_code = fields.Char('Code',required=True)
 	street_delivery =  fields.Char('Street')

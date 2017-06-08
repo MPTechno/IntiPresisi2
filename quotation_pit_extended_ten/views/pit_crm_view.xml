@@ -114,7 +114,7 @@
                                             <field name="qty_en"/>
                                             <field name="product_uom"/>
                                             <field name="part_number" domain="[('product_id', '=', product_en),('sequence_id','=',partner_id)]" attrs="{'readonly':[('check_uid','=',True)]}"/>
-                                            <field name="part_number_product"></field>
+                                            <field name="part_number_product" domain="[('product_id', '=', product_en),('partner_id','=',partner_id)]"></field>
                                             <field name="unit_price_en" attrs="{'readonly':[('check_uid','=',True)]}"/>
                                             <field name="total_price_en"/>
                                         </group>

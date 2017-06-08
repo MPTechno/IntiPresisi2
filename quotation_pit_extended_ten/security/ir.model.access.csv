@@ -43,3 +43,6 @@ access_pricelist_line_partner_sales_person,access.pricelist.line.partner.sales.p
 access_validate_new_date_sales_person,access.validate.new.date.sales.person,quotation_pit_extended_ten.model_validate_new_date,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
 access_phonecall_contact_sales_person,access.phonecall.contact.sales.person,quotation_pit_extended_ten.model_phonecall_contact,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
 access_part_number_line_sales_person,access.part.number.line,quotation_pit_extended_ten.model_part_number_line,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
+
+
+access_sequence_number_product_sales_manager,access.sequence.number.product.manager,quotation_pit_extended_ten.model_sequence_number_product,,1,1,1,1

@@ -74,11 +74,5 @@
             <field name="suffix">-%(month)s-%(year)s</field>
         </record>
 
-<!--         <record id="seq_product_pricelist" model="ir.sequence">
-            <field name="name">Product Pricelist</field>
-            <field name="code">product.pricelist</field>
-            <field name="padding">5</field>
-            <field name="prefix">_%(day)s%(month)s%(year)s_</field>
-        </record> -->
     </data>
 </odoo>
