@@ -26,7 +26,7 @@
         <record id="group_sales_supervisor" model="res.groups">
             <field name="name">Sales Supervisor</field>
             <field name="category_id" ref="module_intiPresisi_rights"/>
-            <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_salesman')),(4,ref('crm_phonecall.group_scheduled_calls')),(4, ref('quotation_pit_extended_ten.group_sales_person_level_pit')),(4, ref('quotation_pit_extended_ten.group_technical_support'))]"/>
+            <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_salesman_all_leads')),(4,ref('crm_phonecall.group_scheduled_calls')),(4, ref('quotation_pit_extended_ten.group_sales_person_level_pit')),(4, ref('quotation_pit_extended_ten.group_technical_support'))]"/>
         </record>
 
         <record id="group_president" model="res.groups">

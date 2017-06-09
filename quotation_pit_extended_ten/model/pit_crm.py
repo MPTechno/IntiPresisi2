@@ -505,11 +505,18 @@ class crm_lead(models.Model):
 			if 'stage_id' in vals:
 				stage = self.stage_id
 				collect_data_list = []
-				collect_list = self.env['res.users'].search(['|',('sales_person_b','=',True),('sales_coordinator_b','=',True)])
-				if collect_list:
-					for i in collect_list:
-						collect_data_list.append(i.partner_id.id)
+				login_user = self.env['res.users'].browse(self._uid)
+				if login_user.sales_coordinator_b == True:
+					collect_data_list.append(login_user.partner_id.id)
+				else:
+					collect_list = self.env['res.users'].search([('sales_coordinator_b','=',True)])
+					if collect_list:
+						for i in collect_list:
+							collect_data_list.append(i.partner_id.id)
 				
+				if login_user.sales_person_b == True:
+					collect_data_list.append(login_user.partner_id.id)
+
 				technical_checking_list = []
 				technical_list = self.env['res.users'].search([('technical_support_b','=',True)])
 				if technical_list:
@@ -625,10 +632,17 @@ class crm_lead(models.Model):
 		res = super(crm_lead, self).create(vals)
 		if 'stage_id' in vals:
 			collect_data_list = []
-			collect_list = self.env['res.users'].search(['|',('sales_person_b','=',True),('sales_coordinator_b','=',True)])
-			if collect_list:
-				for i in collect_list:
-					collect_data_list.append(i.partner_id.id)
+			login_user = self.env['res.users'].browse(self._uid)
+			if login_user.sales_coordinator_b == True:
+				collect_data_list.append(login_user.partner_id.id)
+			else:
+				collect_list = self.env['res.users'].search([('sales_coordinator_b','=',True)])
+				if collect_list:
+					for i in collect_list:
+						collect_data_list.append(i.partner_id.id)
+			
+			if login_user.sales_person_b == True:
+				collect_data_list.append(login_user.partner_id.id)
 			
 			technical_checking_list = []
 			technical_list = self.env['res.users'].search([('technical_support_b','=',True)])

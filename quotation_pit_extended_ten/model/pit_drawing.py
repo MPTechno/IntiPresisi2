@@ -89,28 +89,21 @@ class crm_lead_line(models.Model):
 			partner_obj = self.lead_line_id.partner_id
 			if partner_obj:
 				if partner_obj.drawing_ids:
-					print " >SSSSSSSSSS>>>",vals 
 					for pit in partner_obj.drawing_ids:
 						if self.part_number_product and not vals.get('part_number_product'):
 							if pit.product_id.id == self.product_en.id and pit.drawing_number == vals.get('internal_code_en'):
 								part_id = pit
-								print "111111111111111111",pit.sequence_number , pit.name
 							if pit.product_id.id == self.product_en.id and pit.drawing_number != vals.get('internal_code_en'):
-								print "222222222222222222",pit.sequence_number , pit.name
 								list_of_part.append(pit.sequence_number)                            
 							if self.part_number_product.id == pit.id and pit.product_id.id != self.product_en.id and pit.drawing_number != vals.get('internal_code_en'):
-								print "3333333333333333333",vals.get('internal_code_en')
-						
+								pass						
 						if vals.get('part_number_product'):
 							if pit.id == vals.get('part_number_product') and pit.drawing_number == vals.get('internal_code_en'):
-								print "4444444444444444444",pit
 								part_id = pit
 							if pit.id == vals.get('part_number_product') and pit.drawing_number != vals.get('internal_code_en'):
 								list_of_part.append(pit.sequence_number)
-								print "5555555555555555555",list_of_part
 
 					if not part_id and not list_of_part:
-						print ">>>>>>>>>>>>>>>>>>>>>"
 						draw_dict = {
 							'name': str(partner_obj.partner_code) + ' - ' + format(1, '04'),
 							'partner_id':partner_obj.id,
