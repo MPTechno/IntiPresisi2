@@ -168,7 +168,7 @@
     <record id="res_partner_prospects_rule_own_partner" model="ir.rule">
         <field name="name">Own Partner</field>
         <field ref="base.model_res_partner" name="model_id"/>
-        <field name="domain_force">['|',('user_id','=',user.id),('user_id.admin_b','=',True)]</field>
+        <field name="domain_force">['|',('user_id','=',user.id),'|',('user_id.admin_b','=',True),'|',('user_id.president_director_b','=',True),('user_id','=',False)]</field>
         <field name="groups" eval="[(4, ref('quotation_pit_extended_ten.group_sales_person_level_pit'))]"/>
     </record>
 
