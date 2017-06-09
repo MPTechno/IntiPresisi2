@@ -42,7 +42,15 @@ crm.access_res_partner,res.partner.crm.user,base.model_res_partner,sales_team.gr
 access_pricelist_line_partner_sales_person,access.pricelist.line.partner.sales.person,quotation_pit_extended_ten.model_pricelist_line_partner,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
 access_validate_new_date_sales_person,access.validate.new.date.sales.person,quotation_pit_extended_ten.model_validate_new_date,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
 access_phonecall_contact_sales_person,access.phonecall.contact.sales.person,quotation_pit_extended_ten.model_phonecall_contact,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
-access_part_number_line_sales_person,access.part.number.line,quotation_pit_extended_ten.model_part_number_line,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
+
+access_res_uses_sales_person,access.res.users.line,base.model_res_users,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
+access_res_uses_sales_technical,access.res.users.line.technical,base.model_res_users,quotation_pit_extended_ten.group_technical_support,1,1,1,1
+access_res_uses_sales_supervisor,access.res.users.line.supervisor,base.model_res_users,quotation_pit_extended_ten.group_sales_supervisor,1,1,1,1
+access_res_uses_sales_president,access.res.users.line.president,base.model_res_users,quotation_pit_extended_ten.group_president,1,1,1,1
+access_res_uses_sales_coordinator,access.res.users.line.coordinator,base.model_res_users,quotation_pit_extended_ten.group_sales_coordinator,1,1,1,1
+access_res_uses_sales_director,access.res.users.line.director,base.model_res_users,quotation_pit_extended_ten.group_sales_director,1,1,1,1
+access_res_uses_sales_president_director,access.res.users.line.president.director,base.model_res_users,quotation_pit_extended_ten.group_sales_president_director,1,1,1,1
+access_res_uses_sales_preadmin,access.res.users.line.admin,base.model_res_users,quotation_pit_extended_ten.group_sales_admin,1,1,1,1
 
 
 access_sequence_number_product_sales_manager,access.sequence.number.product.manager,quotation_pit_extended_ten.model_sequence_number_product,,1,1,1,1

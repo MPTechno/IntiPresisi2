@@ -843,23 +843,43 @@
             </field>
         </record>
 
+        <record id="base.view_res_partner_filter" model="ir.ui.view">
+             <field name="name">res.partner.select</field>
+             <field name="model">res.partner</field>
+             <field name="arch" type="xml">
+                 <search string="Search Partner">
+                    <field name="name"
+                        filter_domain="['|','|',('display_name','ilike',self),('ref','=',self),('email','ilike',self)]"/>
+                    <filter help="My Partners" domain="[('user_id','=',uid)]"/>
+                    <separator/>
+                    <filter string="Persons" name="type_person" domain="[('is_company','=',0)]"/>
+                    <filter string="Companies" name="type_company" domain="[('is_company','=',1)]"/>
+                    <separator/>
+                    <filter string="Customers" name="customer" domain="[('customer','=',1),('is_company','!=', False)]"/>
+                    <!-- <filter string="." name="flase" domain="[('parent_id','!=', False)]"/> -->
+                    <filter string="Vendors" name="supplier" domain="[('supplier','=',1), ('parent_id', '=', False)]"/>
+                    <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                    <separator/>
+                    <field name="category_id" string="Tag" filter_domain="[('category_id','ilike', self)]"/>
+                    <field name="user_id"/>
+                    <field name="parent_id" domain="[('is_company','=',1)]" operator="child_of"/>
+                    <group expand="0" name="group_by" string="Group By">
+                        <filter name="salesperson" string="Salesperson" domain="[]" context="{'group_by' : 'user_id'}" />
+                        <filter string="Company" context="{'group_by': 'parent_id'}"/>
+                        <filter string="Country" context="{'group_by': 'country_id'}"/>
+                    </group>
+                </search>
+             </field>
+         </record>
+
         <record id="base.action_partner_form" model="ir.actions.act_window">
             <field name="name">Accounts</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
             <field name="view_mode">kanban,tree,form</field>
-            <field name="context">{"search_default_customer":1}</field>
+            <field name="context">{'search_default_customer':1}</field>
             <field name="search_view_id" ref="base.view_res_partner_filter"/>
-            <field name="help" type="html">
-              <p class="oe_view_nocontent_create">
-                Click to add a contact in your address book.
-              </p><p>
-                Odoo helps you easily track all activities related to
-                a customer; discussions, history of business opportunities,
-                documents, etc.
-              </p>
-            </field>
         </record>
         
         <menuitem id="sales_team.menu_partner_form" name="Accounts" parent="sales_team.menu_sales" action="base.action_partner_form" sequence="2"/>
@@ -874,8 +894,6 @@
 
         <menuitem action="sale.action_orders" id="sale.menu_sale_order" parent="sales_team.menu_sales"
             sequence="12" groups="quotation_pit_extended_ten.group_sales_admin,quotation_pit_extended_ten.group_sales_coordinator,quotation_pit_extended_ten.group_sales_president_director,quotation_pit_extended_ten.group_sales_director"/>
-
-        <!-- <menuitem id="crm.menu_crm_opportunities" action="crm.action_your_pipeline" parent="sales_team.menu_sales" sequence="4" groups=""/> -->
 
     </data>
 </openerp>
