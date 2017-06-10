@@ -26,3 +26,13 @@ class res_company(models.Model):
 	_inherit = 'res.company'
 
 	sign_line_text = fields.Char('Sign Line Name')
+
+
+class sale_order(models.Model):
+	_inherit = 'sale.order'
+
+	@api.multi
+	def action_quotation_send_stage(self):
+		print "##########",self
+		self.write({'state':'sent'})
+		return True

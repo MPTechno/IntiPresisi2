@@ -10,6 +10,10 @@
 			<field name="inherit_id" ref="sale.view_order_form"/>
 			<field name="arch" type="xml">
 				<data>
+					<xpath expr="//button[@name='action_quotation_send']" position="replace"></xpath>
+					<xpath expr="//button[@name='action_quotation_send']" position="replace">
+						<button name="action_quotation_send_stage" string="Quotation Send" type="object" class="btn-primary"/>
+					</xpath>
 					<xpath expr="//button[@name='action_confirm']" position="replace"></xpath>
 					<xpath expr="//button[@name='action_confirm']" position="replace">
 						<button name="%(action_crm_crm_askcode_ponumber_action)d" attrs="{'invisible': [('hide_confirm', '=', True)]}"  string="Confirm Sale" class="btn-primary o_sale_confirm" type="action" />
