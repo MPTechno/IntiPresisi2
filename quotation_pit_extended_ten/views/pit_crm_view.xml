@@ -514,7 +514,7 @@
         </record>
 
         <record model="ir.ui.view" id="quotation_per_opportunity_form_view_lead_view">
-            <field name="name">quotation.per.opportunity.form.view.lead.view</field>
+            <field name="name">quotation.per.opportunity.form.view.lead.view</field> 
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_case_form_view_leads"/>
             <field name="arch" type="xml">

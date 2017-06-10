@@ -20,8 +20,11 @@
                         <field name="pricelis_line_ids" domain="[('pricelist_id', '=', pricelist_id),('product_id','!=',False)]" nolabel="1">
                             <tree>
                                 <field name="product_id"/>
-                                <field name="min_quantity"/>
+                                <field name="part_number"/>
+                                <field name="drawing_number"/>
+                                <field name="product_id"/>
                                 <field name="fixed_price"/>
+                                <field name="pricing_date"/>
                             </tree>
                         </field>
                     </group>

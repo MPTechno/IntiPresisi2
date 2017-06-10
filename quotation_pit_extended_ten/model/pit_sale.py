@@ -33,6 +33,5 @@ class sale_order(models.Model):
 
 	@api.multi
 	def action_quotation_send_stage(self):
-		print "##########",self
 		self.write({'state':'sent'})
 		return True
