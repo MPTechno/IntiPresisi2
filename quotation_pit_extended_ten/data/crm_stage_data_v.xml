@@ -13,7 +13,7 @@
 
                     <p>Enquiry is in ${object.stage_id.name} Stage. You can reply to this email if you have any questions.</p>
                     <p>You Can Find Link Below.</p>
-                    <a href="/web#id=${object.id}&view_type=form&model=crm.lead&action=${'action_id' in ctx and ctx['action_id'] or ''}" style="padding: 5px 10px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:3px">View</a>
+                    <a href="/web#id=${object.id}&view_type=form&model=crm.lead&menu_id=${'menu_id' in ctx and ctx['menu_id'] or ''}&action=${'action_id' in ctx and ctx['action_id'] or ''}" style="padding: 5px 10px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#875A7B; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #875A7B; border: 1px solid #875A7B; border-radius:3px">View</a>
                     <p>Thank you,</p>
 
                     <p style="color:#eeeeee;">

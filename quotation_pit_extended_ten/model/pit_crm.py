@@ -537,27 +537,30 @@ class crm_lead(models.Model):
 						quotation_list.append(l.partner_id.id)
 
 				collect_stage = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_collect_data')
+				action_id = self.env['ir.model.data'].get_object_reference('crm','crm_lead_action_activities')[1]
+				menu_id = self.env['ir.model.data'].get_object_reference('crm','crm_lead_menu_activities')[1]
 				if vals['stage_id'] and collect_stage and vals['stage_id'] == collect_stage[1]:
-					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False)
+					
+					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False).with_context({'action_id':action_id,'menu_id':menu_id})
 					mail_id = template.send_mail(self.id,collect_data_list)
 					self.env['mail.mail'].browse(mail_id).send()
 
 				stage_lead_technical_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_technical_check')
 				if vals['stage_id'] and stage_lead_technical_check and vals['stage_id'] == stage_lead_technical_check[1]:
-					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False)
+					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False).with_context({'action_id':action_id,'menu_id':menu_id})
 					tech_mail_id = template.send_mail(self.id,technical_checking_list)
 					print "EEEEEEEEEEEEEEE",tech_mail_id , technical_checking_list
 					self.env['mail.mail'].browse(tech_mail_id).send()
 
 				pricing_list_ext_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_pricing')
 				if vals['stage_id'] and pricing_list_ext_check and vals['stage_id'] == pricing_list_ext_check[1]:
-					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False)
+					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False).with_context({'action_id':action_id,'menu_id':menu_id})
 					price_mail_id = template.send_mail(self.id,pricing_list)
 					self.env['mail.mail'].browse(price_mail_id).send()
 
 				quotation_list_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_quotations')
 				if vals['stage_id'] and quotation_list_check and vals['stage_id'] == quotation_list_check[1]:
-					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False)
+					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False).with_context({'action_id':action_id,'menu_id':menu_id})
 					quot_mail_id = template.send_mail(self.id,quotation_list)
 					self.env['mail.mail'].browse(quot_mail_id).send()
 		return res
@@ -664,27 +667,29 @@ class crm_lead(models.Model):
 				for l in quotation_list_ext:
 					quotation_list.append(l.partner_id.id)
 
+			action_id = self.env['ir.model.data'].get_object_reference('crm','crm_lead_action_activities')[1]
+			menu_id = self.env['ir.model.data'].get_object_reference('crm','crm_lead_menu_activities')[1]
 			collect_stage = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_collect_data')
 			if vals['stage_id'] and collect_stage and vals['stage_id'] == collect_stage[1]:
-				template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False)
+				template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False).with_context({'action_id':action_id,'menu_id':menu_id})
 				mail_id = template.send_mail(res.id,collect_data_list)
 				self.env['mail.mail'].browse(mail_id).send()
 
 			stage_lead_technical_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_technical_check')
 			if vals['stage_id'] and stage_lead_technical_check and vals['stage_id'] == stage_lead_technical_check[1]:
-				template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False)
+				template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False).with_context({'action_id':action_id,'menu_id':menu_id})
 				tech_mail_id = template.send_mail(res.id,technical_checking_list)
 				self.env['mail.mail'].browse(tech_mail_id).send()
 
 			pricing_list_ext_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_pricing')
 			if vals['stage_id'] and pricing_list_ext_check and vals['stage_id'] == pricing_list_ext_check[1]:
-				template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False)
+				template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False).with_context({'action_id':action_id,'menu_id':menu_id})
 				price_mail_id = template.send_mail(res.id,pricing_list)
 				self.env['mail.mail'].browse(price_mail_id).send()
 
 			quotation_list_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_quotations')
 			if vals['stage_id'] and quotation_list_check and vals['stage_id'] == quotation_list_check[1]:
-				template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False)
+				template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False).with_context({'action_id':action_id,'menu_id':menu_id})
 				quot_mail_id = template.send_mail(res.id,quotation_list)
 				self.env['mail.mail'].browse(quot_mail_id).send()
 		return res
@@ -962,10 +967,10 @@ class sale_order_line(models.Model):
 
 	@api.model
 	def default_get(self, fields):
-	    res = super(sale_order_line, self).default_get(fields)
-	    if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_person_b == True or self.env.user.sales_supervisor_b == True or self.env.user.sales_coordinator_b == True:
-	    	res.update({'check_uid':True})
-	    return res
+		res = super(sale_order_line, self).default_get(fields)
+		if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_person_b == True or self.env.user.sales_supervisor_b == True or self.env.user.sales_coordinator_b == True:
+			res.update({'check_uid':True})
+		return res
 
 	@api.multi
 	def create(self, vals):
