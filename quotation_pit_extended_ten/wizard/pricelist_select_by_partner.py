@@ -43,6 +43,7 @@ class pricelist_line_partner(models.Model):
                     'name':price_line.product_id.name,
                     'product_uom':price_line.product_id.uom_id.id,
                     'order_id':active_id,
+                    'part_number':price_line.part_number.id,
                 }
                 self.env['sale.order.line'].create(res)
             return {'type': 'ir.actions.act_window_close'}

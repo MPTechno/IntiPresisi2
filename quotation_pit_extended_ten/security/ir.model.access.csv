@@ -52,5 +52,4 @@ access_res_uses_sales_director,access.res.users.line.director,base.model_res_use
 access_res_uses_sales_president_director,access.res.users.line.president.director,base.model_res_users,quotation_pit_extended_ten.group_sales_president_director,1,1,1,1
 access_res_uses_sales_preadmin,access.res.users.line.admin,base.model_res_users,quotation_pit_extended_ten.group_sales_admin,1,1,1,1
 
-
 access_sequence_number_product_sales_manager,access.sequence.number.product.manager,quotation_pit_extended_ten.model_sequence_number_product,,1,1,1,1
