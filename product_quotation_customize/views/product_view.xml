@@ -11,11 +11,9 @@
 		    	<xpath expr="//notebook/page[@name='general_information']/group/group[@name='group_general']/field[@name='type']" position="after">
 		        	<field name="part_number"/>
 		        	<field name="part_type_id"/>
-		        	<field name="part_code"/>
 		        	<field name="customer_code"/>
 		        	<field name="customer_part_no"/>
 		        	<field name="revision"/>
-		        	<field name="product_group"/>
 		        	<field name="drawing_no"/>
 		        </xpath>
 		        <xpath expr="//notebook/page[@name='general_information']/group/group[@name='group_standard_price']/field[@name='uom_id']" position="after">

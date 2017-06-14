@@ -58,5 +58,32 @@
             <field name="target">new</field>
         </record>
 
+        <record id="view_part_code_coating_view" model="ir.ui.view">
+            <field name="name">view.part.code.coating.view</field>
+            <field name="model">coating.date.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Interval Date">
+                    <group col="4" colspan="6">
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                    </group>
+                    <footer>
+                        <button name="confirm_print" string="Print" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="coating_wizard_report_action" model="ir.actions.act_window">
+            <field name="name">Interval Date</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">coating.date.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_part_code_coating_view"/>
+            <field name="target">new</field>
+        </record>
+
     </data>
 </openerp>

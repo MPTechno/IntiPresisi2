@@ -17,8 +17,10 @@
         'data/crm_stage_data_v.xml',
         'wizard/lead_ask_code_view.xml',
         'wizard/pricelist_select_by_partner.xml',
+        'views/coating_report_view.xml',
         'views/pit_crm_view.xml',
         'views/pit_sale_view.xml',
+        
     ],
     'qweb': [
         "static/src/xml/sales_name_dashboard.xml",

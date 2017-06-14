@@ -30,8 +30,27 @@ class res_company(models.Model):
 
 class sale_order(models.Model):
 	_inherit = 'sale.order'
-
+	
 	@api.multi
 	def action_quotation_send_stage(self):
 		self.write({'state':'sent'})
 		return True
+
+class part_code_pit(models.Model):
+	_name = 'part.code.pit'
+
+	name = fields.Char('Part Code')
+
+class product_group_pit(models.Model):
+	_name = 'product.group.pit'
+
+	name = fields.Char('Product Group')
+
+class product_template(models.Model):
+	_inherit = 'product.template'
+
+	workpiece_grade = fields.Many2one('workpiece.grade','Workpiece Grade')
+	kind_of_machine = fields.Many2one('kind.of.machine','Kind of Machine')
+	part_code = fields.Many2one('part.code.pit','Part Code')
+	product_group = fields.Many2one('product.group.pit','Product Group')
+

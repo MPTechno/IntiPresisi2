@@ -138,3 +138,46 @@ class crm_askcode_ponumber(models.TransientModel):
 			'type': 'ir.actions.act_window',
 			'context': {}
 		}
+
+
+class coating_date_wizard(models.TransientModel):
+	_name = 'coating.date.wizard'
+
+	start_date = fields.Date('Start Date', required=True)
+	end_date = fields.Date('End Date',required=True)
+
+	@api.multi
+	def get_total(self, obj):
+		sale_obj = self.env['sale.order'].search([('state','=','sale'),('confirmation_date','>=',obj.start_date),('confirmation_date','<=',obj.end_date)])
+		list_of_line = 0.0
+		if sale_obj:
+			for order in sale_obj:
+				for line in order.order_line:
+					if line.coating_en:
+						list_of_line += line.price_subtotal
+		final_dict = {
+			'currency_id':self.env.user.company_id.currency_id,
+			'total':list_of_line
+		}
+		return final_dict		
+
+	@api.multi
+	def get_order_line(self,obj):
+		sale_obj = self.env['sale.order'].search([('state','=','sale'),('confirmation_date','>=',obj.start_date),('confirmation_date','<=',obj.end_date)])
+		list_of_line = []
+		if sale_obj:
+			for order in sale_obj:
+				for line in order.order_line:
+					if line.coating_en:
+						list_of_line.append(line)
+		return list_of_line
+
+	@api.multi
+	def confirm_print(self):
+		datas = {
+			'ids': [],
+			'model': 'sale.order',
+			'date_start': self.start_date,
+			'date_stop': self.end_date
+		}
+		return self.env['report'].get_action([], 'quotation_pit_extended_ten.coating_report_template', data=datas)

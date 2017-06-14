@@ -52,6 +52,20 @@
 					<xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="replace">
 						<field name="price_unit" attrs="{'readonly':[('check_uid','=',True)]}"></field>
 					</xpath>
+					<xpath expr="//field[@name='order_line']" position="attributes">
+						<attribute name="context">{'partner_id':partner_id}</attribute>
+					</xpath>
+					<xpath expr="//field[@name='order_line']/form/group/group//field[@name='tax_id']" position="before">
+						<field name="partner_id" invisible="1"/>
+						<field name="part_number" domain="[('product_id', '=', product_id),('sequence_id','=',partner_id)]" attrs="{'readonly':[('check_uid','=',True)]}"/>
+						<field name="part_number_product" domain="[('product_id', '=', product_id),('partner_id','=',partner_id)]"></field>
+						<field name="drawing_number"/>
+						<field name="workpiece_grade"/>
+						<field name="kind_of_machine"/>
+						<field name="workpiece_material"/>
+						<field name="coating_en"/>
+						<field name="pricing_date"/>
+					</xpath>
 				</data>
 			</field>
 		</record>
@@ -205,5 +219,22 @@
 		    	</tree>
 		    </field>
 		</record>
+	
+		<record id="product_template_form_view_intipresisi_tn" model="ir.ui.view">
+			<field name="name">product.template.common.form.tn.intipresisi</field>
+			<field name="model">product.template</field>
+			<field name="inherit_id" ref="product.product_template_form_view"/>
+			<field name="arch" type="xml">
+			    <data>
+			    	<xpath expr="//notebook/page[@name='general_information']/group/group[@name='group_general']/field[@name='type']" position="after">
+			        	<field name="part_code"/>
+			        	<field name="product_group"/>
+			        </xpath>
+			    </data>
+			</field>
+		</record>
+
+
+		<menuitem id="coating_report_part_code" name="Part Code Report" parent="sales_team.menu_sale_report" sequence="5" action="quotation_pit_extended_ten.coating_wizard_report_action" />
 	</data>
 </openerp>

@@ -416,8 +416,7 @@ class crm_lead(models.Model):
 	@api.multi
 	def _compute_emails_count(self):
 		for partner in self:
-			if partner.partner_id:
-				partner.email_count = self.env['mail.mail'].search_count([('recipient_ids','in', [partner.partner_id.id])])
+			partner.email_count = self.env['mail.mail'].search_count([('res_id','=', [partner.id])])
 
 	@api.multi
 	def _compute_meeting_count_lead(self):
@@ -438,6 +437,7 @@ class crm_lead(models.Model):
 			access_stage_list.append(stage_lead_technical_check)
 			access_stage_list_coordinate.append(stage_lead_technical_check)
 			access_stage_list_person.append(stage_lead_technical_check)
+			access_stage_list_tech.append(stage_lead_technical_check)
 			access_stage_list_supervisor.append(stage_lead_technical_check)
 
 		quotation_list_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_quotations')[1]
@@ -482,7 +482,7 @@ class crm_lead(models.Model):
 				if vals['stage_id'] and vals['stage_id'] in access_stage_list_tech: 
 					pass
 				else:
-					raise UserError(_('You Can Only Edit Enquiry to Collect Date , Pricing , No Offer Stage. Please Contact your Administrator.'))
+					raise UserError(_('You Can Only Edit Enquiry to Technical Checking, Collect Date , Pricing , No Offer Stage. Please Contact your Administrator.'))
 
 			if login_user.sales_coordinator_b == True:
 				if vals['stage_id'] and vals['stage_id'] in access_stage_list_coordinate:
@@ -577,6 +577,7 @@ class crm_lead(models.Model):
 			access_stage_list.append(stage_lead_technical_check)
 			access_stage_list_coordinate.append(stage_lead_technical_check)
 			access_stage_list_person.append(stage_lead_technical_check)
+			access_stage_list_tech.append(stage_lead_technical_check)
 			access_stage_list_supervisor.append(stage_lead_technical_check)
 
 		quotation_list_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_quotations')[1]
@@ -615,7 +616,7 @@ class crm_lead(models.Model):
 					if vals['stage_id'] and vals['stage_id'] in access_stage_list_tech: 
 						pass
 					else:
-						raise UserError(_('You Can Only Edit Enquiry to Collect Date , Pricing , No Offer Stage. Please Contact your Administrator.'))
+						raise UserError(_('You Can Only Edit Enquiry to Technical Checking, Collect Date , Pricing , No Offer Stage. Please Contact your Administrator.'))
 
 				if login_user.sales_coordinator_b == True:
 					if vals['stage_id'] and vals['stage_id'] in access_stage_list_coordinate:
@@ -729,6 +730,12 @@ class crm_lead_line(models.Model):
 			partner = context.get('partner_id')
 		return partner
 
+	@api.one
+	@api.depends('unit_price_en')
+	def compute_vissibility(self):
+		if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_coordinator_b == True or self.env.user.sales_supervisor_b == True or self.env.user.sales_person_b == True:
+			self.check_uid = True
+
 		# PRODUCT PRICELISTINGt
 	
 	lead_line_id = fields.Many2one('crm.lead',string='Listing Line',index=True)
@@ -740,7 +747,7 @@ class crm_lead_line(models.Model):
 	tax_id = fields.Many2many('account.tax', string='Taxes', domain=['|', ('active', '=', False), ('active', '=', True)])
 	internal_code_en = fields.Char('Internal Code')
 	workpiece_material = fields.Many2one('workpiece.material','Workpiece Material')
-	coating_en = fields.Many2one('coating.enquiry','Coating')
+	coating_en = fields.Many2one('coating.enquiry','Coating (Part Name)')
 	product_uom = fields.Many2one('product.uom', string='Unit of Measure', required=True)
 	pricing_date = fields.Date('Pricing Date')
 	remarks_en = fields.Text('Remarks')
@@ -754,16 +761,10 @@ class crm_lead_line(models.Model):
 	workpiece_grade = fields.Many2one('workpiece.grade','Workpiece Grade')
 	kind_of_machine = fields.Many2one('kind.of.machine','Kind of Machine')
 	part_number_product = fields.Many2one('sequence.number.product','Part Number')
-	check_uid = fields.Boolean('Users')
-
-
-
-class product_template(models.Model):
-	_inherit = 'product.template'
-
-	workpiece_grade = fields.Many2one('workpiece.grade','Workpiece Grade')
-	kind_of_machine = fields.Many2one('kind.of.machine','Kind of Machine')
-
+	check_uid = fields.Boolean(compute='compute_vissibility', string='Users')
+	add_name_1 = fields.Char('Add Name 1')
+	add_name_2 = fields.Char('Add Name 2')
+	part_name = fields.Char('Part Name')
 
 class res_partner(models.Model):
 	_inherit = 'res.partner'
@@ -856,6 +857,19 @@ class sale_order(models.Model):
 	or_sale_id = fields.Many2one('Origin')
 	validity_new_date = fields.Many2one('validate.new.date','Expiration Date')
 	po_num = fields.Char('PO Number')
+	user_id = fields.Many2one('res.users', string='Our Reference', index=True, track_visibility='onchange')
+
+
+	@api.multi
+	def create(self, vals):
+		res = super(sale_order, self).create(vals)
+		if vals.get('opportunity_id'):
+			res.write({'user_id':self.env['crm.lead'].browse(vals.get('opportunity_id')).user_id.id})
+		else:
+			if vals.get('partner_id'):
+				res.write({'user_id':self.env['res.partner'].browse(vals.get('partner_id')).user_id.id})
+		return res
+
 
 	@api.multi
 	@api.onchange('opportunity_id')
@@ -871,7 +885,16 @@ class sale_order(models.Model):
 					'product_id':op_line.product_en,
 					'product_uom_qty':op_line.qty_en,
 					'part_number':op_line.part_number.id,
+					'part_number_product':op_line.part_number_product.id,
+					'drawing_number':op_line.internal_code_en,
+					'workpiece_grade':op_line.workpiece_grade.id,
+					'kind_of_machine':op_line.kind_of_machine.id,
+					'workpiece_material':op_line.workpiece_material.id,
+					'coating_en':op_line.coating_en.id,
 					'price_unit':op_line.unit_price_en,
+					'pricing_date':op_line.pricing_date,
+					'name':op_line.remarks_en,
+					'partner_id':op_line.partner_id.id,
 					'discount':op_line.discount,
 					'stat_line':'open',
 					'tax_id':[(6,0,taxlist)],
@@ -903,6 +926,14 @@ class sale_order(models.Model):
 						'name':line.name,
 						'po_num':self._context.get('po_num'),
 						'part_number':line.part_number.id,
+						'part_number_product':line.part_number_product.id,
+						'drawing_number':line.drawing_number,
+						'workpiece_grade':line.workpiece_grade.id,
+						'kind_of_machine':line.kind_of_machine.id,
+						'workpiece_material':line.workpiece_material.id,
+						'coating_en':line.coating_en.id,
+						'pricing_date':line.pricing_date,
+						'partner_id':line.partner_id.id,
 						'stat_line':'so',
 						'confirm_line_box':True,
 						'layout_category_id':line.layout_category_id.id,
@@ -960,58 +991,61 @@ class sale_order(models.Model):
 class sale_order_line(models.Model):
 	_inherit= 'sale.order.line'
 
-	part_number = fields.Many2one('sequence.number.partner','Part Number')
+	@api.model
+	def _get_partner(self):
+		partner = False
+		context = self._context or {}
+		if context.get('partner_id'):
+			partner = context.get('partner_id')
+		return partner
+
+
+	part_number = fields.Many2one('sequence.number.partner','Price History')
+	part_number_product = fields.Many2one('sequence.number.product','Part Number')
+	drawing_number = fields.Char('Drawing Number')
+	workpiece_grade = fields.Many2one('workpiece.grade','Workpiece Grade')
+	kind_of_machine = fields.Many2one('kind.of.machine','Kind of Machine')
+	workpiece_material = fields.Many2one('workpiece.material','Workpiece Material')
+	coating_en = fields.Many2one('coating.enquiry','Coating (Part Name)')
+	pricing_date = fields.Date('Pricing Date')
+	name = fields.Text(string='Remarks',required=False)
+	partner_id = fields.Many2one('res.partner',string='Account' ,default=_get_partner,store=True)
+
 	confirm_line_box = fields.Boolean('.')
 	stat_line = fields.Selection([('so','SO'),('open','Open')],'Status',default='open')
-	check_uid = fields.Boolean('Users')
-
-	@api.model
-	def default_get(self, fields):
-		res = super(sale_order_line, self).default_get(fields)
-		if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_person_b == True or self.env.user.sales_supervisor_b == True or self.env.user.sales_coordinator_b == True:
-			res.update({'check_uid':True})
-		return res
+	check_uid = fields.Boolean(compute='compute_vissibility', string='Users')
 
 	@api.multi
 	def create(self, vals):
 		if not vals.get('name'):
 			vals.update({'name':self.env['product.product'].browse(vals.get('product_id')).name})
-		if vals.get('product_id'):
-			pricelis_dict = {}
-			for priclist in self.env['sale.order'].browse(vals.get('order_id')).partner_id.property_product_pricelist.item_ids:
-				if priclist.product_id.id == vals.get('product_id'):
-					pricelis_dict = {
-						'item_ids': [(1, priclist.id, {'fixed_price': vals.get('price_unit')})]
-					}
-			if not pricelis_dict:
-				pricelis_dict = {
-					'item_ids': [(0, 0, {
-							'applied_on': '0_product_variant',
-							'compute_price': 'fixed',
-							'product_id':vals.get('product_id'),
-							'fixed_price': vals.get('price_unit'),
-						})]
-				}
-			self.env['sale.order'].browse(vals.get('order_id')).partner_id.property_product_pricelist.write(pricelis_dict)
 		return super(sale_order_line, self).create(vals)
 
 	@api.multi
-	def write(self, vals):
-		if vals.get('price_unit'):
-			pricelis_dict = {}
-			for priclist in self.order_id.partner_id.property_product_pricelist.item_ids:
-				if priclist.product_id.id == self.product_id.id:
-					pricelis_dict = {
-						'item_ids': [(1, priclist.id, {'fixed_price': vals.get('price_unit')})]
-					}
-			if not pricelis_dict:
-				pricelis_dict = {
-					'item_ids': [(0, 0, {
-							'applied_on': '0_product_variant',
-							'compute_price': 'fixed',
-							'product_id':self.product_id.id,
-							'fixed_price': vals.get('price_unit'),
-						})]
-				}
-			self.order_id.partner_id.property_product_pricelist.write(pricelis_dict)
-		return super(sale_order_line, self).write(vals)
+	@api.onchange('price_unit')
+	def on_changeunit_price_en(self):
+		for ob in self:
+			self.pricing_date = fields.Datetime.now()
+
+	@api.multi
+	@api.onchange('part_number')
+	def part_number_change(self):
+		for part in self:
+			values = {
+				'price_unit': part.part_number.seq_price,
+				'pricing_date': part.part_number.pricing_date,
+			}
+		self.update(values)
+
+	@api.multi
+	@api.onchange('part_number_product')
+	def part_number_product_change(self):
+		for part in self:
+			self.drawing_number = part.part_number_product.drawing_number
+
+	@api.one
+	@api.depends('price_unit')
+	def compute_vissibility(self):
+		if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_person_b == True or self.env.user.sales_supervisor_b == True or self.env.user.sales_coordinator_b == True:
+			self.check_uid = True
+

@@ -315,13 +315,6 @@ class crm_lead_line(models.Model):
 			self.lead_line_id.partner_id.property_product_pricelist.write(pricelis_dict)
 		return super(crm_lead_line, self).write(vals)
 
-	@api.model
-	def default_get(self, fields):
-		res = super(crm_lead_line, self).default_get(fields)
-		if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_coordinator_b == True or self.env.user.sales_supervisor_b == True or self.env.user.sales_person_b == True:
-			res.update({'check_uid':True})
-		return res
-
 	@api.multi
 	@api.onchange('unit_price_en')
 	def on_changeunit_price_en(self):
