@@ -348,7 +348,9 @@ class crm_lead(models.Model):
 	last_modified_by_en = fields.Datetime('Last Modified By')
 
 		# Attachments
-	attachment_en = fields.Binary('Attachment')
+	attachment_en = fields.Binary('Attachment 1')
+	attachment_en1 = fields.Binary('Attachment 2')
+	attachment_en2 = fields.Binary('Attachment 3')
 	attachment_type_id = fields.Many2one('attachment.type.en','Type')
 	title_attach = fields.Char('Title')
 	last_modified_attach = fields.Datetime('Last Modified')
