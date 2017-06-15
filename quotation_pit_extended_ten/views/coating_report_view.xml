@@ -97,6 +97,6 @@
 		<report id="part_name_report_menu_id" string="Part Name Report" 
 			model="sale.order"  report_type="qweb-pdf"
 		    name="quotation_pit_extended_ten.coating_report_template"
-		    file="quotation_pit_extended_ten.coating_report_template" />
+		    file="quotation_pit_extended_ten.coating_report_template" menu="False"/>
 	</data>
 </openerp>

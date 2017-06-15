@@ -15,6 +15,7 @@ class product_pricelist_item(models.Model):
 	_inherit = 'product.pricelist.item'
 
 	part_number = fields.Many2one('sequence.number.partner','Price History')
+	part_number_product = fields.Many2one('sequence.number.product','Part Number')
 	drawing_number = fields.Char('Drawing Number')
 	pricing_date = fields.Date('Pricing Date')
 	quantity_new = fields.Integer('Quantity',default=0)
@@ -167,7 +168,7 @@ class crm_lead_line(models.Model):
 					part_id = self.env['sequence.number.product'].create(seq_dict)
 					partner_obj.write({'sequence_number': max(list_of_part) + 1})
 				vals.update({'part_number_product':part_id.id})
-		if vals.get('unit_price_en'):
+		if vals.get('unit_price_en') or vals.get('internal_code_en'):
 			pricelis_dict = {}
 			# for priclist in self.env['crm.lead'].browse(vals.get('lead_line_id')).partner_id.property_product_pricelist.item_ids:
 			# 	if priclist.product_id.id == vals.get('product_en'):
@@ -184,6 +185,7 @@ class crm_lead_line(models.Model):
 						'part_number':vals.get('part_number'),
 						'drawing_number':vals.get('internal_code_en'),
 						'pricing_date':fields.Datetime.now(),
+						'part_number_product':vals.get('part_number_product'),
 					})]
 			}
 			vals.update({'pricing_date':fields.Datetime.now()})
@@ -290,7 +292,7 @@ class crm_lead_line(models.Model):
 					part_id = self.env['sequence.number.product'].create(draw_dict)
 					partner_obj.write({'sequence_number': max(list_of_part) + 1})
 				vals.update({'part_number_product':part_id.id})
-		if vals.get('unit_price_en'):
+		if vals.get('unit_price_en')  or vals.get('internal_code_en'):
 			print "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",vals
 			pricelis_dict = {}
 			# for priclist in self.lead_line_id.partner_id.property_product_pricelist.item_ids:
@@ -308,6 +310,7 @@ class crm_lead_line(models.Model):
 						'part_number':vals.get('part_number'),
 						'drawing_number':vals.get('internal_code_en') or self.internal_code_en,
 						'pricing_date':fields.Datetime.now(),
+						'part_number_product':vals.get('part_number_product'),
 					})]
 			}
 			if not vals.get('pricing_date'):

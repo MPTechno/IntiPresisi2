@@ -44,6 +44,10 @@ class pricelist_line_partner(models.Model):
                     'product_uom':price_line.product_id.uom_id.id,
                     'order_id':active_id,
                     'part_number':price_line.part_number.id,
+                    'part_number_product':price_line.part_number_product.id,
+                    'drawing_number':price_line.drawing_number,
+                    'price_unit':price_line.part_number.seq_price,
+                    'pricing_date':price_line.part_number.pricing_date,
                 }
                 self.env['sale.order.line'].create(res)
             return {'type': 'ir.actions.act_window_close'}

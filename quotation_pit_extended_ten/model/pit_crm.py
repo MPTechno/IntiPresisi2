@@ -747,7 +747,7 @@ class crm_lead_line(models.Model):
 	tax_id = fields.Many2many('account.tax', string='Taxes', domain=['|', ('active', '=', False), ('active', '=', True)])
 	internal_code_en = fields.Char('Internal Code')
 	workpiece_material = fields.Many2one('workpiece.material','Workpiece Material')
-	coating_en = fields.Many2one('coating.enquiry','Coating (Part Name)')
+	coating_en = fields.Many2one('coating.enquiry','Coating (Part Code)')
 	product_uom = fields.Many2one('product.uom', string='Unit of Measure', required=True)
 	pricing_date = fields.Date('Pricing Date')
 	remarks_en = fields.Text('Remarks')
@@ -893,6 +893,9 @@ class sale_order(models.Model):
 					'coating_en':op_line.coating_en.id,
 					'price_unit':op_line.unit_price_en,
 					'pricing_date':op_line.pricing_date,
+					'part_name':op_line.part_name,
+					'add_name_1':op_line.add_name_1,
+					'add_name_2':op_line.add_name_2,
 					'name':op_line.remarks_en,
 					'partner_id':op_line.partner_id.id,
 					'discount':op_line.discount,
@@ -933,6 +936,9 @@ class sale_order(models.Model):
 						'workpiece_material':line.workpiece_material.id,
 						'coating_en':line.coating_en.id,
 						'pricing_date':line.pricing_date,
+						'part_name':line.part_name,
+						'add_name_1':line.add_name_1,
+						'add_name_2':line.add_name_2,
 						'partner_id':line.partner_id.id,
 						'stat_line':'so',
 						'confirm_line_box':True,
@@ -1006,7 +1012,7 @@ class sale_order_line(models.Model):
 	workpiece_grade = fields.Many2one('workpiece.grade','Workpiece Grade')
 	kind_of_machine = fields.Many2one('kind.of.machine','Kind of Machine')
 	workpiece_material = fields.Many2one('workpiece.material','Workpiece Material')
-	coating_en = fields.Many2one('coating.enquiry','Coating (Part Name)')
+	coating_en = fields.Many2one('coating.enquiry','Coating (Part Code)')
 	pricing_date = fields.Date('Pricing Date')
 	name = fields.Text(string='Remarks',required=False)
 	partner_id = fields.Many2one('res.partner',string='Account' ,default=_get_partner,store=True)
@@ -1014,6 +1020,9 @@ class sale_order_line(models.Model):
 	confirm_line_box = fields.Boolean('.')
 	stat_line = fields.Selection([('so','SO'),('open','Open')],'Status',default='open')
 	check_uid = fields.Boolean(compute='compute_vissibility', string='Users')
+	add_name_1 = fields.Char('Add Name 1')
+	add_name_2 = fields.Char('Add Name 2')
+	part_name = fields.Char('Part Name')
 
 	@api.multi
 	def create(self, vals):

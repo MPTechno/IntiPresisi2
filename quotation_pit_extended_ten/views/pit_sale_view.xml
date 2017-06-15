@@ -46,8 +46,13 @@
 					<xpath expr="//field[@name='partner_id']" position="before">
 						<field name="po_num" attrs="{'invisible': [('state','!=','sale')]}"/>
 					</xpath>
+					<xpath expr="//field[@name='order_line']/form/group/group//field[@name='product_id']" position="after">
+						<field name="part_name"/>
+					</xpath>
 					<xpath expr="//field[@name='order_line']/form/group/group//field[@name='price_unit']" position="replace">
 						<field name="price_unit" attrs="{'readonly':[('check_uid','=',True)]}"></field>
+						<field name="add_name_1"/>
+						<field name="add_name_2"/>
 					</xpath>
 					<xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="replace">
 						<field name="price_unit" attrs="{'readonly':[('check_uid','=',True)]}"></field>
@@ -180,7 +185,7 @@
 		    <field name="inherit_id" ref="product.product_pricelist_view"/>
 		    <field name="arch" type="xml">
 		    	<xpath expr="//field[@name='item_ids']/tree//field[@name='name']" position="after">
-		    		<field name="part_number"/>
+		    		<field name="part_number_product"/>
 		    		<field name="drawing_number"/>
 		    		<field name="pricing_date"/>
 		    	</xpath>
@@ -194,11 +199,11 @@
 		        <search string="Search Priselist Line">
 		            <field name="product_id"/>
 		            <field name="drawing_number"/>
-		            <field name="part_number"/>
+		            <field name="part_number_product"/>
 		            <separator/>
 		            <group expand="0" string="Group By">
 		                <filter string="Product" domain="[]" context="{'group_by':'product_id'}"/>
-		                <filter string="Price History" domain="[]" context="{'group_by':'part_number'}"/>
+		                <filter string="Part Number" domain="[]" context="{'group_by':'part_number_product'}"/>
 		                <filter string="Price Date" domain="[]" context="{'group_by':'pricing_date'}"/>
 		            </group>
 		       </search>
@@ -211,7 +216,7 @@
 		    <field name="arch" type="xml">
 		    	<tree string="Add Pricelist line">
 		    		<field name="product_id"/>
-		    		<field name="part_number"/>
+		    		<field name="part_number_product"/>
 		    		<field name="drawing_number"/>
 		    		<field name="product_id"/>
 		    		<field name="fixed_price"/>
