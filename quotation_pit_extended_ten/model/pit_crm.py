@@ -710,6 +710,29 @@ class crm_lead(models.Model):
 		vals['en_stages'] = stage_id
 		return vals
 
+	@api.multi
+	def action_schedule_meeting(self):
+		""" Open meeting's calendar view to schedule meeting on current opportunity.
+			:return dict: dictionary value for created Meeting view
+		"""
+		self.ensure_one()
+		action = self.env.ref('calendar.action_calendar_event').read()[0]
+		partner_ids = self.env.user.partner_id.ids
+		if self.partner_id:
+			partner_ids.append(self.partner_id.id)
+		action['context'] = {
+			# 'search_default_user_id':self.user_id
+			# 'search_default_opportunity_id': self.id if self.type == 'opportunity' else False,
+			# 'default_opportunity_id': self.id if self.type == 'opportunity' else False,
+			# 'default_partner_id': self.partner_id.id,
+			# 'default_partner_ids': partner_ids,
+			# 'default_team_id': self.team_id.id,
+			# 'default_name': self.name,
+		}
+		# action['domain'] = { 'user_id' :self.env.user}
+		return action
+
+
 class crm_lead_line(models.Model):
 	_name='crm.lead.line'
 	_order = 'lead_line_id'
@@ -753,7 +776,7 @@ class crm_lead_line(models.Model):
 	tax_id = fields.Many2many('account.tax', string='Taxes', domain=['|', ('active', '=', False), ('active', '=', True)])
 	internal_code_en = fields.Char('Internal Code')
 	workpiece_material = fields.Many2one('workpiece.material','Workpiece Material')
-	coating_en = fields.Many2one('coating.enquiry','Coating (Part Code)')
+	coating_en = fields.Many2one('coating.enquiry','Coating')
 	product_uom = fields.Many2one('product.uom', string='Unit of Measure', required=True)
 	pricing_date = fields.Date('Pricing Date')
 	remarks_en = fields.Text('Remarks')
@@ -1018,7 +1041,7 @@ class sale_order_line(models.Model):
 	workpiece_grade = fields.Many2one('workpiece.grade','Workpiece Grade')
 	kind_of_machine = fields.Many2one('kind.of.machine','Kind of Machine')
 	workpiece_material = fields.Many2one('workpiece.material','Workpiece Material')
-	coating_en = fields.Many2one('coating.enquiry','Coating (Part Code)')
+	coating_en = fields.Many2one('coating.enquiry','Coating')
 	pricing_date = fields.Date('Pricing Date')
 	name = fields.Text(string='Remarks',required=False)
 	partner_id = fields.Many2one('res.partner',string='Account' ,default=_get_partner,store=True)

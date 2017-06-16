@@ -63,9 +63,14 @@
             <field name="model">coating.date.wizard</field>
             <field name="arch" type="xml">
                 <form string="Interval Date">
-                    <group col="4" colspan="6">
-                        <field name="start_date"/>
-                        <field name="end_date"/>
+                    <group>
+                        <group>
+                            <field name="coating_en"/>
+                        </group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
                     </group>
                     <footer>
                         <button name="confirm_print" string="Print" type="object" class="oe_highlight"/>

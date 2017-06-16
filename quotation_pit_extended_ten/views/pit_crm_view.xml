@@ -669,7 +669,7 @@
                             name="%(crm.crm_lead_opportunities)d"
                             icon="fa-star"
                             context="{'search_default_partner_id': active_id}">
-                            <field string="Opportunities" name="opportunity_count" widget="statinfo"/>
+                            <field string="Enquiries" name="opportunity_count" widget="statinfo"/>
                         </button>
                         <button class="oe_stat_button" type="object"
                             name="schedule_meeting"
@@ -805,9 +805,20 @@
                 <xpath expr="//field[@name='location']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <xpath expr="//notebook/page[4]" position="attributes">
+                    <attribute name="groups"></attribute>
+                </xpath>
             </field>
         </record>
 
+        <record id="calendar.action_calendar_event" model="ir.actions.act_window">
+            <field name="name">Meetings</field>
+            <field name="res_model">calendar.event</field>
+            <field name="view_mode">calendar,tree,form</field>
+            <field name="domain">[('user_id','=',uid)]</field>
+            <field name="view_id" ref="calendar.view_calendar_event_calendar"/>
+            <field name="search_view_id" ref="calendar.view_calendar_event_search"/>
+        </record>
     
 
         <record model="ir.actions.act_window" id="crm.crm_case_category_act_leads_all">

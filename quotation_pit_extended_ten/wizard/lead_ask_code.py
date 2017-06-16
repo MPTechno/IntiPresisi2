@@ -149,6 +149,7 @@ class crm_askcode_ponumber(models.TransientModel):
 class coating_date_wizard(models.TransientModel):
 	_name = 'coating.date.wizard'
 
+	coating_en = fields.Many2one('coating.enquiry','Coating')
 	start_date = fields.Date('Start Date', required=True)
 	end_date = fields.Date('End Date',required=True)
 
@@ -162,8 +163,7 @@ class coating_date_wizard(models.TransientModel):
 		row = 1
 		col = 0
 		bold_format = workbook.add_format({'bold':  1})
-		bold_color_format = workbook.add_format({'bold':  1})
-		bold_color_format.set_font_color('Blue')
+		right_format = workbook.add_format({'bold':1,'align':'right'})
 		merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter'})
 		worksheet.merge_range('A1:H2', 'Part Code (Coating) From Date : ' + datetime.strptime(self.start_date, '%Y-%m-%d').strftime('%m/%d/%Y')  + " To : " + datetime.strptime(self.end_date, '%Y-%m-%d').strftime('%m/%d/%Y') , merge_format)
 		worksheet.set_column(row, col, 20)
@@ -233,6 +233,11 @@ class coating_date_wizard(models.TransientModel):
 			col += 1
 		row += 2
 		row += 1
+
+		worksheet.write(row, 6, 'Total', bold_format)
+		worksheet.set_column(row, col, 20)
+		worksheet.write(row, 7,str(res.get_total(self)['currency_id'].name) + ' ' + str(res.get_total(self)['total']) or 0.0,right_format)
+
 		workbook.close()
 		output.seek(0)
 		result = base64.b64encode(output.read())
@@ -254,8 +259,13 @@ class coating_date_wizard(models.TransientModel):
 		if sale_obj:
 			for order in sale_obj:
 				for line in order.order_line:
-					if line.coating_en:
-						list_of_line += line.price_subtotal
+					if obj.coating_en:
+						if line.coating_en.id == obj.coating_en.id:
+							list_of_line += line.price_subtotal
+					else:
+						if line.coating_en.id:
+							list_of_line += line.price_subtotal
+						
 		final_dict = {
 			'currency_id':self.env.user.company_id.currency_id,
 			'total':list_of_line
@@ -269,8 +279,13 @@ class coating_date_wizard(models.TransientModel):
 		if sale_obj:
 			for order in sale_obj:
 				for line in order.order_line:
-					if line.coating_en:
-						list_of_line.append(line)
+					if obj.coating_en:
+						if line.coating_en.id == obj.coating_en.id:
+							list_of_line.append(line)
+					else:
+						if line.coating_en.id:
+							list_of_line.append(line)
+
 		return list_of_line
 
 	@api.multi
