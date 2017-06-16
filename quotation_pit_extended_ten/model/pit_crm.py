@@ -256,6 +256,16 @@ class phonecall_contact(models.Model):
 
 	name = fields.Char('Contact')
 
+class attachment_enquiry(models.Model):
+	_name = 'attachment.enquiry'
+
+	attach_id = fields.Many2one('crm.lead','Lead')
+	attachment_en = fields.Binary('Attachment')
+	attachment_type_id = fields.Many2one('attachment.type.en','Type')
+	title_attach = fields.Char('Title')
+	last_modified_attach = fields.Datetime('Last Modified')
+	created_by_attch = fields.Many2one('res.users','Created By',default=lambda self: self.env.user)
+
 class MailTemplate(models.Model):
 	_inherit = "mail.template"
 	_description = 'Email Templates'
@@ -348,13 +358,7 @@ class crm_lead(models.Model):
 	last_modified_by_en = fields.Datetime('Last Modified By')
 
 		# Attachments
-	attachment_en = fields.Binary('Attachment 1')
-	attachment_en1 = fields.Binary('Attachment 2')
-	attachment_en2 = fields.Binary('Attachment 3')
-	attachment_type_id = fields.Many2one('attachment.type.en','Type')
-	title_attach = fields.Char('Title')
-	last_modified_attach = fields.Datetime('Last Modified')
-	created_by_attch = fields.Many2one('res.users','Created By',default=lambda self: self.env.user)
+	attachment_en_ids = fields.One2many('attachment.enquiry','attach_id',string="Attachment")
 
 	lead_line_ids = fields.One2many('crm.lead.line','lead_line_id',string='CRM Lead Line')
 
@@ -418,7 +422,7 @@ class crm_lead(models.Model):
 	@api.multi
 	def _compute_emails_count(self):
 		for partner in self:
-			partner.email_count = self.env['mail.mail'].search_count([('res_id','=', [partner.id])])
+			partner.email_count = self.env['mail.mail'].search_count([('res_id','in', [partner.id])])
 
 	@api.multi
 	def _compute_meeting_count_lead(self):

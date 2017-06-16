@@ -70,6 +70,8 @@
                     <footer>
                         <button name="confirm_print" string="Print" type="object" class="oe_highlight"/>
                         or
+                        <button class="oe_highlight" name="get_report" string="Export xls" type="object" context="{'xls_export':1}"/>
+                        or 
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
                 </form>

@@ -12,6 +12,12 @@ from odoo.tools.misc import formatLang
 from odoo.addons.base.res.res_partner import WARNING_MESSAGE, WARNING_HELP
 import odoo.addons.decimal_precision as dp
 
+import base64
+import StringIO
+import xlsxwriter
+import csv
+import os.path
+
 
 class crm_askcode_partner(models.TransientModel):
 	_name = 'crm.askcode.partner'
@@ -145,6 +151,101 @@ class coating_date_wizard(models.TransientModel):
 
 	start_date = fields.Date('Start Date', required=True)
 	end_date = fields.Date('End Date',required=True)
+
+
+	@api.multi
+	def get_report(self):
+		res = self
+		output =  StringIO.StringIO()
+		workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+		worksheet = workbook.add_worksheet()
+		row = 1
+		col = 0
+		bold_format = workbook.add_format({'bold':  1})
+		bold_color_format = workbook.add_format({'bold':  1})
+		bold_color_format.set_font_color('Blue')
+		merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter'})
+		worksheet.merge_range('A1:H2', 'Part Code (Coating) From Date : ' + datetime.strptime(self.start_date, '%Y-%m-%d').strftime('%m/%d/%Y')  + " To : " + datetime.strptime(self.end_date, '%Y-%m-%d').strftime('%m/%d/%Y') , merge_format)
+		worksheet.set_column(row, col, 20)
+		row +=2
+		worksheet.write(row, col, 'Sr No.', bold_format)
+		worksheet.set_column(row, col, 20)
+		col += 1
+
+		worksheet.write(row, col, 'SO NO', bold_format)
+		worksheet.set_column(row, col, 20)
+		col += 1
+
+		worksheet.write(row, col, 'Product', bold_format)
+		worksheet.set_column(row, col, 20)
+		col += 1
+
+		worksheet.write(row, col, 'Coating', bold_format)
+		worksheet.set_column(row, col, 20)
+		col += 1
+
+		worksheet.write(row, col, 'Qty', bold_format)
+		worksheet.set_column(row, col, 20)
+		col += 1
+
+		worksheet.write(row, col, 'Unit Price', bold_format)
+		worksheet.set_column(row, col, 20)
+		col += 1
+
+		worksheet.write(row, col, 'Summary', bold_format)
+		worksheet.set_column(row, col, 20)
+		col += 1
+
+		
+		worksheet.write(row, col, 'Total Amount', bold_format)
+		worksheet.set_column(row, col, 20)
+		col += 1
+
+		row = 4
+		count =1
+		row +=1
+		for lead in res.get_order_line(self):
+			row += 1
+			col = 0
+			worksheet.write(row, col,count or '')
+			count += 1
+			col += 1
+
+			worksheet.write(row, col,lead.order_id.name or '')
+			col += 1
+			
+			worksheet.write(row, col,lead.product_id.name or '')
+			col += 1
+
+			worksheet.write(row, col,lead.coating_en.name or '')
+			col += 1
+
+			worksheet.write(row, col,str(lead.product_uom_qty) + ' ' + str(lead.product_uom.name) or '')
+			col += 1
+
+			worksheet.write(row, col,lead.price_unit or '')
+			col += 1
+
+			worksheet.write(row, col,lead.name or '')
+			col += 1
+
+			worksheet.write(row, col,lead.price_subtotal or 0.0)
+			col += 1
+		row += 2
+		row += 1
+		workbook.close()
+		output.seek(0)
+		result = base64.b64encode(output.read())
+		attachment_obj = self.env['ir.attachment']
+		attachment_id = attachment_obj.create({'name': 'Part Code.xlsx', 'datas_fname': 'Part Code.xlsx', 'datas': result})
+		download_url = '/web/content/' + str(attachment_id.id) + '?download=true'
+		base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+
+		return {
+			"type": "ir.actions.act_url",
+			"url": str(base_url) + str(download_url),
+			"target": "self",
+		}
 
 	@api.multi
 	def get_total(self, obj):

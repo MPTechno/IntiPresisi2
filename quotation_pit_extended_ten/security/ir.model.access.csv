@@ -56,3 +56,5 @@ access_sequence_number_product_sales_manager,access.sequence.number.product.mana
 
 access_product_group_pit_sales_person,access.product.group.pit.sales.person,quotation_pit_extended_ten.model_product_group_pit,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
 access_part_code_pit_sales_person,access.part.code.pit.sales.person,quotation_pit_extended_ten.model_part_code_pit,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
+
+access_attachment_enquiry_sales_person,access.attachment.enquiry.sales.person,quotation_pit_extended_ten.model_attachment_enquiry,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
