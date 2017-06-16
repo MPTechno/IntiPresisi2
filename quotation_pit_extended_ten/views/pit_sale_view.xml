@@ -240,6 +240,6 @@
 		</record>
 
 
-		<menuitem id="coating_report_part_code" name="Part Code Report" parent="sales_team.menu_sale_report" sequence="5" action="quotation_pit_extended_ten.coating_wizard_report_action" />
+		<menuitem id="coating_report_part_code" name="Coating Report" parent="sales_team.menu_sale_report" sequence="5" action="quotation_pit_extended_ten.coating_wizard_report_action" />
 	</data>
 </openerp>

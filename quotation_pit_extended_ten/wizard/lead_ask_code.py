@@ -165,7 +165,7 @@ class coating_date_wizard(models.TransientModel):
 		bold_format = workbook.add_format({'bold':  1})
 		right_format = workbook.add_format({'bold':1,'align':'right'})
 		merge_format = workbook.add_format({'bold': 1,'border': 1,'align': 'center','valign': 'vcenter'})
-		worksheet.merge_range('A1:H2', 'Part Code (Coating) From Date : ' + datetime.strptime(self.start_date, '%Y-%m-%d').strftime('%m/%d/%Y')  + " To : " + datetime.strptime(self.end_date, '%Y-%m-%d').strftime('%m/%d/%Y') , merge_format)
+		worksheet.merge_range('A1:H2', 'Coating Report     From Date : ' + datetime.strptime(self.start_date, '%Y-%m-%d').strftime('%m/%d/%Y')  + " To : " + datetime.strptime(self.end_date, '%Y-%m-%d').strftime('%m/%d/%Y') , merge_format)
 		worksheet.set_column(row, col, 20)
 		row +=2
 		worksheet.write(row, col, 'Sr No.', bold_format)
