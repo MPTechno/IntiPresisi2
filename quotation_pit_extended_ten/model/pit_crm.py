@@ -257,8 +257,7 @@ class phonecall_contact(models.Model):
 	name = fields.Char('Contact')
 
 class attachment_enquiry(models.Model):
-	_name = 'attachment.enquiry'
-
+	_name = 'attachment.enquiry'		
 	attach_id = fields.Many2one('crm.lead','Lead')
 	attachment_en = fields.Binary('Attachment')
 	attachment_type_id = fields.Many2one('attachment.type.en','Type')
@@ -1060,6 +1059,12 @@ class sale_order_line(models.Model):
 		return super(sale_order_line, self).create(vals)
 
 	@api.multi
+	@api.onchange('product_uom_qty')
+	def on_changeunit_qty(self):
+		if self.part_number:
+			self.price_unit = self.part_number.seq_price
+
+	@api.multi
 	@api.onchange('price_unit')
 	def on_changeunit_price_en(self):
 		for ob in self:
@@ -1081,7 +1086,7 @@ class sale_order_line(models.Model):
 		for part in self:
 			self.drawing_number = part.part_number_product.drawing_number
 
-	@api.one
+	@api.one	
 	@api.depends('price_unit')
 	def compute_vissibility(self):
 		if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_person_b == True or self.env.user.sales_supervisor_b == True or self.env.user.sales_coordinator_b == True:

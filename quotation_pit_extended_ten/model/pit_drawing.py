@@ -168,14 +168,8 @@ class crm_lead_line(models.Model):
 					part_id = self.env['sequence.number.product'].create(seq_dict)
 					partner_obj.write({'sequence_number': max(list_of_part) + 1})
 				vals.update({'part_number_product':part_id.id})
-		if vals.get('unit_price_en') or vals.get('internal_code_en'):
+		if vals.get('unit_price_en') != 0 and vals.get('internal_code_en'):
 			pricelis_dict = {}
-			# for priclist in self.env['crm.lead'].browse(vals.get('lead_line_id')).partner_id.property_product_pricelist.item_ids:
-			# 	if priclist.product_id.id == vals.get('product_en'):
-			# 		pricelis_dict = {
-			# 			'item_ids': [(1, priclist.id, {'fixed_price': vals.get('unit_price_en')})]
-			# 		}
-			# if not pricelis_dict:
 			pricelis_dict = {
 				'item_ids': [(0, 0, {
 						'applied_on': '0_product_variant',
@@ -220,17 +214,17 @@ class crm_lead_line(models.Model):
 								list_of_part.append(pit.sequence_number)
 								print "5555555555555555555",list_of_part
 
-					if not part_id and not list_of_part:
-						print "66666666666666666"
-						seq_dict = {
-							'name': str(partner_obj.partner_code) + ' - PRICE 0000' + str(1),
-							'sequence_id':partner_obj.id,
-							'product_id':self.product_en.id,
-							'seq_price':vals.get('unit_price_en'),
-							'sequence_number': 1,
-							'pricing_date':fields.Datetime.now(),
-						}
-						part_id = self.env['sequence.number.partner'].create(seq_dict)
+				if not part_id and not list_of_part:
+					print "66666666666666666"
+					seq_dict = {
+						'name': str(partner_obj.partner_code) + ' - PRICE 0000' + str(1),
+						'sequence_id':partner_obj.id,
+						'product_id':self.product_en.id,
+						'seq_price':vals.get('unit_price_en'),
+						'sequence_number': 1,
+						'pricing_date':fields.Datetime.now(),
+					}
+					part_id = self.env['sequence.number.partner'].create(seq_dict)
 
 				if list_of_part:
 					seq_dict = {
@@ -242,6 +236,7 @@ class crm_lead_line(models.Model):
 						'pricing_date':fields.Datetime.now(),
 					}
 					part_id = self.env['sequence.number.partner'].create(seq_dict)
+				print "WWWWWWWWWW",part_id
 				vals.update({'part_number':part_id.id})
 		print "WWWWWWWWWWWWW111111111WWWWWWWWWWWWWWW",vals
 		if vals.get('internal_code_en', False):
@@ -295,22 +290,16 @@ class crm_lead_line(models.Model):
 		if vals.get('unit_price_en')  or vals.get('internal_code_en'):
 			print "WWWWWWWWWWWWWWWWWWWWWWWWWWWW",vals
 			pricelis_dict = {}
-			# for priclist in self.lead_line_id.partner_id.property_product_pricelist.item_ids:
-			# 	if priclist.product_id.id == self.product_en.id:
-			# 		pricelis_dict = {
-			# 			'item_ids': [(1, priclist.id, {'fixed_price': vals.get('unit_price_en')})]
-			# 		}
-			# if not pricelis_dict:
 			pricelis_dict = {
 				'item_ids': [(0, 0, {
 						'applied_on': '0_product_variant',
 						'compute_price': 'fixed',
 						'product_id':self.product_en.id,
 						'fixed_price': vals.get('unit_price_en'),
-						'part_number':vals.get('part_number'),
+						'part_number':vals.get('part_number') or self.part_number.id,
 						'drawing_number':vals.get('internal_code_en') or self.internal_code_en,
 						'pricing_date':fields.Datetime.now(),
-						'part_number_product':vals.get('part_number_product'),
+						'part_number_product':vals.get('part_number_product') or self.part_number_product.id,
 					})]
 			}
 			if not vals.get('pricing_date'):
