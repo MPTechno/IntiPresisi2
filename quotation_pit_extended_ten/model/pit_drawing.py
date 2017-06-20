@@ -168,7 +168,7 @@ class crm_lead_line(models.Model):
 					part_id = self.env['sequence.number.product'].create(seq_dict)
 					partner_obj.write({'sequence_number': max(list_of_part) + 1})
 				vals.update({'part_number_product':part_id.id})
-		if vals.get('unit_price_en') != 0 and vals.get('internal_code_en'):
+		if vals.get('unit_price_en') != 0.0:
 			pricelis_dict = {}
 			pricelis_dict = {
 				'item_ids': [(0, 0, {
