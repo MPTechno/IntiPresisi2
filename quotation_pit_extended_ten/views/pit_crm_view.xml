@@ -367,6 +367,17 @@
             <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
             <field name="arch" type="xml">
                 <data>
+                    <xpath expr="//filter[@name='won']" position="replace">
+                        <filter string="Collect Data" domain="[('stage_id.name','ilike','Collect Data')]"/>
+                        <filter string="Technical Checking" domain="[('stage_id.name','ilike','Technical Checking')]"/>
+                        <filter string="Pricing" domain="[('stage_id.name','ilike','Pricing')]"/>
+                        <filter string="Quotations" domain="[('stage_id.name','ilike','Quotations')]"/>
+                        <filter string="Quotations Sent" domain="[('stage_id.name','ilike','Quotations Sent')]"/>
+                        <filter string="Negotiation" domain="[('stage_id.name','ilike','Negotiation')]"/>
+                        <filter string="Close Won" domain="[('stage_id.name','ilike','Close Won')]"/>
+                        <filter string="Close Lost" domain="[('stage_id.name','ilike','Close Lost')]"/>
+                        <filter string="No Offer" domain="[('stage_id.name','ilike','No Offer')]"/>
+                    </xpath>
                     <xpath expr="//filter[@name='assigned_to_me']" position="attributes">
                         <attribute name="string">My Enquiry</attribute>
                     </xpath>

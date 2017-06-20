@@ -54,3 +54,7 @@ class product_template(models.Model):
 	part_code = fields.Many2one('part.code.pit','Part Code')
 	product_group = fields.Many2one('product.group.pit','Product Group')
 
+class crm_stage(models.Model):
+	_inherit = 'crm.stage'
+
+	stage_known = fields.Integer('Stage Num')

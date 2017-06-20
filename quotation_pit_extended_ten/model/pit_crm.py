@@ -767,7 +767,7 @@ class crm_lead_line(models.Model):
 		# PRODUCT PRICELISTINGt
 	
 	lead_line_id = fields.Many2one('crm.lead',string='Listing Line',index=True)
-	product_en = fields.Many2one('product.product','Product Name')
+	product_en = fields.Many2one('product.product','Product Variant')
 	qty_en = fields.Integer('Quantity')
 	unit_price_en = fields.Float('Unit Price')
 	total_price_en = fields.Float('Total Price')
