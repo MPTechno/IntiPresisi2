@@ -63,7 +63,398 @@
 		</field>
 	</record>
 
+<!-- (product) PART CODE -->
+
+<menuitem id="menu_product_item" name="Product" parent="sales_team.menu_sale_config" sequence="1"/>
+
+    <record id="view_config_code_form" model="ir.ui.view">
+			<field name="name">part.code.pit.form</field>
+			<field name="model">part.code.pit</field>
+			<field name="arch" type="xml">
+				<form string="part code">
+					<group>
+						<field name="name"/>
+					</group>
+				</form>
+			</field>
+		</record>
+		<record id="view_config_code_tree" model="ir.ui.view">
+            <field name="name">part.code.pit.tree</field>
+            <field name="model">part.code.pit</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree string="part code">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+		<record id="action_config_code_form" model="ir.actions.act_window">
+			<field name="name">Part code</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">part.code.pit</field>
+			<field name="view_id" ref="view_config_code_tree"/>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_config_code_form"/>
+		</record>
+		<record model="ir.actions.act_window.view" id="action_config_code_view_tree">
+            <field name="act_window_id" ref="action_config_code_form"/>
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_config_code_tree"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_config_code_view_form">
+            <field name="act_window_id" ref="action_config_code_form"/>
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_config_code_form"/>
+        </record>
+
+		<menuitem id="menu_code_form" parent="menu_product_item" action="action_config_code_form" sequence="7"/>
+
+<!-- PRODUCT GROUP-->
+
+ 		<record id="view_config_group_form" model="ir.ui.view">
+			<field name="name">product.group.pit.form</field>
+			<field name="model">product.group.pit</field>
+			<field name="arch" type="xml">
+				<form string="product group">
+					<group>
+						<field name="name"/>
+					</group>
+				</form>
+			</field>
+		</record>
+		<record id="view_config_group_tree" model="ir.ui.view">
+            <field name="name">product.group.pit.tree</field>
+            <field name="model">product.group.pit</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree string="product group">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+		<record id="action_config_group_form" model="ir.actions.act_window">
+			<field name="name">Product group</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">product.group.pit</field>
+			<field name="view_id" ref="view_config_group_tree"/>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_config_group_form"/>
+		</record>
+		<record model="ir.actions.act_window.view" id="action_config_group_view_tree">
+            <field name="act_window_id" ref="action_config_group_form"/>
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_config_group_tree"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_config_group_view_form">
+            <field name="act_window_id" ref="action_config_group_form"/>
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_config_group_form"/>
+        </record>
+
+		<menuitem id="menu_group_form" parent="menu_product_item" action="action_config_group_form" sequence="8"/>
+
+<!-- PART TYPE-->
+
+		<record id="view_config_parttype_form" model="ir.ui.view">
+			<field name="name">part.type.form</field>
+			<field name="model">part.type</field>
+			<field name="arch" type="xml">
+				<form string="part type">
+					<group>
+						<field name="name"/>
+					</group>
+				</form>
+			</field>
+		</record>
+		<record id="view_config_parttype_tree" model="ir.ui.view">
+            <field name="name">part.type.tree</field>
+            <field name="model">part.type</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree string="part type">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+		<record id="action_config_parttype_form" model="ir.actions.act_window">
+			<field name="name">Part type</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">part.type</field>
+			<field name="view_id" ref="view_config_parttype_tree"/>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_config_parttype_form"/>
+		</record>
+		<record model="ir.actions.act_window.view" id="action_config_parttype_view_tree">
+            <field name="act_window_id" ref="action_config_parttype_form"/>
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_config_parttype_tree"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_config_parttype_view_form">
+            <field name="act_window_id" ref="action_config_parttype_form"/>
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_config_parttype_form"/>
+        </record>
+
+		<menuitem id="menu_parttype_form" parent="menu_product_item" action="action_config_parttype_form" sequence="8"/>
 
 
-</data>
+
+
+<!--(quotation and sales order)  ANALYTIC TAG-->
+
+<menuitem id="menu_saleorder_item" name="Quotation &amp; Sale Order" parent="sales_team.menu_sale_config" sequence="1"/>
+
+	<record id="view_config_accanalytic_form" model="ir.ui.view">
+			<field name="name">account.analytic.tag.form</field>
+			<field name="model">account.analytic.tag</field>
+			<field name="arch" type="xml">
+				<form string="analytic tag">
+					<group>
+						<field name="name"/>
+					</group>
+				</form>
+			</field>
+		</record>
+		<record id="view_config_accanalytic_tree" model="ir.ui.view">
+            <field name="name">account.analytic.tag.tree</field>
+            <field name="model">account.analytic.tag</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree string="analytic tag">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+		<record id="action_config_accanalytic_form" model="ir.actions.act_window">
+			<field name="name">Analytic tag</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.analytic.tag</field>
+			<field name="view_id" ref="view_config_accanalytic_tree"/>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_config_accanalytic_form"/>
+		</record>
+		<record model="ir.actions.act_window.view" id="action_config_accanalytic_view_tree">
+            <field name="act_window_id" ref="action_config_accanalytic_form"/>
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_config_accanalytic_tree"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_config_accanalytic_view_form">
+            <field name="act_window_id" ref="action_config_accanalytic_form"/>
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_config_accanalytic_form"/>
+        </record>
+
+        <menuitem id="menu_analytic_form" parent="menu_saleorder_item" action="action_config_accanalytic_form" sequence="13"/>
+
+
+
+<!-- DELIVERY TERM-->
+
+
+		<record id="view_config_term_form" model="ir.ui.view">
+			<field name="name">delivery.term.form</field>
+			<field name="model">delivery.term</field>
+			<field name="arch" type="xml">
+				<form string="Delivery term">
+					<group>
+						<field name="name"/>
+					</group>
+				</form>
+			</field>
+		</record>
+		<record id="view_config_term_tree" model="ir.ui.view">
+            <field name="name">delivery.term.tree</field>
+            <field name="model">delivery.term</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree string="Delivery term">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+		<record id="action_config_term_form" model="ir.actions.act_window">
+			<field name="name">Delivery term</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">delivery.term</field>
+			<field name="view_id" ref="view_config_term_tree"/>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_config_term_form"/>
+		</record>
+		<record model="ir.actions.act_window.view" id="action_config_term_view_tree">
+            <field name="act_window_id" ref="action_config_term_form"/>
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_config_term_tree"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_config_term_view_form">
+            <field name="act_window_id" ref="action_config_term_form"/>
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_config_term_form"/>
+        </record>
+
+        <menuitem id="menu_term_form" parent="menu_saleorder_item" action="action_config_term_form" sequence="14"/>
+
+
+<!-- PAYMENT TERM-->
+
+	<menuitem id="account.menu_action_payment_term_form" parent="menu_saleorder_item" sequence="11" name="Payment term"/>
+
+<!--PACKAGING -->
+
+	<record id="view_config_packaging_form" model="ir.ui.view">
+			<field name="name">product.packaging.form</field>
+			<field name="model">product.packaging</field>
+			<field name="arch" type="xml">
+				<form string="packaging">
+					<group>
+						<field name="name"/>
+					</group>
+				</form>
+			</field>
+		</record>
+		<record id="view_config_packaging_tree" model="ir.ui.view">
+            <field name="name">product.packaging.tree</field>
+            <field name="model">product.packaging</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree string="packaging">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+		<record id="action_config_packaging_form" model="ir.actions.act_window">
+			<field name="name">Packaging</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">product.packaging</field>
+			<field name="view_id" ref="view_config_packaging_tree"/>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_config_packaging_form"/>
+		</record>
+		<record model="ir.actions.act_window.view" id="action_config_packaging_view_tree">
+            <field name="act_window_id" ref="action_config_packaging_form"/>
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_config_packaging_tree"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_config_packaging_view_form">
+            <field name="act_window_id" ref="action_config_packaging_form"/>
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_config_packaging_form"/>
+        </record>
+
+        <menuitem id="menu_packaging_form" parent="menu_saleorder_item" action="action_config_packaging_form" sequence="14"/>
+
+<!--TAGS  -->
+
+		<record id="view_config_tag_form" model="ir.ui.view">
+			<field name="name">crm.lead.tag.form</field>
+			<field name="model">crm.lead.tag</field>
+			<field name="arch" type="xml">
+				<form string="Tag">
+					<group>
+						<field name="name"/>
+					</group>
+				</form>
+			</field>
+		</record>
+		<record id="view_config_tag_tree" model="ir.ui.view">
+            <field name="name">crm.lead.tag.tree</field>
+            <field name="model">crm.lead.tag</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree string="Tag">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+		<record id="action_config_tag_form" model="ir.actions.act_window">
+			<field name="name">Tags</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">crm.lead.tag</field>
+			<field name="view_id" ref="view_config_tag_tree"/>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_config_tag_form"/>
+		</record>
+		<record model="ir.actions.act_window.view" id="action_config_tag_view_tree">
+            <field name="act_window_id" ref="action_config_tag_form"/>
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_config_tag_tree"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_config_tag_view_form">
+            <field name="act_window_id" ref="action_config_tag_form"/>
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_config_tag_form"/>
+        </record>
+
+        <menuitem id="menu_tag_form" parent="menu_saleorder_item" action="action_config_tag_form" sequence="15"/>
+
+<!-- ACCOUNT ANALYTIC-->
+
+	<record id="view_config_analytic_form" model="ir.ui.view">
+			<field name="name">account.analytic.account.form</field>
+			<field name="model">account.analytic.account</field>
+			<field name="arch" type="xml">
+				<form string="account analytic">
+					<group>
+						<field name="name"/>
+					</group>
+				</form>
+			</field>
+		</record>
+		<record id="view_config_analytic_tree" model="ir.ui.view">
+            <field name="name">account.analytic.account.tree</field>
+            <field name="model">account.analytic.account</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree string="account analytic">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+		<record id="action_config_analytic_form" model="ir.actions.act_window">
+			<field name="name">Account analytic</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">account.analytic.account</field>
+			<field name="view_id" ref="view_config_analytic_tree"/>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_config_analytic_form"/>
+		</record>
+		<record model="ir.actions.act_window.view" id="action_config_analytic_view_tree">
+            <field name="act_window_id" ref="action_config_analytic_form"/>
+            <field name="sequence" eval="0"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_config_analytic_tree"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="action_config_analytic_view_form">
+            <field name="act_window_id" ref="action_config_analytic_form"/>
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_config_analytic_form"/>
+        </record>
+
+        <menuitem id="menu_analytic_form" parent="menu_saleorder_item" action="action_config_analytic_form" sequence="16"/>
+
+
+
+	</data>
 </openerp>
