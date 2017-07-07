@@ -361,6 +361,11 @@ class crm_lead_line(models.Model):
 		if product:
 			vals['workpiece_grade'] = product.workpiece_grade.id
 			vals['kind_of_machine'] = product.kind_of_machine.id
+			vals['coating_en'] = product.coating_en.id
+			vals['workpiece_material'] = product.workpiece_material.id
+			vals['remarks_en'] = product.pro_remark
+			vals['internal_code_en'] = product.drawing_no
+
 		if product.description_sale:
 			name += '\n' + product.description_sale
 		vals['remarks_en'] = name
