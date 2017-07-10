@@ -72,6 +72,7 @@ class product_template(models.Model):
 	productf_id = fields.One2many('product.product', 'fproduct_id', 'Family Product List')
 	is_variant = fields.Boolean('Is Variant')
 	is_template = fields.Boolean('Is Template')
+	
 
 class crm_stage(models.Model):
 	_inherit = 'crm.stage'
@@ -82,6 +83,37 @@ class crm_stage(models.Model):
 class product_product(models.Model):
 	_inherit = 'product.product'
 
-	# item_product_ids = fields.One2many('product.pricelist.item', 'product_id', 'Pricelist Items')
+	@api.depends('total_part_qty')
+	def _compute_part_count(self):
+		part_obj = self.env['sequence.number.product']
+		for i in self.ids:
+			total_count = 0
+			i_obj= ''
+			total_count = part_obj.search_count([('product_id','=',i)])
+			i_obj = self.env['product.product'].browse(i)
+			i_obj.update({'total_part_qty':total_count})
+
 	family_id = fields.Many2one('product.family', 'Product Family')
 	fproduct_id = fields.Many2one('product.template', 'Product Family')
+	part_num_ids = fields.One2many('sequence.number.product','product_id','Part Number')
+	total_part_qty = fields.Integer('Qty',compute='_compute_part_count')
+
+
+	@api.multi
+	def create(self, vals):
+		res = super(product_product,self).create(vals)
+		if vals.get('customer_code') and vals.get('drawing_no'):
+			partner_obj = self.env['res.partner'].browse(vals.get('customer_code'))
+			seq_dict = {
+				'name': str(partner_obj.partner_code) + ' - ' + str(format(partner_obj.sequence_number + 1, '05')),
+				'partner_id':partner_obj.id,
+				'product_id':res.id,
+				'drawing_number':vals.get('drawing_no'),
+				'product_family':res.fproduct_id.id,
+				'part_type_id':vals.get('part_type_id', False),
+				'uom_id':res.uom_id.id,
+				'lst_price':res.lst_price,
+			}
+			part_id = self.env['sequence.number.product'].create(seq_dict)
+			partner_obj.write({'sequence_number': partner_obj.sequence_number + 1})
+		return res

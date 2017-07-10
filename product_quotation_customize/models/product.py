@@ -11,7 +11,7 @@ class product_template(models.Model):
 	alternative_uom_id = fields.Many2one('product.uom','Alternative Unit of Measure')
 	drawing_no = fields.Char('Drawing No',size=20)
 	revision = fields.Char('Revision')
-	customer_code = fields.Char('Customer Code')
+	customer_code = fields.Many2one('res.partner','Customer Code')
 	customer_part_no = fields.Char('Customer Part No')
 	add_name_1 = fields.Char('Add Name 1')
 	add_name_2 = fields.Char('Add Name 2')

@@ -45,11 +45,27 @@ class sequence_number_partner(models.Model):
 class sequence_number_product(models.Model):
 	_name = "sequence.number.product"
 
-	partner_id = fields.Many2one('res.partner','Account')
-	product_id = fields.Many2one('product.product','Product')
-	drawing_number = fields.Char('Drawing Number')
+	partner_id = fields.Many2one('res.partner','Account',required=True)
+	product_id = fields.Many2one('product.product','Product',required=True)
+	drawing_number = fields.Char('Drawing Number',required=True)
 	name = fields.Char('Name')
+	product_family = fields.Many2one('product.template','Product Family')
+	part_type_id = fields.Many2one('part.type','Part Type')
+	uom_id = fields.Many2one('product.uom','Unit of Measure')
+	lst_price = fields.Float('Price')
 
+	@api.multi
+	def create(self, vals):
+		res = super(sequence_number_product,self).create(vals)
+		if not vals.get('name'):
+			partner_obj = self.env['res.partner'].browse(res.partner_id.id)
+			seq_dict = {
+				'name': str(partner_obj.partner_code) + ' - ' + str(format(partner_obj.sequence_number + 1, '05')),
+				'product_family':res.product_family.id,
+			}
+			res.write(seq_dict)
+			partner_obj.write({'sequence_number': partner_obj.sequence_number + 1})
+		return res
 
 class crm_lead_line(models.Model):
 	_inherit='crm.lead.line'

@@ -6,21 +6,25 @@
 	    <field name="model">product.product</field>
 	    <field name="inherit_id" ref="product.product_normal_form_view"/>
 	    <field name="arch" type="xml">
-<!-- 	        <xpath expr="//notebook" position="inside">
+	        <xpath expr="//notebook" position="inside">
 	        	<page string="Product Family">
-	        		<field name="item_product_ids" mode="tree">
+	        		<field name="part_num_ids" mode="tree" attrs="{'invisible': [('is_variant', '=', False)]}">
 	        			<tree string="Product Family">
-	        				<field name="product_id"/>
+	        				<field name="name" string="Part Number"/>
 	        				<field name="drawing_number"/>
-	        				<field name="part_number_product"/>
+	        				<field name="product_family"/>
+	        				<field name="product_id"/>
+	        				<field name="part_type_id"/>
+	        				<field name="uom_id"/>
+	        				<field name="lst_price"/>
 	        			</tree>
 	        		</field>
 	        	</page>
-	        </xpath> -->
+	        </xpath>
 	        <xpath expr="//div[@class='oe_title']" position="inside">
 	            <div class='oe_title'>
 	                <label for="fproduct_id" string="Product Family"/>
-	                 <h3><field name="fproduct_id" context="{'prod_var':active_id,'default_is_template':1}" domain="[('is_template','=',1)]"/> </h3>
+	                 <h3><field name="fproduct_id" attrs="{'required': [('is_variant', '=', True)]}" context="{'prod_var':active_id,'default_is_template':1}" domain="[('is_template','=',1)]"/> </h3>
 	            </div>
 	        </xpath>
 	    </field>
@@ -50,8 +54,7 @@
 	    	            <field name="productf_id" mode="tree">
 	    	                <tree string="Product Variants">
 	    	                    <field name="name"/>
-	    	                    <field name="part_number"/>
-	    	                    <field name="drawing_no"/>
+	    	                    <field name="total_part_qty"/>
 	    	                </tree>
 	    	            </field>
 	    	        </page>
