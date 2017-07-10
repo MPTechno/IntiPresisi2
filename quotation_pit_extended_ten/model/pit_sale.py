@@ -12,8 +12,12 @@ from odoo.addons.base.res.res_partner import WARNING_MESSAGE, WARNING_HELP
 import odoo.addons.decimal_precision as dp
 
 class ProductType(models.Model):
-    _name = 'product.type'    
-    name = fields.Char('Name', size=256)
+	_name = 'product.type'    
+	name = fields.Char('Name', size=256)
+
+class ProductFamily(models.Model):
+	_name = 'product.family'
+	name = fields.Char('Name', size=256) 
 
 class res_users(models.Model):
 	_inherit = 'res.users'
@@ -63,18 +67,21 @@ class product_template(models.Model):
 	pricing_date = fields.Date('Pricing Date')
 	pro_remark = fields.Text('Remarks')
 
+	family_id = fields.Many2one('product.family', 'Product Family')
+	fproduct_ids = fields.Many2many('product.product', 'template_variant_rel', 'template_id', 'product_id', 'Family Product List')
+	productf_id = fields.One2many('product.product', 'fproduct_id', 'Family Product List')
+	is_variant = fields.Boolean('Is Variant')
+	is_template = fields.Boolean('Is Template')
+
 class crm_stage(models.Model):
 	_inherit = 'crm.stage'
 
 	stage_known = fields.Integer('Stage Num')
 
-    
+	
 class product_product(models.Model):
 	_inherit = 'product.product'
 
-	item_product_ids = fields.One2many('product.pricelist.item', 'product_id', 'Pricelist Items')
-
-
-    
-
-    
+	# item_product_ids = fields.One2many('product.pricelist.item', 'product_id', 'Pricelist Items')
+	family_id = fields.Many2one('product.family', 'Product Family')
+	fproduct_id = fields.Many2one('product.template', 'Product Family')
