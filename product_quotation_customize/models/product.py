@@ -17,9 +17,3 @@ class product_template(models.Model):
 	add_name_2 = fields.Char('Add Name 2')
 	add_name_3 = fields.Char('Add Name 3')
 	add_name_4 = fields.Char('Add Name 4')
-
-class part_type(models.Model):
-	_name = 'part.type'
-	_description = 'Part Type'
-    
-	name = fields.Char('Name', required=True, translate=True)

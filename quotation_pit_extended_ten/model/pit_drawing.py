@@ -49,10 +49,24 @@ class sequence_number_product(models.Model):
 	product_id = fields.Many2one('product.product','Product',required=True)
 	drawing_number = fields.Char('Drawing Number',required=True)
 	name = fields.Char('Name')
-	product_family = fields.Many2one('product.template','Product Family')
 	part_type_id = fields.Many2one('part.type','Part Type')
 	uom_id = fields.Many2one('product.uom','Unit of Measure')
 	lst_price = fields.Float('Price')
+	type_id   = fields.Many2one('product.type', 'Product Type')
+	product_group = fields.Many2one('product.group.pit','Product Group')
+	customer_part_no = fields.Char('Customer Part No')
+	part_code = fields.Many2one('part.code.pit','Part Code')
+	revision = fields.Char('Revision')
+	pricing_date = fields.Date('Pricing Date')
+
+	workpiece_grade = fields.Many2one('workpiece.grade','Workpiece Grade')
+	kind_of_machine = fields.Many2one('kind.of.machine','Kind of Machine')
+	workpiece_material = fields.Many2one('workpiece.material','Workpiece Material')
+	coating_en = fields.Many2one('coating.enquiry','Coating')
+	add_name_1 = fields.Char('Add Name 1')
+	add_name_2 = fields.Char('Add Name 2')
+	add_name_3 = fields.Char('Add Name 3')
+	add_name_4 = fields.Char('Add Name 4')
 
 	@api.multi
 	def create(self, vals):
@@ -61,7 +75,20 @@ class sequence_number_product(models.Model):
 			partner_obj = self.env['res.partner'].browse(res.partner_id.id)
 			seq_dict = {
 				'name': str(partner_obj.partner_code) + ' - ' + str(format(partner_obj.sequence_number + 1, '05')),
-				'product_family':res.product_family.id,
+				'part_type_id':vals.get('part_type_id',False) or res.product_id.part_type_id.id,
+				'workpiece_grade':vals.get('workpiece_grade',False) or res.product_id.workpiece_grade.id,
+				'kind_of_machine':vals.get('kind_of_machine',False) or res.product_id.kind_of_machine.id,
+				'workpiece_material':vals.get('workpiece_material',False) or res.product_id.workpiece_material.id,
+				'coating_en':vals.get('coating_en',False) or res.product_id.coating_en.id,
+				'add_name_1':vals.get('add_name_1',False) or res.product_id.add_name_1,
+				'add_name_2':vals.get('add_name_2',False) or res.product_id.add_name_2,
+				'add_name_3':vals.get('add_name_3',False) or res.product_id.add_name_3,
+				'add_name_4':vals.get('add_name_4',False) or res.product_id.add_name_4,
+				'product_group':vals.get('product_group',False) or res.product_id.product_group.id,
+				'customer_part_no':vals.get('customer_part_no',False) or res.product_id.customer_part_no,
+				'part_code':vals.get('part_code',False) or res.product_id.part_code.id,
+				'uom_id':vals.get('uom_id',False) or res.product_id.uom_id.id,
+				'revision':vals.get('revision',False) or res.product_id.revision,
 			}
 			res.write(seq_dict)
 			partner_obj.write({'sequence_number': partner_obj.sequence_number + 1})
@@ -161,6 +188,16 @@ class crm_lead_line(models.Model):
 							'partner_id':partner_obj.id,
 							'product_id':vals.get('product_en'),
 							'drawing_number':vals.get('internal_code_en'),
+							'part_type_id':vals.get('part_type_id', False),
+							'uom_id':vals.get('product_uom', False),
+							'lst_price':vals.get('unit_price_en', False),
+							'pricing_date':fields.Datetime.now(),
+							'workpiece_grade':vals.get('workpiece_grade', False),
+							'kind_of_machine':vals.get('kind_of_machine', False),
+							'workpiece_material':vals.get('workpiece_material', False),
+							'coating_en':vals.get('coating_en',False),
+							'add_name_1':vals.get('add_name_1',False),
+							'add_name_2':vals.get('add_name_2',False),
 						}
 						part_id = self.env['sequence.number.product'].create(seq_dict)
 						partner_obj.write({'sequence_number': partner_obj.sequence_number + 1})
@@ -170,6 +207,16 @@ class crm_lead_line(models.Model):
 						'partner_id':partner_obj.id,
 						'product_id':vals.get('product_en'),
 						'drawing_number':vals.get('internal_code_en'),
+						'part_type_id':vals.get('part_type_id', False),
+						'uom_id':vals.get('product_uom', False),
+						'lst_price':vals.get('unit_price_en', False),
+						'pricing_date':fields.Datetime.now(),
+						'workpiece_grade':vals.get('workpiece_grade', False),
+						'kind_of_machine':vals.get('kind_of_machine', False),
+						'workpiece_material':vals.get('workpiece_material', False),
+						'coating_en':vals.get('coating_en',False),
+						'add_name_1':vals.get('add_name_1',False),
+						'add_name_2':vals.get('add_name_2',False),
 					}
 					part_id = self.env['sequence.number.product'].create(draw_dict)
 					partner_obj.write({'sequence_number': partner_obj.sequence_number + 1})
@@ -180,6 +227,16 @@ class crm_lead_line(models.Model):
 						'partner_id':partner_obj.id,
 						'product_id':vals.get('product_en'),
 						'drawing_number':vals.get('internal_code_en'),
+						'part_type_id':vals.get('part_type_id', False),
+						'uom_id':vals.get('product_uom', False),
+						'lst_price':vals.get('unit_price_en', False),
+						'pricing_date':fields.Datetime.now(),
+						'workpiece_grade':vals.get('workpiece_grade', False),
+						'kind_of_machine':vals.get('kind_of_machine', False),
+						'workpiece_material':vals.get('workpiece_material', False),
+						'coating_en':vals.get('coating_en',False),
+						'add_name_1':vals.get('add_name_1',False),
+						'add_name_2':vals.get('add_name_2',False),
 					}
 					part_id = self.env['sequence.number.product'].create(seq_dict)
 					partner_obj.write({'sequence_number': max(list_of_part) + 1})
@@ -281,6 +338,15 @@ class crm_lead_line(models.Model):
 							'partner_id':partner_obj.id,
 							'product_id':self.product_en.id,
 							'drawing_number':vals.get('internal_code_en'),
+							'uom_id':vals.get('product_uom', False) or self.product_uom.id,
+							'lst_price':vals.get('unit_price_en', False) or self.unit_price_en,
+							'pricing_date':vals.get('pricing_date', False) or fields.Datetime.now(),
+							'workpiece_grade':vals.get('workpiece_grade', False) or self.workpiece_grade.id,
+							'kind_of_machine':vals.get('kind_of_machine', False) or self.kind_of_machine.id,
+							'workpiece_material':vals.get('workpiece_material', False) or self.workpiece_material.id,
+							'coating_en':vals.get('coating_en', False) or self.coating_en.id,
+							'add_name_1':vals.get('add_name_1', False) or self.add_name_1,
+							'add_name_2':vals.get('add_name_2', False) or self.add_name_2,
 						}
 						part_id = self.env['sequence.number.product'].create(draw_dict)
 						partner_obj.write({'sequence_number': partner_obj.sequence_number + 1})
@@ -290,6 +356,15 @@ class crm_lead_line(models.Model):
 						'partner_id':partner_obj.id,
 						'product_id':self.product_en.id,
 						'drawing_number':vals.get('internal_code_en'),
+						'uom_id':vals.get('product_uom', False) or self.product_uom.id,
+						'lst_price':vals.get('unit_price_en', False) or self.unit_price_en,
+						'pricing_date':vals.get('pricing_date', False) or fields.Datetime.now(),
+						'workpiece_grade':vals.get('workpiece_grade', False) or self.workpiece_grade.id,
+						'kind_of_machine':vals.get('kind_of_machine', False) or self.kind_of_machine.id,
+						'workpiece_material':vals.get('workpiece_material', False) or self.workpiece_material.id,
+						'coating_en':vals.get('coating_en', False) or self.coating_en.id,
+						'add_name_1':vals.get('add_name_1', False) or self.add_name_1,
+						'add_name_2':vals.get('add_name_2', False) or self.add_name_2,
 					}
 					part_id = self.env['sequence.number.product'].create(draw_dict)
 					partner_obj.write({'sequence_number': partner_obj.sequence_number + 1})
@@ -299,6 +374,15 @@ class crm_lead_line(models.Model):
 						'partner_id':partner_obj.id,
 						'product_id':self.product_en.id,
 						'drawing_number':vals.get('internal_code_en'),
+						'uom_id':vals.get('product_uom', False) or self.product_uom.id,
+						'lst_price':vals.get('unit_price_en', False) or self.unit_price_en,
+						'pricing_date':vals.get('pricing_date', False) or fields.Datetime.now(),
+						'workpiece_grade':vals.get('workpiece_grade', False) or self.workpiece_grade.id,
+						'kind_of_machine':vals.get('kind_of_machine', False) or self.kind_of_machine.id,
+						'workpiece_material':vals.get('workpiece_material', False) or self.workpiece_material.id,
+						'coating_en':vals.get('coating_en', False) or self.coating_en.id,
+						'add_name_1':vals.get('add_name_1', False) or self.add_name_1,
+						'add_name_2':vals.get('add_name_2', False) or self.add_name_2,
 					}
 					part_id = self.env['sequence.number.product'].create(draw_dict)
 					partner_obj.write({'sequence_number': max(list_of_part) + 1})
@@ -344,6 +428,17 @@ class crm_lead_line(models.Model):
 	def part_number_product_change(self):
 		for part in self:
 			self.internal_code_en = part.part_number_product.drawing_number
+		vals = {}
+		if part:
+			vals['workpiece_grade'] = self.part_number_product.workpiece_grade.id
+			vals['kind_of_machine'] = self.part_number_product.kind_of_machine.id
+			vals['coating_en'] = self.part_number_product.coating_en.id
+			vals['workpiece_material'] = self.part_number_product.workpiece_material.id
+			vals['internal_code_en'] = self.part_number_product.drawing_number
+			vals['add_name_1'] = self.part_number_product.add_name_1
+			vals['add_name_2'] = self.part_number_product.add_name_2
+			vals['unit_price_en'] = self.part_number_product.lst_price
+		self.update(vals)
 
 	@api.multi
 	def _get_display_price(self, product):
@@ -375,12 +470,7 @@ class crm_lead_line(models.Model):
 		vals['qty_en'] = 1.0
 		name =''
 		if product:
-			vals['workpiece_grade'] = product.workpiece_grade.id
-			vals['kind_of_machine'] = product.kind_of_machine.id
-			vals['coating_en'] = product.coating_en.id
-			vals['workpiece_material'] = product.workpiece_material.id
 			vals['remarks_en'] = product.pro_remark
-			vals['internal_code_en'] = product.drawing_no
 
 		if product.description_sale:
 			name += '\n' + product.description_sale

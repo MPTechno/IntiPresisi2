@@ -241,6 +241,12 @@ class workpiece_grade(models.Model):
 
 	name = fields.Char('Name')
 
+class part_type(models.Model):
+	_name = 'part.type'
+	_description = 'Part Type'
+    
+	name = fields.Char('Name', required=True, translate=True)
+
 class kind_of_machine(models.Model):
 	_name = 'kind.of.machine'
 

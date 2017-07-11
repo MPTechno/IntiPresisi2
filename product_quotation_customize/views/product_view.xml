@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 <data>
+
+    <record id="view_part_number_sequence_form" model="ir.ui.view">
+		<field name="name">part.part.number.sequence.form</field>
+		<field name="model">sequence.number.product</field>
+		<field name="arch" type="xml">
+			<form string="Part Number">
+				<group>
+					<group>
+						<field name="name" invisible="1"/>
+						<field name="partner_id"/>
+						<field name="product_id" invisible="1"/>
+						<field name="drawing_number"/>
+						<field name="type_id"/>
+						<field name="product_group"/>
+						<field name="customer_part_no"/>
+						<field name="part_code"/>
+						<field name="uom_id"/>
+						<field name="revision"/>
+					</group>
+					<group>
+						<field name="part_type_id"/>
+						<field name="lst_price" readonly="True"/>
+						<field name="pricing_date" readonly="True"/>
+						<field name="workpiece_grade"/>
+						<field name="kind_of_machine"/>
+						<field name="workpiece_material"/>
+						<field name="coating_en"/>
+						<field name="add_name_1"/>
+						<field name="add_name_2"/>
+						<field name="add_name_3"/>
+						<field name="add_name_4"/>
+					</group>
+				</group>
+			</form>
+		</field>
+	</record>
+
 	<record id="product_product_custom_inherit_form_view" model="ir.ui.view">
 	    <field name="name">product.product.custom.inherit.form</field>
 	    <field name="model">product.product</field>
@@ -8,11 +45,10 @@
 	    <field name="arch" type="xml">
 	        <xpath expr="//notebook" position="inside">
 	        	<page string="Product Family">
-	        		<field name="part_num_ids" mode="tree" attrs="{'invisible': [('is_variant', '=', False)]}">
+	        		<field name="part_num_ids" mode="tree" context="{'default_product_id':active_id}" attrs="{'invisible': [('is_variant', '=', False)]}">
 	        			<tree string="Product Family">
 	        				<field name="name" string="Part Number"/>
 	        				<field name="drawing_number"/>
-	        				<field name="product_family"/>
 	        				<field name="product_id"/>
 	        				<field name="part_type_id"/>
 	        				<field name="uom_id"/>
@@ -21,6 +57,7 @@
 	        		</field>
 	        	</page>
 	        </xpath>
+	        <xpath expr="//field[@name='attribute_value_ids']" position="replace"></xpath>
 	        <xpath expr="//div[@class='oe_title']" position="inside">
 	            <div class='oe_title'>
 	                <label for="fproduct_id" string="Product Family"/>
