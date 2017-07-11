@@ -99,7 +99,7 @@ class product_product(models.Model):
 	total_part_qty = fields.Integer('Qty',compute='_compute_part_count')
 
 
-	@api.multi
+	@api.model
 	def create(self, vals):
 		res = super(product_product,self).create(vals)
 		if vals.get('customer_code') and vals.get('drawing_no'):

@@ -98,7 +98,7 @@ class crm_lead_line(models.Model):
 	_inherit='crm.lead.line'
 
 
-	@api.multi
+	@api.model
 	def create(self, vals):
 		if vals.get('unit_price_en') != 0.0:
 			part_id = ''
