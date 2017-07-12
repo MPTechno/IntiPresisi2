@@ -34,9 +34,9 @@ class ProductProduct(models.Model):
                 if part_number_obj.part_num_ids:
                     for product in part_number_obj.part_num_ids:
                         content +=  str(product.name or '\t') + '  ' + str(product.product_id.name or '\t') + '  ' + str(product.part_type_id and product.part_type_id.name or '\t') + '   ' +\
-                                    str(product.uom_id and product.uom_id.name or '\t') + '   ' + str(product.product_id.alternative_uom_id and product.product_id.alternative_uom_id.name or '\t') + '   '+ \
-                                    str(product.part_code or '\t') + '   ' + str(product.product_group or '\t') + '    ' + \
-                                    str(product.product_id.categ_id.name or '\t') + '   ' + str(product.drawing_number or '\t') + '   ' + str(product.revision or '\t') + '    ' + \
+                                    str(product.uom_id and product.uom_id.name or '\t') + '   ' + str(product.uom_id and product.uom_id.name or '\t') + '   '+ \
+                                    str(product.part_code and product.part_code.name or '\t') + '   ' + str(product.product_group and product.product_group.name or '\t') + '    ' + \
+                                    str(product.product_id.product_tmpl_id.name or '\t') + '   ' + str(product.drawing_number or '\t') + '   ' + str(product.revision or '\t') + '    ' + \
                                     str(product.add_name_1 or '\t') + '   ' + str(product.add_name_2 or '\t') + '   ' + \
                                     str(product.add_name_3 or '\t') + '   ' + str(product.add_name_4 or '\t') + '   ' + \
                                     str(product.partner_id.partner_code or '\t') + '   ' + str(product.lst_price or 0) + '   ' + \
@@ -164,7 +164,7 @@ class ProductProduct(models.Model):
                         worksheet.write(row, col,product_obj.uom_id.name or '')
                         col += 1
 
-                        worksheet.write(row, col,product_obj.product_id.alternative_uom_id.name or '')
+                        worksheet.write(row, col,product_obj.uom_id.name or '')
                         col += 1
 
                         worksheet.write(row, col,product_obj.part_code.name or '')
@@ -173,7 +173,7 @@ class ProductProduct(models.Model):
                         worksheet.write(row, col,product_obj.product_group.name or '')
                         col += 1
 
-                        worksheet.write(row, col,product_obj.product_id.categ_id.name or '')
+                        worksheet.write(row, col,product_obj.product_id.product_tmpl_id.name or '')
                         col += 1
                         
                         worksheet.write(row, col,product_obj.drawing_number or '')
@@ -197,7 +197,7 @@ class ProductProduct(models.Model):
                         worksheet.write(row, col,product_obj.partner_id.partner_code or '')
                         col += 1
 
-                        worksheet.write(row, col,product_obj.lst_price or '')
+                        worksheet.write(row, col,product_obj.lst_price or 0)
                         col += 1
 
                         worksheet.write(row, col,product_obj.customer_part_no or '')

@@ -743,14 +743,18 @@
                         <field name="delivery_address_name" placeholder="Name..."/>
                         
                         <label for="street_delivery" string="Delivery Address 1" />
-                        <div class="o_row">
-                            <field name="street_delivery" placeholder="Street..."/>
-                            <field name="zip_delivery" placeholder="ZIP" />
+                        <div class="o_address_format">
+                            <field name="street_delivery" placeholder="Street..." class="o_address_street"/>
+                            <field name="city_delivery" placeholder="City" class="o_address_city"/>
+                            <field name="state_id_delivery" placeholder="State" class="o_address_state"/>
+                            <field name="zip_delivery" placeholder="ZIP"  class="o_address_zip"/>
                         </div>
                         <label for="street2_delivery" string="Delivery Address 2" />
-                        <div class="o_row">
-                            <field name="street2_delivery" placeholder="Street..." />
-                            <field name="zip2_delivery" placeholder="ZIP"/>
+                        <div class="o_address_format">
+                            <field name="street2_delivery" placeholder="Street..." class="o_address_street"/>
+                            <field name="city2_delivery" placeholder="City" class="o_address_city"/>
+                            <field name="state_id2_delivery" placeholder="State" class="o_address_state"/>
+                            <field name="zip2_delivery" placeholder="ZIP" class="o_address_zip"/>
                         </div>
                     </xpath>
                     <xpath expr="//field[@name='function']" position="replace"></xpath>
