@@ -21,16 +21,26 @@ class ProductProduct(models.Model):
     def download_txt(self):
         product_ids = self._context.get('active_ids',[])
         if product_ids:
-            content = ''
-            for product in self.env['product.product'].browse(product_ids):
-                content += str(product.part_number or '') + '	' + str(product.name) + '   ' + str(product.part_type_id and product.part_type_id.name or '') + '   ' +\
-                str(product.uom_id and product.uom_id.name or '') + '   ' + str(product.alternative_uom_id and product.alternative_uom_id.name or '') + '   '+ \
-                str(product.part_code or '') + '   ' + str(product.product_group or '') + '    ' + \
-                str(product.drawing_no or '') + '   ' + str(product.revision or '') + '    ' + \
-                str(product.add_name_1 or '') + '   ' + str(product.add_name_2 or '') + '   ' + \
-                str(product.add_name_3 or '') + '   ' + str(product.add_name_4 or '') + '   ' + \
-                str(product.customer_code or '') + '   ' + str(product.lst_price or '') + '   ' + \
-                str(product.customer_part_no or '') + '   ' + '\n'
+            content =   str('Part Number') + '  ' + str('Name') + '  ' +\
+                        str('Part Type') + '   ' + str('Unit') + '  ' +\
+                        str('Alternate Unit') + '   ' + str('Part Code') + '  ' +\
+                        str('Product Group') + '  ' + str('Product Category') + '  ' +\
+                        str('Drawing No.') + '  ' + str('Revision') + '  ' +\
+                        str('Add Name 1') + '  ' + str('Add Name 2') + '  ' +\
+                        str('Add Name 3') + '  ' + str('Add Name 4') + '  ' +\
+                        str('Customer Code') + '  ' + str('Customer Price') + '  ' +\
+                        str('Customer Partno') + '  ' + '\n'
+            for part_number_obj in self.env['product.product'].browse(product_ids):
+                if part_number_obj.part_num_ids:
+                    for product in part_number_obj.part_num_ids:
+                        content +=  str(product.name or '\t') + '  ' + str(product.product_id.name or '\t') + '  ' + str(product.part_type_id and product.part_type_id.name or '\t') + '   ' +\
+                                    str(product.uom_id and product.uom_id.name or '\t') + '   ' + str(product.product_id.alternative_uom_id and product.product_id.alternative_uom_id.name or '\t') + '   '+ \
+                                    str(product.part_code or '\t') + '   ' + str(product.product_group or '\t') + '    ' + \
+                                    str(product.product_id.categ_id.name or '\t') + '   ' + str(product.drawing_number or '\t') + '   ' + str(product.revision or '\t') + '    ' + \
+                                    str(product.add_name_1 or '\t') + '   ' + str(product.add_name_2 or '\t') + '   ' + \
+                                    str(product.add_name_3 or '\t') + '   ' + str(product.add_name_4 or '\t') + '   ' + \
+                                    str(product.partner_id.partner_code or '\t') + '   ' + str(product.lst_price or 0) + '   ' + \
+                                    str(product.customer_part_no or '\t') + '   ' + '\n'
             filename = '/opt/odoo/Products.txt'
             f = open(filename, 'w')
             f.write(content)
@@ -136,60 +146,62 @@ class ProductProduct(models.Model):
 
             row += 1
             for product in product_ids:
-                product_obj = self.env['product.product'].browse(product)
-                row += 1
-                col = 0
+                part_number_obj = self.env['product.product'].browse(product)
+                if part_number_obj.part_num_ids:
+                    for product_obj in part_number_obj.part_num_ids:
+                        row += 1
+                        col = 0
 
-                worksheet.write(row, col,unicode((product_obj.part_number or '').encode("utf-8"), "utf-8"))
-                col += 1
-                
-                worksheet.write(row, col,unicode((product_obj.name or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.name or '')
+                        col += 1
+                        
+                        worksheet.write(row, col,product_obj.product_id.name or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.part_type_id.name or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.part_type_id.name or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.uom_id.name or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.uom_id.name or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.alternative_uom_id.name or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.product_id.alternative_uom_id.name or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.part_code.name or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.part_code.name or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.product_group.name or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.product_group.name or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.categ_id.name or '').encode("utf-8"), "utf-8"))
-                col += 1
-                
-                worksheet.write(row, col,unicode((product_obj.drawing_no or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.product_id.categ_id.name or '')
+                        col += 1
+                        
+                        worksheet.write(row, col,product_obj.drawing_number or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.revision or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.revision or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.add_name_1 or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.add_name_1 or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.add_name_2 or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.add_name_2 or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.add_name_3 or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.add_name_3 or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.add_name_4 or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.add_name_4 or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.customer_code.name or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.partner_id.partner_code or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.lst_price or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.lst_price or '')
+                        col += 1
 
-                worksheet.write(row, col,unicode((product_obj.customer_part_no or '').encode("utf-8"), "utf-8"))
-                col += 1
+                        worksheet.write(row, col,product_obj.customer_part_no or '')
+                        col += 1
 
             row += 2
             row += 1
