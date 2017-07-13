@@ -111,6 +111,14 @@
 			<t t-foreach="docs" t-as="o">
 				<t t-call="report.custom_ips_quotation_layout">
 					<div class="page">
+						<style type="text/css">
+							.table_delivery tr td{
+								padding:10px;
+							}
+							.table delivery th td{
+								padding:10px;
+							}
+						</style>
 						<div class="oe_structure"/>
 						<div class="col-xs-12 pull-left" style="border:1px solid black; border-radius: 5px;">
 							<div class="col-xs-6 pull-left">
@@ -136,27 +144,27 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-xs-12 pull-left" style="margin-top:20px;">
-							<div class="col-xs-3 pull-left">
-								<strong>Terms Of Delivery</strong><br/><br/>
-								<strong>Delivery Method</strong><br/><br/><br/>
-								<strong>Valid Through</strong><br/><br/>
-							</div>
-							<div class="col-xs-3 pull-left">
-								<span t-if="o.delivery_term_id" t-field="o.delivery_term_id.name"/><br/><br/>
-								<span t-if="o.picking_policy" t-field="o.picking_policy"/><br/><br/>
-								<span t-if="o.validity_new_date" t-field="o.validity_new_date.name"/><br/><br/>
-							</div>
-							<div class="col-xs-3 pull-left">
-								<strong>Terms Of Payment</strong><br/><br/>
-								<strong>Delivery Time</strong><br/><br/>
-								<strong>Goods Label</strong><br/><br/>
-							</div>
-							<div class="col-xs-3 pull-right">
-								<span t-if="o.payment_term_id" t-field="o.payment_term_id.name"/><br/><br/>
-								<span t-if="o.delivery_time" t-field="o.delivery_time"/><br/><br/>
-								<span t-esc="o.get_order_name(o)"></span><br/><br/>
-							</div>
+						<div class="col-xs-12" style="margin-top:20px;">
+							<table class="table_delivery">
+								<tr>
+									<th>Terms Of Delivery</th>
+									<td><span t-if="o.delivery_term_id" t-field="o.delivery_term_id.name"/></td>
+									<th>Terms Of Payment</th>
+									<td><span t-if="o.payment_term_id" t-field="o.payment_term_id.name"/></td>
+								</tr>
+								<tr>
+									<th>Delivery Method</th>
+									<td><span t-if="o.picking_policy" t-field="o.picking_policy"/></td>
+									<th>Delivery Time</th>
+									<td><span t-if="o.delivery_time" t-field="o.delivery_time"/></td>
+								</tr>
+								<tr>
+									<th>Valid Through</th>
+									<td><span t-if="o.validity_new_date" t-field="o.validity_new_date.name"/></td>
+									<th>Goods Label</th>
+									<td><span t-esc="o.get_order_name(o)"></span></td>
+								</tr>
+							</table>
 						</div>
 						
 						<table class="table table-condensed">
