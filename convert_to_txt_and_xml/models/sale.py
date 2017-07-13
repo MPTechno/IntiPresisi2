@@ -6,6 +6,7 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import Element,SubElement
 from xml.dom import minidom
 from odoo.tools.misc import ustr
+import datetime
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -25,12 +26,16 @@ class SaleOrder(models.Model):
     def download_xml(self):
         order_ids = self._context.get('active_ids',[])
         if order_ids:
-            Orders = Element('Orders')#Top Element
+            Orders = Element('ORDERS420')#Top Element
+            Orders.set('SoftwareManufacturer',ustr('Monitor ERP System AB'))
+            Orders.set('SoftwareName',ustr('Monitor'))
+            Orders.set('SoftwareVersion',ustr('8.0.12p39'))
+            
             for order in self.env['sale.order'].browse(order_ids):
                 Order = SubElement(Orders,'Order')
-                Order.set('OrderNumber',ustr(order.name))
+                Order.set('OrderNumber',ustr(str(order.name).split('/')[0]))
                 
-                head = SubElement(Order,'head')#Header Part
+                head = SubElement(Order,'Head')#Header Part
                 
                 supplier = SubElement(head, 'Supplier')#Supplier (Company Address)
                 supplier.set('SupplierCodeEdi','123')#FixMe
@@ -89,33 +94,35 @@ class SaleOrder(models.Model):
                 BuyerComment.text = ustr(order.buyer_comment or '')
                 
                 GoodsLabeling = SubElement(References, 'GoodsLabeling')
-                GoodsLabeling.text = ustr(order.goods_label or '')
+                GoodsLabeling_row1 = SubElement(GoodsLabeling,'Row1')
+                GoodsLabeling_row1.text = ustr(order.goods_label or '')
+                GoodsLabeling_row2 = SubElement(GoodsLabeling,'Row2')
                 
                 DeliveryAddress = SubElement(head, 'DeliveryAddress')#Delivery Address #FixMe: Need to confirm which value?
                 DeliveryAddress_name = SubElement(DeliveryAddress, 'Name')
                 DeliveryAddress_name.text = ustr(order.partner_shipping_id.name)
                 
                 StreetBox1 = SubElement(DeliveryAddress, 'StreetBox1')
-                if order.partner_shipping_id.street:
-                    StreetBox1.text = ustr(order.partner_shipping_id.street)
+                if order.partner_shipping_id.street_delivery:
+                    StreetBox1.text = ustr(order.partner_shipping_id.street_delivery)
                     
                 StreetBox2 = SubElement(DeliveryAddress, 'StreetBox2')
-                if order.user_id.company_id.street2:
-                    StreetBox2.text = ustr(order.partner_shipping_id.street2)
+                if order.partner_shipping_id.street2_delivery:
+                    StreetBox2.text = ustr(order.partner_shipping_id.street2_delivery)
                     
                 ZipCity1 = SubElement(DeliveryAddress, 'ZipCity1')
-                if order.user_id.company_id.city:
-                    ZipCity1.text = ustr(order.partner_shipping_id.city) +' ' + ustr(order.partner_shipping_id.state_id.name or '')
+                if order.partner_shipping_id.city_delivery:
+                    ZipCity1.text = ustr(order.partner_shipping_id.city_delivery) +' ' + ustr(order.partner_shipping_id.state_id.name or '')
                     
                 ZipCity2 = SubElement(DeliveryAddress, 'ZipCity2')
-                if order.partner_shipping_id.zip:
-                    ZipCity2.text = ustr(order.partner_shipping_id.zip)
+                if order.partner_shipping_id.city2_delivery:
+                    ZipCity2.text = ustr(order.partner_shipping_id.city2_delivery)
                     
                 Country = SubElement(DeliveryAddress, 'Country')
                 if order.partner_shipping_id.country_id:
                     Country.text = ustr(order.partner_shipping_id.country_id.name)
                 CompanyAdressFlag = SubElement(DeliveryAddress, 'CompanyAdressFlag')
-                CompanyAdressFlag.text = ustr(order.partner_shipping_id.company_type or '')
+                CompanyAdressFlag.text = ustr(order.company_id.id)
                 
                 Terms = SubElement(head, 'Terms')#Terms
                 DeliveryTerms = SubElement(Terms, 'DeliveryTerms')
@@ -149,8 +156,8 @@ class SaleOrder(models.Model):
                 for line in order.order_line:
                     Row = SubElement(Rows,'Row')
                     Row.set('RowNumber',ustr(line_no))
+                    Row.set('RowType',ustr(line_no))#FixMe
                     line_no+=1
-                    Row.set('RowType','')#FixMe
                     
                     Part = SubElement(Row,'Part')
                     if line.product_id and line.product_id.part_number:
@@ -176,13 +183,15 @@ class SaleOrder(models.Model):
                     Unit.text = ustr(line.product_uom.name)
                     
                     DeliveryPeriod = SubElement(Row,'DeliveryPeriod')
-                    DeliveryPeriod.text = ustr(str(line.customer_lead) + '(Days)')
+                    currentDT = datetime.datetime.now()
+                    date = currentDT.strftime("%m/%d/%Y")
+                    DeliveryPeriod.text = ustr(date)
                     
                     Each = SubElement(Row,'Each')
-                    Each.text = ustr(line.each or '')
+                    Each.text = ustr(line.price_unit or '')
                     
                     Discount = SubElement(Row,'Discount')
-                    Discount.text = ustr(str(line.discount)+ '(%)')
+                    Discount.text = ustr(str(line.discount))
                     
                     Setup = SubElement(Row,'Setup')
                     Setup.text = ustr(line.setup or '')
