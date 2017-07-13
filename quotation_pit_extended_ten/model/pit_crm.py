@@ -1009,6 +1009,11 @@ class sale_order(models.Model):
 					'payment_term_id':order.payment_term_id.id,
 					'hide_confirm':True,
 					'order_line':line_list,
+					'transport_payer':order.transport_payer,
+					'buyer_comment':order.buyer_comment,
+					'customer_transport_time_days':order.customer_transport_time_days,
+					'customer_invoice_code':order.customer_invoice_code,
+					'buyer_reference':order.buyer_reference,
 				}
 				new_order = self.env['sale.order'].create(sale_dict)
 				new_order.state = 'sale'
@@ -1091,6 +1096,17 @@ class sale_order_line(models.Model):
 	def part_number_product_change(self):
 		for part in self:
 			self.drawing_number = part.part_number_product.drawing_number
+			vals = {}
+		if part:
+			vals['workpiece_grade'] = self.part_number_product.workpiece_grade.id
+			vals['kind_of_machine'] = self.part_number_product.kind_of_machine.id
+			vals['coating_en'] = self.part_number_product.coating_en.id
+			vals['workpiece_material'] = self.part_number_product.workpiece_material.id
+			vals['drawing_number'] = self.part_number_product.drawing_number
+			vals['add_name_1'] = self.part_number_product.add_name_1
+			vals['add_name_2'] = self.part_number_product.add_name_2
+			vals['price_unit'] = self.part_number_product.lst_price
+		self.update(vals)
 
 	@api.one	
 	@api.depends('price_unit')

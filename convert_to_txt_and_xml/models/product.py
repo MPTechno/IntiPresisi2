@@ -80,7 +80,7 @@ class ProductProduct(models.Model):
             worksheet.set_column(row, col, 20)
             col += 1
 
-            worksheet.write(row, col, unicode('Name', "utf-8"), bold_format)
+            worksheet.write(row, col, unicode('Product Variant Name', "utf-8"), bold_format)
             worksheet.set_column(row, col, 20)
             col += 1
 
@@ -104,7 +104,7 @@ class ProductProduct(models.Model):
             worksheet.set_column(row, col, 20)
             col += 1
 
-            worksheet.write(row, col, unicode('Product Category', "utf-8"), bold_format)
+            worksheet.write(row, col, unicode('Product Family', "utf-8"), bold_format)
             worksheet.set_column(row, col, 20)
             col += 1
 
@@ -144,7 +144,6 @@ class ProductProduct(models.Model):
             worksheet.set_column(row, col, 20)
             col += 1
 
-            row += 1
             for product in product_ids:
                 part_number_obj = self.env['product.product'].browse(product)
                 if part_number_obj.part_num_ids:
@@ -197,7 +196,7 @@ class ProductProduct(models.Model):
                         worksheet.write(row, col,product_obj.partner_id.partner_code or '')
                         col += 1
 
-                        worksheet.write(row, col,product_obj.lst_price or 0)
+                        worksheet.write(row, col,format((product_obj.lst_price or 0), '.2f'))
                         col += 1
 
                         worksheet.write(row, col,product_obj.customer_part_no or '')

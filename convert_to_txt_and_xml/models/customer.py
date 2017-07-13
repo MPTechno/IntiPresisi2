@@ -180,87 +180,90 @@ class ResPartner(models.Model):
             worksheet.set_column(row, col, 20)
             col += 1
 
-            row += 1
             for customer in self.env['res.partner'].browse(customer_ids):
-                row += 1
-                col = 0
+                for child in customer.child_ids:
+                    row += 1
+                    col = 0
 
-                worksheet.write(row, col,customer.partner_code or '')
-                col += 1
-                
-                worksheet.write(row, col,customer.name or '')
-                col += 1
+                    worksheet.write(row, col,customer.partner_code or '')
+                    col += 1
+                    
+                    worksheet.write(row, col,customer.name or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.mailing_address_name or '')
-                col += 1
+                    worksheet.write(row, col,customer.mailing_address_name or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.street or '')
-                col += 1
+                    worksheet.write(row, col,customer.street or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.street2 or '')
-                col += 1
+                    worksheet.write(row, col,customer.street2 or '')
+                    col += 1
 
-                worksheet.write(row, col,str(customer.city or '')+ '/' + str(customer.zip or '') or '')
-                col += 1
+                    worksheet.write(row, col,str(customer.city or '')+ ' ' + str(customer.zip or '') or '')
+                    col += 1
 
-                worksheet.write(row, col,str(customer.city2_mailing or '')+ '/' + str(customer.zip2_mailing or '') or '')
-                col += 1
+                    worksheet.write(row, col,str(customer.city2_mailing or '')+ ' ' + str(customer.zip2_mailing or '') or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.delivery_address_name or '')
-                col += 1
-                
-                worksheet.write(row, col,customer.street_delivery or '')
-                col += 1
+                    worksheet.write(row, col,customer.delivery_address_name or '')
+                    col += 1
+                    
+                    worksheet.write(row, col,customer.street_delivery or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.street2_delivery or '')
-                col += 1
+                    worksheet.write(row, col,customer.street2_delivery or '')
+                    col += 1
 
-                worksheet.write(row, col,str(customer.city_delivery or '') +'/'+str(customer.zip_delivery or '') or '')
-                col += 1
+                    worksheet.write(row, col,str(customer.city_delivery or '') +' '+str(customer.zip_delivery or '') or '')
+                    col += 1
 
-                worksheet.write(row, col,str(customer.street2_delivery or '') +'/'+ str(customer.city2_delivery or '') or '')
-                col += 1
+                    worksheet.write(row, col,str(customer.street2_delivery or '') +' '+ str(customer.city2_delivery or '') or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.lang or '')
-                col += 1
+                    if customer.lang == 'en_US':
+                        worksheet.write(row, col,'EN')
+                        col += 1
+                    else:
+                        worksheet.write(row, col,customer.lang or '')
+                        col += 1
 
-                worksheet.write(row, col,customer.currency_new_id.name or '')
-                col += 1
+                    worksheet.write(row, col,customer.currency_new_id.name or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.customer_group_id.name or '')
-                col += 1
+                    worksheet.write(row, col,customer.customer_group_id.name or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.vat_code or '')
-                col += 1
+                    worksheet.write(row, col,customer.vat_code or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.vat_number or '')
-                col += 1
+                    worksheet.write(row, col,customer.vat_number or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.country_id.code or '')
-                col += 1
+                    worksheet.write(row, col,customer.country_id.code or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.phone or '')
-                col += 1
+                    worksheet.write(row, col,customer.phone or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.fax or '')
-                col += 1
+                    worksheet.write(row, col,customer.fax or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.email or '')
-                col += 1
+                    worksheet.write(row, col,customer.email or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.ref_name or '')
-                col += 1
+                    worksheet.write(row, col,child.name or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.ref_phone or '')
-                col += 1
+                    worksheet.write(row, col,child.phone or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.ref_mobile or '')
-                col += 1
+                    worksheet.write(row, col,child.mobile or '')
+                    col += 1
 
-                worksheet.write(row, col,customer.ref_email or '')
-                col += 1
+                    worksheet.write(row, col,child.email or '')
+                    col += 1
 
-            row += 2
             row += 1
 
             workbook.close()

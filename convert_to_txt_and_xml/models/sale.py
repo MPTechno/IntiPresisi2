@@ -22,6 +22,7 @@ class SaleOrder(models.Model):
     transport_payer = fields.Char('Transport Payer')
     customer_transport_time_days = fields.Char('Customer Transport time Days')
     customer_invoice_code = fields.Char('Customer Invoice Code')
+    buyer_reference = fields.Char('Buyer Reference')
 
     def download_xml(self):
         order_ids = self._context.get('active_ids',[])
@@ -71,16 +72,16 @@ class SaleOrder(models.Model):
                     StreetBox1.text = ustr(order.partner_id.street)
                     
                 StreetBox2 = SubElement(Buyer, 'StreetBox2')
-                if order.user_id.company_id.street2:
+                if order.partner_id.street2:
                     StreetBox2.text = ustr(order.partner_id.street2)
                     
                 ZipCity1 = SubElement(Buyer, 'ZipCity1')
-                if order.user_id.company_id.city:
-                    ZipCity1.text = ustr(order.partner_id.city) +' ' + ustr(order.partner_id.state_id.name or '')
+                if order.partner_id.city:
+                    ZipCity1.text = ustr(order.partner_id.city or '') +' ' + ustr(order.partner_id.state_id.name or '') +' ' + ustr(order.partner_id.zip or '')
                     
                 ZipCity2 = SubElement(Buyer, 'ZipCity2')
                 if order.partner_id.zip:
-                    ZipCity2.text = ustr(order.partner_id.zip)
+                    ZipCity2.text = ustr(order.partner_id.city2_mailing) +' '+ ustr(order.partner_id.state_id2.name) + ' ' + ustr(order.partner_id.zip2_mailing or '')
                     
                 Country = SubElement(Buyer, 'Country')
                 if order.partner_id.country_id:
@@ -88,14 +89,14 @@ class SaleOrder(models.Model):
                     
                 References = SubElement(head, 'References')#References    
                 BuyerReference = SubElement(References, 'BuyerReference')
-                BuyerReference.text = ustr(order.contact_id.name or '')
+                BuyerReference.text = ustr(order.buyer_reference or '')
                 
                 BuyerComment = SubElement(References, 'BuyerComment')
                 BuyerComment.text = ustr(order.buyer_comment or '')
                 
                 GoodsLabeling = SubElement(References, 'GoodsLabeling')
                 GoodsLabeling_row1 = SubElement(GoodsLabeling,'Row1')
-                GoodsLabeling_row1.text = ustr(order.goods_label or '')
+                GoodsLabeling_row1.text = ustr(str(order.name).split('/')[0] or '')
                 GoodsLabeling_row2 = SubElement(GoodsLabeling,'Row2')
                 
                 DeliveryAddress = SubElement(head, 'DeliveryAddress')#Delivery Address #FixMe: Need to confirm which value?
@@ -112,11 +113,11 @@ class SaleOrder(models.Model):
                     
                 ZipCity1 = SubElement(DeliveryAddress, 'ZipCity1')
                 if order.partner_shipping_id.city_delivery:
-                    ZipCity1.text = ustr(order.partner_shipping_id.city_delivery) +' ' + ustr(order.partner_shipping_id.state_id.name or '')
+                    ZipCity1.text = ustr(order.partner_shipping_id.city_delivery or '') +' ' + ustr(order.partner_shipping_id.state_id_delivery.name or '') + ' ' + ustr(order.partner_shipping_id.zip_delivery or '')
                     
                 ZipCity2 = SubElement(DeliveryAddress, 'ZipCity2')
                 if order.partner_shipping_id.city2_delivery:
-                    ZipCity2.text = ustr(order.partner_shipping_id.city2_delivery)
+                    ZipCity2.text = ustr(order.partner_shipping_id.city2_delivery or '') + ' ' + ustr(order.partner_shipping_id.state_id2_delivery.name or '') + ' ' + ustr(order.partner_shipping_id.zip2_delivery or '')
                     
                 Country = SubElement(DeliveryAddress, 'Country')
                 if order.partner_shipping_id.country_id:
@@ -161,7 +162,7 @@ class SaleOrder(models.Model):
                     
                     Part = SubElement(Row,'Part')
                     if line.product_id and line.product_id.part_number:
-                        Part.set('PartNumber',ustr(line.product_id.part_number))
+                        Part.set('PartNumber',ustr(line.part_number_product))
                     else:
                         Part.set('PartNumber','')
                     if line.product_id and line.product_id.customer_part_no:
@@ -170,14 +171,14 @@ class SaleOrder(models.Model):
                         Part.set('SupplierPartNumber','')
                     
                     Text = SubElement(Row,'Text')
-                    Text.text = ustr(line.name or line.product_id.name)
+                    Text.text = ustr(line.product_id.name or line.name)
                     
                     ReferenceNumber = SubElement(Row,'ReferenceNumber')
                     if line.product_id.default_code:
                         ReferenceNumber.text = ustr(line.product_id.default_code)
                     
                     Quantity = SubElement(Row,'Quantity')
-                    Quantity.text = ustr(line.product_uom_qty)
+                    Quantity.text = ustr(str(int(line.product_uom_qty)))
                     
                     Unit = SubElement(Row,'Unit')
                     Unit.text = ustr(line.product_uom.name)
@@ -191,13 +192,13 @@ class SaleOrder(models.Model):
                     Each.text = ustr(line.price_unit or '')
                     
                     Discount = SubElement(Row,'Discount')
-                    Discount.text = ustr(str(line.discount))
+                    Discount.text = ustr(str(int(line.discount)))
                     
                     Setup = SubElement(Row,'Setup')
-                    Setup.text = ustr(line.setup or '')
+                    Setup.text = ustr(line.setup or 0)
                     
                     Alloy = SubElement(Row,'Alloy')
-                    Alloy.text = ustr(line.alloy or '')
+                    Alloy.text = ustr(line.alloy or 0)
                     
             filename = '/opt/odoo/Sale Order XML.xml'
             f = open(filename, 'w')

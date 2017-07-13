@@ -12,10 +12,6 @@ class sale_order(models.Model):
 	delivery_time = fields.Date('Delivery Time')
 	manual_sequence = fields.Char('Quote Number')
 	contact_id = fields.Many2one('res.partner','Your Reference')
-	buyer_comment = fields.Text(string='Buyer Comment')#Field for XML export report
-	transport_payer = fields.Char(string='Transport Payer')#Field for XML export report
-	customer_transport_time_days = fields.Char(string='Customer Transport Time Days')#Field for XML export report
-	customer_invoice_code = fields.Char(string='Customer Invoice Code')#Field for XML export report
 	
 	def get_date_order(self,order_date):
 		if order_date:
@@ -31,6 +27,10 @@ class sale_order(models.Model):
 		date = currentDT.strftime("%m/%d/%Y")
 		return date
 	
+	def get_order_name(self,order):
+		if order:
+			return str(order.name).split('/')[0]
+
 	@api.model
 	def create(self, vals):
 		if vals.get('name', 'New') == 'New':

@@ -17,6 +17,7 @@
     	                		<field name="buyer_comment"/>
     	                		<field name="customer_transport_time_days"/>
     	                		<field name="customer_invoice_code"/>
+                                <field name="buyer_reference"/>
     	                	</group>
     	                </page>
     	            </xpath>
