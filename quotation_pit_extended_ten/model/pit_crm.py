@@ -985,6 +985,12 @@ class sale_order(models.Model):
 			for line in order.order_line:
 				if line.stat_line == 'so':
 					num_of_line += 1
+
+			if order.tag_ids:
+				tag_list = order.tag_ids.ids
+			else:
+				tag_list = []
+
 			if line_list:
 				order_name = self.search_count([('or_sale_id','=',order.id)])
 				if order_name == 0:
@@ -1013,7 +1019,7 @@ class sale_order(models.Model):
 					'incoterm':order.incoterm.id,
 					'delivery_term_id':order.delivery_term_id.id,
 					'delivery_time_id':order.delivery_time_id.id,
-					'tag_ids': [(4,order.tag_ids.ids)],
+					'tag_ids': [(6,0, tag_list)],
 					'contact_id':order.contact_id.id,
 					'related_project_id':order.related_project_id.id,
 					'origin':order.origin,
