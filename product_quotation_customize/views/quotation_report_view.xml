@@ -156,7 +156,7 @@
 									<th>Delivery Method</th>
 									<td><span t-if="o.picking_policy" t-field="o.picking_policy"/></td>
 									<th>Delivery Time</th>
-									<td><span t-if="o.delivery_time" t-field="o.delivery_time"/></td>
+									<td><span t-if="o.delivery_time_id" t-field="o.delivery_time_id.name"/></td>
 								</tr>
 								<tr>
 									<th>Valid Through</th>
@@ -184,12 +184,14 @@
 						            <t t-set="i" t-value="i+1"/>
 						            <td style="border:none;"><span t-esc="i"/></td>
 						            <td style="border:none;"><span t-if="l.part_number_product" t-field="l.part_number_product.name"/></td>
-						            <td style="border:none;"><span t-field="l.product_id.name"/></td>
-						            <td style="border:none;" class="text-right">
-						                <span t-field="l.product_uom_qty"/> <span t-field="l.product_uom.name"/>
+						            <td style="border:none;">
+						                <span t-field="l.product_id.name"/>
 						            </td>
-						            <td style="border:none;" class="text-right"><span t-field="l.price_unit"/></td>
-						            <td style="border:none;" class="text-right"><span t-field="l.price_subtotal"/></td>
+						            <td style="border:none;" class="text-right">
+						                <span t-esc="int(l.product_uom_qty)"/> <span t-field="l.product_uom.name"/>
+						            </td>
+						            <td style="border:none;" class="text-right"><span t-esc="'%.2f'%(l.price_unit)"/></td>
+						            <td style="border:none;" class="text-right"><span t-esc="'%.2f'%(l.price_subtotal)"/></td>
 						        </tr>
 						    </tbody>
 						</table>
@@ -199,7 +201,7 @@
 						            <tr style="border:none;">
 						                <td style="border:none;"><strong>Total excl. PPN (IDR)</strong></td>
 						                <td style="border:none;" class="text-right">
-						                     <span t-field="o.amount_total"/>
+						                     <span t-esc="'%.2f'%(o.amount_total)"/>
 						                </td>
 						            </tr>
 						        </table>
