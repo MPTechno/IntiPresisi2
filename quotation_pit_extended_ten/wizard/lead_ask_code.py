@@ -18,6 +18,27 @@ import xlsxwriter
 import csv
 import os.path
 
+class res_partner(models.Model):
+	_inherit = 'res.partner'
+
+	@api.model
+	def create(self, vals):
+		print "DDDDDDDDDDDDdd",vals
+		w = super(res_partner,self).create(vals)
+		if w.company_type == 'company':
+			sale_pricelist_id = self.env['product.pricelist'].create({
+				'name':str(w.short_name) + '_' + str(w.partner_code),
+				'item_ids': [(0, 0, {
+						'applied_on': '3_global',
+						'compute_price': 'fixed',
+						'fixed_price': 0.0,
+					})]
+			})
+			value = {
+				'property_product_pricelist':sale_pricelist_id.id,
+			}
+			w.write(value)
+		return w
 
 class crm_askcode_partner(models.TransientModel):
 	_name = 'crm.askcode.partner'
@@ -46,14 +67,7 @@ class crm_askcode_partner(models.TransientModel):
 			partner = self.env['res.partner']
 			vals_dict = {}
 			if lead_obje.comp_name:
-				sale_pricelist_id = self.env['product.pricelist'].create({
-					'name':str(w.short_name) + '_' + str(w.code_partner),
-					'item_ids': [(0, 0, {
-							'applied_on': '3_global',
-							'compute_price': 'fixed',
-							'fixed_price': 0.0,
-						})]
-				})
+
 				contact_dict = {
 					'partner_code': w.code_partner + '/CON',
 					'short_name':w.short_name,
@@ -64,7 +78,6 @@ class crm_askcode_partner(models.TransientModel):
 					'user_id': self._uid,
 					'email':lead_obje.email_from,
 					'mobile':lead_obje.mobile,
-					'property_product_pricelist':sale_pricelist_id.id,
 					'is_company': False,
 					'company_type':'person',
 					'type': 'contact',
@@ -88,7 +101,6 @@ class crm_askcode_partner(models.TransientModel):
 					'fax':lead_obje.fax,
 					'country_id':lead_obje.country_id.id,
 					'zip':lead_obje.zip,
-					'property_product_pricelist':sale_pricelist_id.id,
 					'is_company': True,
 					'company_type':'company',
 					'type': 'contact',
