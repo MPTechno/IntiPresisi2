@@ -34,6 +34,8 @@
 						<field name="add_name_4"/>
 					</group>
 				</group>
+				<separator string="Remarks"/>
+				<field name="remarks_en"/>
 			</form>
 		</field>
 	</record>

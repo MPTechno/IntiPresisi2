@@ -67,6 +67,7 @@ class sequence_number_product(models.Model):
 	add_name_2 = fields.Char('Add Name 2')
 	add_name_3 = fields.Char('Add Name 3')
 	add_name_4 = fields.Char('Add Name 4')
+	remarks_en = fields.Text('Remark')
 
 	@api.multi
 	def create(self, vals):
