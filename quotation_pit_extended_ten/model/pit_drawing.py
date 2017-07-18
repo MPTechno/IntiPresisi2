@@ -243,6 +243,7 @@ class crm_lead_line(models.Model):
 					pricelis_dict = {
 						'item_ids': [(1, priclist.id, {'fixed_price': vals.get('unit_price_en')})]
 					}
+					priclist.part_number_product.write({'lst_price':vals.get('unit_price_en')})
 			if not pricelis_dict:
 				pricelis_dict = {
 					'item_ids': [(0, 0, {
@@ -400,6 +401,8 @@ class crm_lead_line(models.Model):
 							'part_number_product':vals.get('part_number_product') or self.part_number_product.id,
 						})]
 				}
+			part_product = self.env['sequence.number.product'].browse(vals.get('part_number_product') or self.part_number_product.id)
+			part_product.write({'lst_price':vals.get('unit_price_en')})
 			if not vals.get('pricing_date'):
 				vals.update({'pricing_date':fields.Datetime.now()})
 			self.lead_line_id.partner_id.property_product_pricelist.write(pricelis_dict)

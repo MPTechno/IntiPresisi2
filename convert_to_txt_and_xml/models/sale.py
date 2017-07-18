@@ -189,7 +189,7 @@ class SaleOrder(models.Model):
                     DeliveryPeriod.text = ustr(date)
                     
                     Each = SubElement(Row,'Each')
-                    Each.text = ustr(line.price_unit or '')
+                    Each.text = ustr(str(int(line.price_unit or '')))
                     
                     Discount = SubElement(Row,'Discount')
                     Discount.text = ustr(str(int(line.discount)))

@@ -238,6 +238,9 @@
 						<field name="part_code"/>
 						<field name="product_group"/>
 					</xpath>
+					<xpath expr="//notebook/page[@name='general_information']" position="attributes">
+						<attribute name="invisible">1</attribute>
+					</xpath>
 				</data>
 			</field>
 		</record>
