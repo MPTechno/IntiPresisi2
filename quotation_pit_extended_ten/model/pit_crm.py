@@ -383,7 +383,7 @@ class crm_lead(models.Model):
 	def _compute_phonecall_count(self):
 		for partner in self:
 			if partner.partner_id:
-				partner.phonecall_count = self.env['crm.phonecall'].search_count([('partner_id', '=', partner.partner_id.id)])
+				partner.phonecall_count_opp = self.env['crm.phonecall'].search_count([('partner_id', '=', partner.partner_id.id)])
 
 	def _onchange_partner_id_values(self, partner_id):
 		""" returns the new values when partner_id has changed """
