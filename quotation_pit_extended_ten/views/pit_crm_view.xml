@@ -29,7 +29,7 @@
                             name="%(crm_phonecall.crm_case_categ_phone_incoming0)d"
                             icon="fa-phone"
                             context="{'search_default_opportunity_id': active_id}">
-                            <field string="Calls" name="phonecall_count" widget="statinfo"/>
+                            <field string="Calls" name="phonecall_count_opp" widget="statinfo"/>
                         </button>
                     </div>
 <!--                     <xpath expr="//button[@name='action_set_won']" position="before">
@@ -918,7 +918,6 @@
              <field name="model">res.partner</field>
              <field name="arch" type="xml">
                  <search string="Search Partner">
-                    <field name="partner_code"/>
                     <field name="name"
                         filter_domain="['|','|',('display_name','ilike',self),('ref','=',self),('email','ilike',self)]"/>
                     <filter help="My Partners" domain="[('user_id','=',uid)]"/>
@@ -933,6 +932,7 @@
                     <separator/>
                     <field name="category_id" string="Tag" filter_domain="[('category_id','ilike', self)]"/>
                     <field name="user_id"/>
+                    <field name="partner_code"/>
                     <field name="parent_id" domain="[('is_company','=',1)]" operator="child_of"/>
                     <group expand="0" name="group_by" string="Group By">
                         <filter name="salesperson" string="Salesperson" domain="[]" context="{'group_by' : 'user_id'}" />

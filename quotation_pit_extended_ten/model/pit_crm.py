@@ -288,6 +288,7 @@ class crm_phonecall(models.Model):
 
 	prospect_id = fields.Many2one('crm.lead','Lead')
 	contact_name = fields.Many2one('phonecall.contact','Contact')
+	
 
 	@api.model
 	def create(self, vals):
@@ -300,7 +301,7 @@ class crm_lead(models.Model):
 	_inherit = 'crm.lead'
 
 	email_count = fields.Integer("Emails", compute='_compute_emails_count')
-	phonecall_count = fields.Integer(compute='_compute_phonecall_count',string="Phonecalls")
+	phonecall_count_opp = fields.Integer(compute='_compute_phonecall_count',string="Phonecalls")
 	phonecall_count_lead = fields.Integer(compute='_compute_phonecall_count_lead',string="Phonecalls")
 	partner_name = fields.Char('Account Name')
 	stage_new_pr = fields.Many2one('crm.new.case','Prospects Status')
@@ -727,10 +728,10 @@ class crm_lead(models.Model):
 			partner_ids.append(self.partner_id.id)
 		action['context'] = {
 			# 'search_default_user_id':self.user_id
-			# 'search_default_opportunity_id': self.id if self.type == 'opportunity' else False,
-			# 'default_opportunity_id': self.id if self.type == 'opportunity' else False,
-			# 'default_partner_id': self.partner_id.id,
-			# 'default_partner_ids': partner_ids,
+			'search_default_opportunity_id': self.id if self.type == 'opportunity' else False,
+			'default_opportunity_id': self.id if self.type == 'opportunity' else False,
+			'default_partner_id': self.partner_id.id,
+			'default_partner_ids': partner_ids,
 			# 'default_team_id': self.team_id.id,
 			# 'default_name': self.name,
 		}
