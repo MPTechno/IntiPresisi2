@@ -288,7 +288,7 @@ class crm_phonecall(models.Model):
 
 	prospect_id = fields.Many2one('crm.lead','Lead')
 	contact_name = fields.Many2one('phonecall.contact','Contact')
-	
+
 
 	@api.model
 	def create(self, vals):
@@ -521,7 +521,7 @@ class crm_lead(models.Model):
 				if login_user.sales_coordinator_b == True:
 					collect_data_list.append(login_user.partner_id.id)
 				else:
-					collect_list = self.env['res.users'].search([('sales_coordinator_b','=',True)])
+					collect_list = self.env['res.users'].search(['|',('sales_coordinator_b','=',True),('sales_supervisor_b','=',True)])
 					if collect_list:
 						for i in collect_list:
 							collect_data_list.append(i.partner_id.id)
@@ -531,7 +531,6 @@ class crm_lead(models.Model):
 
 				technical_checking_list = []
 				technical_list = self.env['res.users'].search([('technical_support_b','=',True)])
-				print "SSSSSSSSSSSSS",technical_list
 				if technical_list:
 					for j in technical_list:
 						technical_checking_list.append(j.partner_id.id)
@@ -561,7 +560,6 @@ class crm_lead(models.Model):
 				if vals['stage_id'] and stage_lead_technical_check and vals['stage_id'] == stage_lead_technical_check[1]:
 					template = self.env.ref('quotation_pit_extended_ten.email_template_collect_data_report', False).with_context({'action_id':action_id,'menu_id':menu_id})
 					tech_mail_id = template.send_mail(self.id,technical_checking_list)
-					print "EEEEEEEEEEEEEEE",tech_mail_id , technical_checking_list
 					self.env['mail.mail'].browse(tech_mail_id).send()
 
 				pricing_list_ext_check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_pricing')
@@ -654,7 +652,7 @@ class crm_lead(models.Model):
 			if login_user.sales_coordinator_b == True:
 				collect_data_list.append(login_user.partner_id.id)
 			else:
-				collect_list = self.env['res.users'].search([('sales_coordinator_b','=',True)])
+				collect_list = self.env['res.users'].search([('sales_coordinator_b','=',True),('sales_supervisor_b','=',True)])
 				if collect_list:
 					for i in collect_list:
 						collect_data_list.append(i.partner_id.id)
