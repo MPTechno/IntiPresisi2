@@ -156,7 +156,7 @@
 								</tr>
 								<tr>
 									<th>Delivery Method</th>
-									<td><span t-if="o.picking_policy" t-field="o.picking_policy"/></td>
+									<td><span t-if="o.carrier_id" t-field="o.carrier_id.name"/></td>
 									<th>Delivery Time</th>
 									<td><span t-if="o.delivery_time_id" t-field="o.delivery_time_id.name"/></td>
 								</tr>
