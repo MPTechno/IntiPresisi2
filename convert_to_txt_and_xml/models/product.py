@@ -11,6 +11,7 @@ from odoo.addons.base.res.res_partner import WARNING_MESSAGE, WARNING_HELP
 import odoo.addons.decimal_precision as dp
 
 import base64
+import unicodedata
 import StringIO
 import xlsxwriter
 import csv
@@ -33,14 +34,15 @@ class ProductProduct(models.Model):
             for part_number_obj in self.env['product.product'].browse(product_ids):
                 if part_number_obj.part_num_ids:
                     for product in part_number_obj.part_num_ids:
-                        content +=  str(product.name or '\t') + '  ' + str(product.product_id.name or '\t') + '  ' + str(product.part_type_id and product.part_type_id.name or '\t') + '   ' +\
-                                    str(product.uom_id and product.uom_id.name or '\t') + '   ' + str(product.uom_id and product.uom_id.name or '\t') + '   '+ \
-                                    str(product.part_code and product.part_code.name or '\t') + '   ' + str(product.product_group and product.product_group.name or '\t') + '    ' + \
-                                    str(product.product_id.product_tmpl_id.name or '\t') + '   ' + str(product.drawing_number or '\t') + '   ' + str(product.revision or '\t') + '    ' + \
-                                    str(product.add_name_1 or '\t') + '   ' + str(product.add_name_2 or '\t') + '   ' + \
-                                    str(product.add_name_3 or '\t') + '   ' + str(product.add_name_4 or '\t') + '   ' + \
-                                    str(product.partner_id.partner_code or '\t') + '   ' + str(product.lst_price or 0) + '   ' + \
-                                    str(product.customer_part_no or '\t') + '   ' + '\n'
+                        print ":::::::::::::::",product.partner_id.partner_code ,type(product.partner_id.partner_code), type(str(product.partner_id.partner_code))
+                        content +=  unicodedata.normalize('NFKD', product.name or unicode(unicode('\t'))).encode('ascii', 'ignore') + '  ' + unicodedata.normalize('NFKD', product.product_id.name or unicode('\t')).encode('ascii', 'ignore') + '  ' + unicodedata.normalize('NFKD', product.part_type_id and product.part_type_id.name or unicode('\t')).encode('ascii', 'ignore') + '   ' +\
+                                    unicodedata.normalize('NFKD', product.uom_id and product.uom_id.name or unicode('\t')).encode('ascii', 'ignore') + '   ' + unicodedata.normalize('NFKD', product.uom_id and product.uom_id.name or unicode('\t')).encode('ascii', 'ignore') + '   '+ \
+                                    unicodedata.normalize('NFKD', product.part_code and product.part_code.name or unicode('\t')).encode('ascii', 'ignore') + '   ' + unicodedata.normalize('NFKD', product.product_group and product.product_group.name or unicode('\t')).encode('ascii', 'ignore') + '    ' + \
+                                    unicodedata.normalize('NFKD', product.product_id.product_tmpl_id.name or unicode('\t')).encode('ascii', 'ignore') + '   ' + unicodedata.normalize('NFKD', product.drawing_number or unicode('\t')).encode('ascii', 'ignore') + '   ' + unicodedata.normalize('NFKD', product.revision or unicode('\t')).encode('ascii', 'ignore') + '    ' + \
+                                    unicodedata.normalize('NFKD', product.add_name_1 or unicode('\t')).encode('ascii', 'ignore') + '   ' + unicodedata.normalize('NFKD', product.add_name_2 or unicode('\t')).encode('ascii', 'ignore') + '   ' + \
+                                    unicodedata.normalize('NFKD', product.add_name_3 or unicode('\t')).encode('ascii', 'ignore') + '   ' + unicodedata.normalize('NFKD', product.add_name_4 or unicode('\t')).encode('ascii', 'ignore') + '   ' + \
+                                    product.partner_id.partner_code or '\t' + '   ' + str(product.lst_price or 0 )+ '   ' + \
+                                    product.customer_part_no or '\t'  + '   ' + '\n'
             filename = '/opt/odoo/Products.txt'
             f = open(filename, 'w')
             f.write(content)
