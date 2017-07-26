@@ -239,6 +239,7 @@ class crm_lead_line(models.Model):
 		if vals.get('unit_price_en') != 0.0:
 			pricelis_dict = {}
 			for priclist in self.env['crm.lead'].browse(vals.get('lead_line_id')).partner_id.property_product_pricelist.item_ids:
+				print "EEEEEEEEEEEE",pricelis_dict.part_number_product.id , vals.get('part_number_product')
 				if priclist.part_number_product.id == vals.get('part_number_product'):
 					pricelis_dict = {
 						'item_ids': [(1, priclist.id, {'fixed_price': vals.get('unit_price_en')})]
@@ -384,7 +385,11 @@ class crm_lead_line(models.Model):
 		if vals.get('unit_price_en') or vals.get('internal_code_en'):
 			pricelis_dict = {}
 			for priclist in self.lead_line_id.partner_id.property_product_pricelist.item_ids:
-				if priclist.part_number_product.id == self.part_number_product.id:
+				if not vals.get('part_number_product') and priclist.part_number_product.id == self.part_number_product.id:
+					pricelis_dict = {
+						'item_ids': [(1, priclist.id, {'fixed_price': vals.get('unit_price_en')})]
+					}
+				if vals.get('part_number_product') and priclist.part_number_product.id == vals.get('part_number_product'):
 					pricelis_dict = {
 						'item_ids': [(1, priclist.id, {'fixed_price': vals.get('unit_price_en')})]
 					}

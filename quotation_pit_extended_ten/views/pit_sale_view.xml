@@ -248,6 +248,33 @@
 
 		<menuitem id="coating_report_part_code" name="Coating Report" parent="sales_team.menu_sale_report" sequence="5" action="quotation_pit_extended_ten.coating_wizard_report_action" />
 
+		<record id="view_config_sequence_partner_form" model="ir.ui.view">
+			<field name="name">sequence.number.partner</field>
+			<field name="model">sequence.number.partner</field>
+			<field name="arch" type="xml">
+				<form string="Sequence Price History">
+					<group>
+						<field name="name"/>
+						<field name="sequence_id"></field>
+						<field name="product_id"></field>
+						<field name="sequence_number"></field>
+						<field name="seq_price"></field>
+						<field name="pricing_date"/>
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_config_sequence_partner" model="ir.actions.act_window">
+			<field name="name">Sequence Partner</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">sequence.number.partner</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem id="menu_sequence_partner_form" parent="menu_account_item" action="action_config_sequence_partner" sequence="10"/>
+
 
 
 <!--(accounts) CUSTOMER GROUP -->

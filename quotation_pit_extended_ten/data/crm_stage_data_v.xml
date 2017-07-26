@@ -9,7 +9,7 @@
             <field name="model_id" ref="crm.model_crm_lead"/>
             <field name="lang">${object.partner_id.lang}</field>
             <field name="body_html"><![CDATA[
-                    <p>Hello Sir/Madam,
+                    <p>Dear Sir/Madam,
 
                     <p>Enquiry is in ${object.stage_id.name} Stage. You can reply to this email if you have any questions.</p>
                     <p>You Can Find Link Below.</p>
