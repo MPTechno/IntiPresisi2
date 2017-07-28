@@ -248,6 +248,23 @@
 
 		<menuitem id="coating_report_part_code" name="Coating Report" parent="sales_team.menu_sale_report" sequence="5" action="quotation_pit_extended_ten.coating_wizard_report_action" />
 
+		<record id="view_product_part_number_partner_filter" model="ir.ui.view">
+			<field name="name">product.price.history.select</field>
+			<field name="model">sequence.number.partner</field>
+			<field name="arch" type="xml">
+				<search string="Price History">
+					<field name="product_id"/>
+					<field name="name"/>
+					<field name="sequence_id"/>
+					<separator/>
+					<group expand="0" string="Group By">
+						<filter string="Product" domain="[]" context="{'group_by':'product_id'}"/>
+						<filter string="Partner" domain="[]" context="{'group_by':'sequence_id'}"/>
+					</group>
+			   </search>
+			</field>
+		</record>
+
 		<record id="view_config_sequence_partner_form" model="ir.ui.view">
 			<field name="name">sequence.number.partner</field>
 			<field name="model">sequence.number.partner</field>
@@ -287,6 +304,22 @@
 
 		<menuitem id="menu_sequence_partner_form" parent="menu_account_item" action="action_config_sequence_partner" sequence="10"/>
 
+		<record id="view_product_part_number_product_filter" model="ir.ui.view">
+			<field name="name">product.part.number.ytm.select</field>
+			<field name="model">sequence.number.product</field>
+			<field name="arch" type="xml">
+				<search string="Part Number">
+					<field name="product_id"/>
+					<field name="drawing_number"/>
+					<field name="partner_id"/>
+					<separator/>
+					<group expand="0" string="Group By">
+						<filter string="Product" domain="[]" context="{'group_by':'product_id'}"/>
+						<filter string="Partner" domain="[]" context="{'group_by':'partner_id'}"/>
+					</group>
+			   </search>
+			</field>
+		</record>
 
 		<record id="view_config_customer_treesequence_product" model="ir.ui.view">
 			<field name="name">customer.group.sequence.productrtree</field>
