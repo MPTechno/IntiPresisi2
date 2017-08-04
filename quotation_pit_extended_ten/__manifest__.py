@@ -20,7 +20,7 @@
         'views/coating_report_view.xml',
         'views/pit_crm_view.xml',
         'views/pit_sale_view.xml',
-        
+        'views/quotation_approval_view.xml',        
     ],
     'qweb': [
         "static/src/xml/sales_name_dashboard.xml",

@@ -32,6 +32,58 @@
             <field name="target">new</field>
         </record>
 
+        <record id="view_sale_order_approval_quotation" model="ir.ui.view">
+            <field name="name">sale.order.approval.quotation.form</field>
+            <field name="model">sale.order.approval</field>
+            <field name="arch" type="xml">
+                <form string="Approved By">
+                    <group name="name">
+                        <field name="approved_by" class="oe_inline" string="Approved By"/>
+                    </group>
+                    <footer>
+                        <button name="approv_sale" string="Approve" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_crm_askcode_approval_quotation_action" model="ir.actions.act_window">
+            <field name="name">Approved By</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.approval</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_sale_order_approval_quotation"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="view_sale_order_approval_quotation_send" model="ir.ui.view">
+            <field name="name">sale.order.approval.quotation.form.send</field>
+            <field name="model">sale.order.send</field>
+            <field name="arch" type="xml">
+                <form string="Quotation Send">
+                    <group name="name">
+                        <field name="email_to" class="oe_inline" string="To (Email Account):"/>
+                    </group>
+                    <footer>
+                        <button name="approv_sale_send" string="Send" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_send_email_approval_quotation_action" model="ir.actions.act_window">
+            <field name="name">Quotation Send</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.send</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_sale_order_approval_quotation_send"/>
+            <field name="target">new</field>
+        </record>
+
         <record id="view_crm_lcrm_askcode_po_number_popup" model="ir.ui.view">
             <field name="name">crm.askcode.po.number.form</field>
             <field name="model">crm.askcode.ponumber</field>

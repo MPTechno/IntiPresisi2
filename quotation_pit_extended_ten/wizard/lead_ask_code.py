@@ -23,7 +23,6 @@ class res_partner(models.Model):
 
 	@api.model
 	def create(self, vals):
-		print "DDDDDDDDDDDDdd",vals
 		w = super(res_partner,self).create(vals)
 		if w.company_type == 'company':
 			sale_pricelist_id = self.env['product.pricelist'].create({
@@ -39,6 +38,41 @@ class res_partner(models.Model):
 			}
 			w.write(value)
 		return w
+
+class sale_order_send(models.TransientModel):
+	_name = 'sale.order.send'
+
+	email_to = fields.Char('Email')
+
+	@api.one
+	def approv_sale_send(self):
+		w = self
+		template = self.env.ref('quotation_pit_extended_ten.email_template_sale_order_approval_send', False).with_context({'email_to':w.email_to})
+		mail_id = template.send_mail(self._context.get('active_id'))
+		self.env['mail.mail'].browse(mail_id).send()
+		self.env['sale.order'].browse(self._context.get('active_id')).write({'state':'sent'})
+		return True
+
+class sale_order_approval(models.TransientModel):
+	_name = 'sale.order.approval'
+
+	def _get_data(self):
+		userlist= []
+		company_obj = self.env['sale.order'].browse(self._context.get('active_id')).company_id
+		if company_obj and company_obj.sign_line_ids:
+			for i in company_obj.sign_line_ids:
+				userlist.append(i.user_id.id)
+		return [('id', 'in', userlist)]
+
+	approved_by = fields.Many2one('res.users','User', domain=_get_data)
+
+	@api.one
+	def approv_sale(self):
+		if self._context.get('active_id'):
+			w = self
+			sale_obje = self.env['sale.order'].browse(self._context.get('active_id'))
+			sale_obje.write({'state':'approved','approved_by':w.approved_by.id})
+		return True
 
 class crm_askcode_partner(models.TransientModel):
 	_name = 'crm.askcode.partner'

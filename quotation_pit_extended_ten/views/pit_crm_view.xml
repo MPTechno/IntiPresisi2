@@ -533,7 +533,7 @@
             <field name="view_mode">tree,calendar</field>
             <field name="view_id" ref="crm_phonecall.crm_case_inbound_phone_tree_view"/>
             <field name="domain">[('prospect_id','=',active_id)]</field>
-            <field name="context">{'search_default_state': 'done', 'default_state': 'done'}</field>
+            <!-- <field name="context">{'search_default_state': 'done', 'default_state': 'done'}</field> -->
             <field name="search_view_id" ref="crm_phonecall.view_crm_case_phonecalls_filter"/>
         </record>
 

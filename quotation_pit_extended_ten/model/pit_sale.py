@@ -30,11 +30,6 @@ class res_users(models.Model):
 	admin_b = fields.Boolean('Admin')
 	sales_supervisor_b = fields.Boolean('Sales Supervisor')
 
-class res_company(models.Model):
-	_inherit = 'res.company'
-
-	sign_line_text = fields.Char('Sign Line Name')
-
 
 class sale_order(models.Model):
 	_inherit = 'sale.order'

@@ -12,7 +12,7 @@
 				<data>
 					<xpath expr="//button[@name='action_quotation_send']" position="replace"></xpath>
 					<xpath expr="//button[@name='action_quotation_send']" position="replace">
-						<button name="action_quotation_send_stage" string="Quotation Send" type="object" class="btn-primary"/>
+						<button name="%(action_send_email_approval_quotation_action)d" states="approved" string="Send Quotation" type="action" class="btn-primary"/>
 					</xpath>
 					<xpath expr="//button[@name='action_confirm']" position="replace"></xpath>
 					<xpath expr="//button[@name='action_confirm']" position="replace">
@@ -90,25 +90,12 @@
 						<field name="prospect_id" invisible="1"/>
 					</field>
 					<field name="partner_id" position="attributes">
-						<attribute name="invisible">1</attribute>
+						<attribute name="string">Account</attribute>
 					</field>
 				</data>
 			</field>
 		</record>
-
-		<record model="ir.ui.view" id="quotation_per_quotation_res_company_view">
-			<field name="name">Company</field>
-			<field name="model">res.company</field>
-			<field name="inherit_id" ref="base.view_company_form"/>
-			<field name="arch" type="xml">
-				<data>
-					<field name="currency_id" position="after">
-						<field name="sign_line_text"/>
-					</field>
-				</data>
-			</field>
-		</record>
-
+		
 		<!-- FOR LEAD FIELD READONLY -->
 
 		<record id="view_crm_prospect_sales_person_ref_readonly" model="ir.ui.view">

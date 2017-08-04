@@ -19,7 +19,7 @@
 		<template id="quotation_header_layout">
 			<div class="header">
 				<div class="col-xs-12 pull-left">
-					<div class="col-xs-5 pull-left">
+					<div class="col-xs-6 pull-left">
 						<img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="width:200px;height:150px;margin-top:-25px; margin-left:-45px;" />
 						<strong>
 							<span style="font-size:15px; color:red; align: right; margin-left:100px; margin-top:-40px; font-style: italic; display:inline-block;" t-if="company.rml_header1" t-field="company.rml_header1" /><br/>
@@ -34,7 +34,7 @@
 							<span t-if="o.opportunity_id" t-field="o.opportunity_id.en_number" />
 						</div>
 					</div>
-					<div class="col-xs-7 pull-right">
+					<div class="col-xs-6 pull-right">
 						<div style="border:1px solid black; border-radius: 5px;margin-bottom:10px;">
 							<strong><span style="font-size:20px; margin-left:10px;">Quotation</span></strong><br/>
 						</div>
@@ -74,9 +74,11 @@
 
 		<template id="quotation_footer_layout">
 			<div class="footer">
-				<span t-if="company" t-field="company.sign_line_text"/><br/>
-				<span>........................</span><br/>
-				Contact Name
+				<t t-if="o and o.state == 'approved'">
+					<img t-if="o" t-att-src="'data:image/png;base64,%s' % company.get_approved_image(o,company)" style="width:100px;height:100px;" /><br/>
+					<span>........................</span><br/>
+					<span t-if="o" t-esc="company.get_approved(o)" />
+				</t>
 				<br/><br/>
 				<div class="col-xs-12 pull-left" style="border-top:1px solid black;">
 					<div class="col-xs-4 pull-left">
@@ -146,27 +148,23 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-xs-12" style="margin-top:20px;">
-							<table class="table_delivery">
-								<tr>
-									<th>Terms Of Delivery</th>
-									<td><span t-if="o.delivery_term_id" t-field="o.delivery_term_id.name"/></td>
-									<th>Terms Of Payment</th>
-									<td><span t-if="o.payment_term_id" t-field="o.payment_term_id.name"/></td>
-								</tr>
-								<tr>
-									<th>Delivery Method</th>
-									<td><span t-if="o.carrier_id" t-field="o.carrier_id.name"/></td>
-									<th>Delivery Time</th>
-									<td><span t-if="o.delivery_time_id" t-field="o.delivery_time_id.name"/></td>
-								</tr>
-								<tr>
-									<th>Valid Through</th>
-									<td><span t-if="o.validity_new_date" t-field="o.validity_new_date.name"/></td>
-									<th>Goods Label</th>
-									<td><span t-esc="o.get_order_name(o)"></span></td>
-								</tr>
-							</table>
+						<div class="col-xs-12" style="margin-top:20px;margin-bottom:20px;">
+							<div class="col-xs-6 pull-left">
+								<span><b>Terms Of Delivery : </b></span>
+								<span t-if="o.delivery_term_id" t-field="o.delivery_term_id.name"/><br/>
+								<span><b>Delivery Method : </b></span>
+								<span t-if="o.carrier_id" t-field="o.carrier_id.name"/><br/>
+								<span><b>Valid Through : </b></span>
+								<span t-if="o.validity_new_date" t-field="o.validity_new_date.name"/><br/>
+							</div>
+							<div class="col-xs-6 pull-right">
+								<span><b>Terms Of Payment : </b></span>
+								<span t-if="o.payment_term_id" t-field="o.payment_term_id.name"/><br/>
+								<span><b>Delivery Time : </b></span>
+								<span t-if="o.delivery_time_id" t-field="o.delivery_time_id.name"/><br/>
+								<span><b>Goods Label : </b></span>
+								<span t-esc="o.get_order_name(o)"></span><br/>
+							</div>
 						</div>
 						
 						<table class="table table-condensed">
