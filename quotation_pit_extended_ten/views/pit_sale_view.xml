@@ -929,28 +929,6 @@
 	
 		<menuitem id="calendar.menu_calendar_alarm" name="Reminders" groups="base.group_user" action="calendar.action_calendar_alarm" parent="menu_cal_meetings" sequence="3"/>
 
-		<record id="view_calender_event_type_form" model="ir.ui.view">
-			<field name="name">calender.event.type.calnder.form</field>
-			<field name="model">calendar.event</field>
-			<field name="arch" type="xml">
-				<form string="Tags">
-					<group>
-						<field name="name"/>
-					</group>
-				</form>
-			</field>
-		</record>
-
-		<record id="view_calender_event_type_tree" model="ir.ui.view">
-			<field name="name">calender.event.type.calnder.tree</field>
-			<field name="model">calendar.event</field>
-			<field name="priority">2</field>
-			<field name="arch" type="xml">
-				<tree string="Tags">
-					<field name="name"/>
-				</tree>
-			</field>
-		</record>
 
 		<record id="action_calender_event_type_form" model="ir.actions.act_window">
 			<field name="name">Tags</field>
@@ -958,44 +936,10 @@
 			<field name="res_model">calendar.event.type</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
-			<field name="view_id" ref="view_calender_event_type_tree"/>
 		</record>
 
 		<menuitem id="menu_calender_event_type" parent="menu_cal_meetings" action="action_calender_event_type_form" sequence="1"/>
 
-<!-- 		<record id="view_calendar_alarm_type_form" model="ir.ui.view">
-			<field name="name">calender.calendar.alarm.form</field>
-			<field name="model">calendar.alarm</field>
-			<field name="arch" type="xml">
-				<form string="Tags">
-					<group>
-						<field name="name"/>
-					</group>
-				</form>
-			</field>
-		</record>
-
-		<record id="view_calender_calendar_alarm_tree" model="ir.ui.view">
-			<field name="name">calender.calendar.alarm.calnder.tree</field>
-			<field name="model">calendar.alarm</field>
-			<field name="priority">2</field>
-			<field name="arch" type="xml">
-				<tree string="Tags">
-					<field name="name"/>
-				</tree>
-			</field>
-		</record>
-
-		<record id="action_calender_calendar_alarm_form" model="ir.actions.act_window">
-			<field name="name">Reminders</field>
-			<field name="type">ir.actions.act_window</field>
-			<field name="res_model">calendar.alarm</field>
-			<field name="view_type">form</field>
-			<field name="view_mode">tree,form</field>
-			<field name="view_id" ref="view_calender_calendar_alarm_tree"/>
-		</record>
-
-		<menuitem id="menu_calenderalarm_type" parent="menu_cal_meetings" action="action_calender_calendar_alarm_form" sequence="2"/> -->
 
 
 <!--LOCATION-->
