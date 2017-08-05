@@ -291,6 +291,38 @@
 
 		<menuitem id="menu_sequence_partner_form" parent="menu_account_item" action="action_config_sequence_partner" sequence="10"/>
 
+		<record id="view_config_vat_code_form" model="ir.ui.view">
+			<field name="name">vat.code.partner</field>
+			<field name="model">vat.code</field>
+			<field name="arch" type="xml">
+				<form string="Vat Code">
+					<group>
+						<field name="name"/>
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_configvat_codesequence_partner" model="ir.ui.view">
+			<field name="name">customer.vat.code.partnertree</field>
+			<field name="model">vat.code</field>
+			<field name="arch" type="xml">
+				<tree string="Vat Code">
+					<field name="name"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="action_config_vat_code" model="ir.actions.act_window">
+			<field name="name">Vat Code</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">vat.code</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem id="menu_sequence_vat_code" parent="menu_account_item" action="action_config_vat_code" sequence="10"/>
+
 		<record id="view_product_part_number_product_filter" model="ir.ui.view">
 			<field name="name">product.part.number.ytm.select</field>
 			<field name="model">sequence.number.product</field>

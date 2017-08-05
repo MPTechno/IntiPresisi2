@@ -262,6 +262,11 @@ class phonecall_contact(models.Model):
 
 	name = fields.Char('Contact')
 
+class vat_code(models.Model):
+	_name='vat.code'
+
+	name = fields.Char('Vat Code')
+
 class attachment_enquiry(models.Model):
 	_name = 'attachment.enquiry'		
 	attach_id = fields.Many2one('crm.lead','Lead')
@@ -831,7 +836,7 @@ class res_partner(models.Model):
 	zip2_delivery =  fields.Char('Zip')
 	currency_new_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self._get_user_currency())
 	customer_group_id = fields.Many2one('customer.group','Customer Group')
-	vat_code = fields.Char('Vat Code')
+	vat_code = fields.Many2one('vat.code','Vat Code')
 	vat_number = fields.Char('Vat Number (NPWP No.)')
 	country_code = fields.Char('Country Code')
 	state_id2 = fields.Many2one("res.country.state", 'State', ondelete='restrict')
