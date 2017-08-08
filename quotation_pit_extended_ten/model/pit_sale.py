@@ -11,6 +11,14 @@ from odoo.tools.misc import formatLang
 from odoo.addons.base.res.res_partner import WARNING_MESSAGE, WARNING_HELP
 import odoo.addons.decimal_precision as dp
 
+class ResCompany(models.Model):
+	_inherit = 'res.company'
+	
+	npwp_no = fields.Char('NPWP No')
+	dom = fields.Char('Dom')
+	bank_acc_number = fields.Char('Bank Acc No')
+	bank_bin = fields.Char('Bank Name')
+
 class ProductType(models.Model):
 	_name = 'product.type'    
 	name = fields.Char('Name', size=256)
