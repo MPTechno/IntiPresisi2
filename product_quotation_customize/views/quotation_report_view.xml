@@ -197,12 +197,12 @@
 						    </tbody>
 						</table>
 						<div class="row">
-						    <div class="col-xs-4 pull-right" style="border:1px solid black; border-radius: 5px;">
-						        <table class="table table-condensed" style="border:none;">
-						            <tr style="border:none;">
-						                <td style="border:none;"><strong>Total excl. PPN (IDR)</strong></td>
-						                <td style="border:none;" class="text-right">
-						                     <span t-esc="'%.2f'%(o.amount_total)"/>
+						    <div class="col-xs-5 pull-right">
+						        <table class="table table-condensed">
+						            <tr class="border-black">
+						                <td><strong>Total excl. PPN (IDR)</strong></td>
+						                <td class="text-right">
+						                    <span t-esc="'%.2f'%(o.amount_untaxed)"/>
 						                </td>
 						            </tr>
 						        </table>
