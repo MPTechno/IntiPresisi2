@@ -25,6 +25,7 @@
                         <field name="dom"/>
                         <field name="bank_acc_number"/>
                         <field name="bank_bin"/>
+                        <field name="sign_line_text" invisible="1"/>
                     </xpath>
                 </data>
             </field>

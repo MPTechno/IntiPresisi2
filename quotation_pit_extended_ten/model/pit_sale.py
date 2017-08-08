@@ -18,6 +18,7 @@ class ResCompany(models.Model):
 	dom = fields.Char('Dom')
 	bank_acc_number = fields.Char('Bank Acc No')
 	bank_bin = fields.Char('Bank Name')
+	sign_line_text = fields.Char('sign Line')
 
 class ProductType(models.Model):
 	_name = 'product.type'    
