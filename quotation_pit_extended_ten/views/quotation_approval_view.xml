@@ -3,8 +3,8 @@
 	<data>
 
 		<!-- PARTNER VIEW -->
-        <record id="res_comopany_form_view_intipresisi" model="ir.ui.view">
-            <field name="name">res.company.form.view.form.intipresisi</field>
+        <record id="res_comopany_form_view_intipresisi_new" model="ir.ui.view">
+            <field name="name">res.company.form.view.form.intipresisi.new</field>
             <field name="model">res.company</field>
             <field name="inherit_id" ref="base.view_company_form"/>
             <field name="arch" type="xml">
@@ -20,6 +20,12 @@
                 			</field>
                 		</page>
                 	</xpath>
+                    <xpath expr="//field[@name='website']" position="after">
+                        <field name="npwp_no"/>
+                        <field name="dom"/>
+                        <field name="bank_acc_number"/>
+                        <field name="bank_bin"/>
+                    </xpath>
                 </data>
             </field>
         </record>

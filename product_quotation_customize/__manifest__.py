@@ -19,7 +19,6 @@
         'security/ir.model.access.csv',
         'views/product_view.xml',
         'views/sale_view.xml',
-        'views/res_company.xml',
         'views/report_menu.xml',
         'views/quotation_report_view.xml',
     ],
