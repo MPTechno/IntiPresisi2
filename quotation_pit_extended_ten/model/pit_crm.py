@@ -472,6 +472,10 @@ class crm_lead(models.Model):
 			access_stage_list_person.append(stage_lead_collect_check)
 			access_stage_list_supervisor.append(stage_lead_collect_check)
 
+		stage_lead_won_check = self.env['ir.model.data'].get_object_reference('crm','stage_lead4')[1]
+		if stage_lead_won_check:
+			access_stage_list_person.append(stage_lead_won_check)
+
 		stage_lead_pricing_Check = self.env['ir.model.data'].get_object_reference('quotation_pit_extended_ten','stage_lead_pricing')[1]
 		if stage_lead_pricing_Check:
 			access_stage_list_tech.append(stage_lead_pricing_Check)
@@ -513,6 +517,8 @@ class crm_lead(models.Model):
 
 			if login_user.sales_person_b == True:
 				if vals['stage_id'] and vals['stage_id'] in access_stage_list_person:
+					pass
+				elif self.env['crm.stage'].browse(vals['stage_id']).name == 'Close Lost':
 					pass
 				else:
 					raise UserError(_('You have Only Rights to Edit Record in Collect Data and Technical Drawing Stage. Please Contact your Administrator.'))
@@ -895,6 +901,8 @@ class sale_order(models.Model):
 	or_sale_id = fields.Many2one('Origin')
 	validity_new_date = fields.Many2one('validate.new.date','Expiration Date')
 	po_num = fields.Char('PO Number')
+	order_date = fields.Date('Order Date')
+	delivery_date = fields.Date('Delivery Date')
 	user_id = fields.Many2one('res.users', string='Our Reference', index=True, track_visibility='onchange')
 
 
@@ -1013,6 +1021,7 @@ class sale_order(models.Model):
 					'warehouse_id':order.warehouse_id.id,
 					'team_id':order.team_id.id,
 					'po_num':self._context.get('po_num'),
+					'order_date':self._context.get('order_date'),
 					'or_sale_id':order.id,
 					'revision':order.revision,
 					'goods_label':order.goods_label,
@@ -1041,11 +1050,12 @@ class sale_order(models.Model):
 				new_order.state = 'sale'
 				new_order.confirmation_date = fields.Datetime.now()
 				new_order.order_line._action_procurement_create()
-				if self.env.context.get('send_email'):
-					new_order.force_quotation_send()
+				# if self.env.context.get('send_email'):
+				# 	new_order.force_quotation_send()
 		
 				if self.env['ir.values'].get_default('sale.config.settings', 'auto_done_setting'):
 					new_order.action_done()
+				new_order.state = 'sale'
 			if len(order.order_line) != 0:
 				if num_of_line == len(order.order_line):
 					order.write({'hide_confirm':True})
@@ -1133,6 +1143,6 @@ class sale_order_line(models.Model):
 	@api.one	
 	@api.depends('price_unit')
 	def compute_vissibility(self):
-		if self.env.user.director_b == True or self.env.user.technical_support_b == True or self.env.user.sales_person_b == True or self.env.user.sales_supervisor_b == True or self.env.user.sales_coordinator_b == True:
+		if self.env.user.technical_support_b == True or self.env.user.sales_person_b == True or self.env.user.sales_supervisor_b == True or self.env.user.sales_coordinator_b == True:
 			self.check_uid = True
 

@@ -48,10 +48,13 @@
 
         <record id="email_template_sale_order_approval_send" model="mail.template">
             <field name="name">Sale Order Approval Send - Send by Email</field>
-            <field name="email_from"></field>
+            <field name="email_from">${(object.user_id.email and '%s &lt;%s&gt;' % (object.user_id.name, object.user_id.email) or '')|safe}</field>
             <field name="email_to">${ctx['email_to'] or object.partner_id.email}</field>
             <field name="subject">${object.name}</field>
+            <field name="partner_to">${object.partner_id.id}</field>
             <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="report_template" ref="sale.report_sale_order"/>
+            <field name="report_name">${(object.name or '').replace('/','_')}${object.state == 'draft' and '_draft' or ''}</field>
             <field name="lang">${object.partner_id.lang}</field>
             <field name="body_html"><![CDATA[
                     <p>Dear Sir / Madam,</p>
@@ -62,23 +65,23 @@
                     <p><b>Best regards,</b></p>
                     <p><b>Inti Presisi Toolsindo, PT.</b></p>
                     
-                    <p style="color:#af9e9e;">
-                        Phone : +62-21-89832720
+                    <p style="color:#af9e9e;"><font class="bg-white" style="">
+                        Phone : +62-21-89832720</font>
                     </p>
-                    <p style="color:#af9e9e;">
-                        Email : sales@inti-tools.com
+                    <p style="color:#af9e9e;"><font class="bg-white" style="">
+                        Email : sales@inti-tools.com</font>
                     </p>
-                    <p style="color:#af9e9e;">
-                        Jababeka IIE St. Blok C/15-F
+                    <p style="color:#af9e9e;"><font class="bg-white" style="">
+                        Jababeka IIE St. Blok C/15-F</font>
                     </p>
-                    <p style="color:#af9e9e;">
-                        Kawasan Industri Jababeka 1
+                    <p style="color:#af9e9e;"><font class="bg-white" style="">
+                        Kawasan Industri Jababeka 1</font>
                     </p>
-                    <p style="color:#af9e9e;"> 
-                        Cikarang - Bekasi
+                    <p style="color:#af9e9e;"> <font class="bg-white" style="">
+                        Cikarang - Bekasi</font>
                     </p>
-                    <p style="color:#af9e9e;">
-                        Jawa Barat (17520) - Indonesia
+                    <p style="color:#af9e9e;"><font class="bg-white" style="">
+                        Jawa Barat (17520) - Indonesia</font>
                     </p>
                     ]]></field>
         </record>

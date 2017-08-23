@@ -2,6 +2,18 @@
 <openerp>
 	<data>
 
+		<record model="ir.ui.view" id="mail_conpose_message_form_view">
+			<field name="name">Compose Email</field>
+			<field name="model">mail.compose.message</field>
+			<field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='subject']" position="before">
+					<field name="email_cc_ids" widget="many2many_tags_email" placeholder="cc..." context="{'force_email':True, 'show_email':True}"/>
+					<field name="email_bcc_ids" widget="many2many_tags_email" placeholder="bcc..." context="{'force_email':True, 'show_email':True}"/>
+				</xpath>
+			</field>
+		</record>
+
 		<!-- SALE ORDER VIEW -->
 
 		<record model="ir.ui.view" id="quotation_per_quotation_form_view">
@@ -10,9 +22,12 @@
 			<field name="inherit_id" ref="sale.view_order_form"/>
 			<field name="arch" type="xml">
 				<data>
-					<xpath expr="//button[@name='action_quotation_send']" position="replace"></xpath>
 					<xpath expr="//button[@name='action_quotation_send']" position="replace">
-						<button name="%(action_send_email_approval_quotation_action)d" states="approved" string="Send Quotation" type="action" class="btn-primary"/>
+						
+					</xpath>
+					<xpath expr="//button[@name='action_quotation_send']" position="replace">
+						<!-- <button name="%(action_send_email_approval_quotation_action)d" states="approved" string="Send Quotation" type="action" class="btn-primary"/> -->
+						<button name="action_quotation_send" string="Send by Email" type="object" class="btn-primary"/>
 					</xpath>
 					<xpath expr="//button[@name='action_confirm']" position="replace"></xpath>
 					<xpath expr="//button[@name='action_confirm']" position="replace">
@@ -45,6 +60,10 @@
 					</xpath>
 					<xpath expr="//field[@name='partner_id']" position="before">
 						<field name="po_num" attrs="{'invisible': [('state','!=','sale')]}"/>
+					</xpath>
+					<xpath expr="//field[@name='partner_id']" position="before">
+						<field name="delivery_date"/>
+						<field name="order_date"/>
 					</xpath>
 					<xpath expr="//field[@name='order_line']/form/group/group//field[@name='product_id']" position="attributes">
 						<attribute name="string">Product Variant</attribute>
@@ -174,11 +193,18 @@
 			<field name="model">product.pricelist</field>
 			<field name="inherit_id" ref="product.product_pricelist_view"/>
 			<field name="arch" type="xml">
+				<xpath expr="//field[@name='name']" position="after">
+					<field name="partner_id" invisible="1"/>
+				</xpath>
+				<xpath expr="//field[@name='name']" position="before">
+					<field name="res_partner_id" invisible="1"/>
+				</xpath>
 				<xpath expr="//field[@name='item_ids']/tree//field[@name='name']" position="after">
 					<field name="part_number_product"/>
 					<field name="drawing_number"/>
 					<field name="pricing_date"/>
 				</xpath>
+				<xpath expr="//field[@name='item_ids']/tree//field[@name='min_quantity']" position="replace"></xpath>
 			</field>
 		</record>
 
@@ -200,18 +226,17 @@
 			</field>
 		</record>
 
-		<record id="view_changer_product_pricelist_tree_view" model="ir.ui.view">
-			<field name="name">change.product.price.tree</field>
+
+		<record id="view_changer_product_pricelist_form_view_etxe" model="ir.ui.view">
+			<field name="name">change.product.price.form.extebde</field>
 			<field name="model">product.pricelist.item</field>
+			<field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
 			<field name="arch" type="xml">
-				<tree string="Add Pricelist line">
-					<field name="product_id"/>
-					<field name="part_number_product"/>
+				<xpath expr="//field[@name='product_id']" position="after">
+					<field name="part_number_product" domain="[('product_id', '=', product_id),('partner_id','=',parent.res_partner_id)]" context="{'default_product_id':product_id, 'default_partner_id': parent.res_partner_id}"/>
 					<field name="drawing_number"/>
-					<field name="product_id"/>
-					<field name="fixed_price"/>
 					<field name="pricing_date"/>
-				</tree>
+				</xpath>
 			</field>
 		</record>
 	

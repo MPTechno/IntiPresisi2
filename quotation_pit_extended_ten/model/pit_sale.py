@@ -109,7 +109,7 @@ class product_product(models.Model):
 		if vals.get('customer_code') and vals.get('drawing_no'):
 			partner_obj = self.env['res.partner'].browse(vals.get('customer_code'))
 			seq_dict = {
-				'name': str(partner_obj.partner_code) + ' - ' + str(format(partner_obj.sequence_number + 1, '05')),
+				'name': str(partner_obj.partner_code) + '-' + str(format(partner_obj.sequence_number + 1, '05')),
 				'partner_id':partner_obj.id,
 				'product_id':res.id,
 				'drawing_number':vals.get('drawing_no'),

@@ -91,6 +91,7 @@
                 <form string="Confirm Sale">
                     <group name="Po Number">
                         <field name="po_num" class="oe_inline" placeholder="PO Number .." string="PO Number"/>
+                        <field name="order_date" string="Order Date"/>
                     </group>
                     <footer>
                         <button name="confirm_sale" string="Confirm Sale" type="object" class="oe_highlight"/>

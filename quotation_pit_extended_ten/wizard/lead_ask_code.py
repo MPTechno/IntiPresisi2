@@ -166,12 +166,13 @@ class crm_askcode_ponumber(models.TransientModel):
 	_name = 'crm.askcode.ponumber'
 
 	po_num = fields.Char('PO Number', required=True)
+	order_date = fields.Date('Order Date', required=True)
 
 	@api.one
 	def confirm_sale(self):
 		self.with_context({'po_num':self.po_num})
 		context = self.env.context.copy()
-		context.update({'po_num':self.po_num})
+		context.update({'po_num':self.po_num,'order_date':self.order_date})
 		new_order = self.env['sale.order'].browse(self._context.get('active_id')).with_context(context).action_confirm()
 		print ">>>>>>>>",new_order
 		models_data = self.env['ir.model.data']

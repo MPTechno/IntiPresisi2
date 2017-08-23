@@ -11,6 +11,17 @@ from odoo.tools.misc import formatLang
 from odoo.addons.base.res.res_partner import WARNING_MESSAGE, WARNING_HELP
 import odoo.addons.decimal_precision as dp
 
+class product_pricelist(models.Model):
+	_inherit = 'product.pricelist'
+
+	def _get_partner(self): 
+		for line in self.partner_id:
+			if line.company_type == 'company':
+				self.res_partner_id = line.id
+
+	partner_id = fields.One2many('res.partner', 'property_product_pricelist', string="partner")
+	res_partner_id = fields.Many2one('res.partner','Partner', compute="_get_partner")
+
 class product_pricelist_item(models.Model):
 	_inherit = 'product.pricelist.item'
 
@@ -19,6 +30,12 @@ class product_pricelist_item(models.Model):
 	drawing_number = fields.Char('Drawing Number')
 	pricing_date = fields.Date('Pricing Date')
 	quantity_new = fields.Integer('Quantity',default=0)
+
+	@api.multi
+	@api.onchange('part_number_product')
+	def part_number_product_change(self):
+		for part in self:
+			self.drawing_number = part.part_number_product.drawing_number
 
 	@api.multi
 	@api.onchange('quantity_new')
@@ -49,6 +66,8 @@ class sequence_number_product(models.Model):
 	product_id = fields.Many2one('product.product','Product',required=True)
 	drawing_number = fields.Char('Drawing Number',required=True)
 	name = fields.Char('Name')
+	next_sequence = fields.Integer(compute='compute_sequence',string='Next Sequence')
+	expected_number = fields.Integer('Expected Sequence')
 	part_type_id = fields.Many2one('part.type','Part Type')
 	uom_id = fields.Many2one('product.uom','Unit of Measure')
 	lst_price = fields.Float('Price')
@@ -69,13 +88,20 @@ class sequence_number_product(models.Model):
 	add_name_4 = fields.Char('Add Name 4')
 	remarks_en = fields.Text('Remark')
 
-	@api.multi
+	_sql_constraints = [('name_uniq', 'unique (name)', "Name already exists !")]
+
+	@api.one
+	@api.depends('partner_id')
+	def compute_sequence(self):
+		self.next_sequence = self.partner_id.sequence_number
+
+	@api.model
 	def create(self, vals):
 		res = super(sequence_number_product,self).create(vals)
 		if not vals.get('name'):
 			partner_obj = self.env['res.partner'].browse(res.partner_id.id)
 			seq_dict = {
-				'name': str(partner_obj.partner_code) + ' - ' + str(format(partner_obj.sequence_number + 1, '05')),
+				# 'name': str(partner_obj.partner_code) + '-' + str(format(vals.get('expected_number') or partner_obj.sequence_number + 1, '05')),
 				'part_type_id':vals.get('part_type_id',False) or res.product_id.part_type_id.id,
 				'workpiece_grade':vals.get('workpiece_grade',False) or res.product_id.workpiece_grade.id,
 				'kind_of_machine':vals.get('kind_of_machine',False) or res.product_id.kind_of_machine.id,
@@ -90,10 +116,52 @@ class sequence_number_product(models.Model):
 				'part_code':vals.get('part_code',False) or res.product_id.part_code.id,
 				'uom_id':vals.get('uom_id',False) or res.product_id.uom_id.id,
 				'revision':vals.get('revision',False) or res.product_id.revision,
+				# 'expected_number':0,
 			}
 			res.write(seq_dict)
-			partner_obj.write({'sequence_number': partner_obj.sequence_number + 1})
+			partner_obj.write({'sequence_number':vals.get('expected_number') or partner_obj.sequence_number + 1})
 		return res
+
+	@api.multi
+	def write(self, vals):
+		if vals.get('expected_number') != 0:
+			partner_obj = self.env['res.partner'].browse(self.partner_id.id)
+			vals.update({
+				'name': str(partner_obj.partner_code) + '-' + str(format(vals.get('expected_number') or self.expected_number, '05')),
+				'expected_number':0,
+			})
+			print ">>>>>>>>>>>>>>.",vals
+			partner_obj.write({'sequence_number':vals.get('expected_number') or partner_obj.sequence_number + 1})
+		if vals.get('lst_price') != 0:
+			part_id = ''
+			list_of_part = []
+			if partner_obj:
+				if partner_obj.sequence_ids:
+					for pit in partner_obj.sequence_ids:						
+						if pit.product_id.id == self.product_id.id and pit.seq_price != vals.get('lst_price'):
+							list_of_part.append(pit.sequence_number)                            
+				print "WWWWWWWWWWW", list_of_part
+				if list_of_part:
+					seq_dict = {
+						'name': str(partner_obj.partner_code) + ' - PRICE 0000' + str(max(list_of_part) + 1),
+						'sequence_id':partner_obj.id,
+						'product_id':self.product_id.id,
+						'seq_price':vals.get('lst_price'),
+						'sequence_number': max(list_of_part) + 1,
+						'pricing_date':fields.Datetime.now(),
+					}
+					part_id = self.env['sequence.number.partner'].create(seq_dict)
+				else:
+					seq_dict = {
+						'name': str(partner_obj.partner_code) + ' - PRICE 0000' + str(1),
+						'sequence_id':partner_obj.id,
+						'product_id':vals.get('product_id'),
+						'seq_price':vals.get('lst_price'),
+						'sequence_number': 1,
+						'pricing_date':fields.Datetime.now(),
+					}
+					part_id = self.env['sequence.number.partner'].create(seq_dict)
+		return super(sequence_number_product,self).write(vals)
 
 class crm_lead_line(models.Model):
 	_inherit='crm.lead.line'
@@ -180,7 +248,7 @@ class crm_lead_line(models.Model):
 
 					if not part_id and not list_of_part:
 						seq_dict = {
-							'name': str(partner_obj.partner_code) + ' - ' + str(format(partner_obj.sequence_number + 1, '05')),
+							'name': str(partner_obj.partner_code) + '-' + str(format(partner_obj.sequence_number + 1, '05')),
 							'partner_id':partner_obj.id,
 							'product_id':vals.get('product_en'),
 							'drawing_number':vals.get('internal_code_en'),
@@ -199,7 +267,7 @@ class crm_lead_line(models.Model):
 						partner_obj.write({'sequence_number': partner_obj.sequence_number + 1})
 				else:
 					draw_dict = {
-						'name': str(partner_obj.partner_code) + ' - ' + format(partner_obj.sequence_number + 1, '05'),
+						'name': str(partner_obj.partner_code) + '-' + format(partner_obj.sequence_number + 1, '05'),
 						'partner_id':partner_obj.id,
 						'product_id':vals.get('product_en'),
 						'drawing_number':vals.get('internal_code_en'),
@@ -218,7 +286,7 @@ class crm_lead_line(models.Model):
 					partner_obj.write({'sequence_number': partner_obj.sequence_number + 1})
 				if list_of_part:
 					seq_dict = {
-						'name': str(partner_obj.partner_code) + ' - ' + str(format(max(list_of_part) + 1, '05')),
+						'name': str(partner_obj.partner_code) + '-' + str(format(max(list_of_part) + 1, '05')),
 						'partner_id':partner_obj.id,
 						'product_id':vals.get('product_en'),
 						'drawing_number':vals.get('internal_code_en'),
@@ -328,7 +396,7 @@ class crm_lead_line(models.Model):
 
 					if not part_id and not list_of_part:
 						draw_dict = {
-							'name': str(partner_obj.partner_code) + ' - ' + format(partner_obj.sequence_number + 1, '05'),
+							'name': str(partner_obj.partner_code) + '-' + format(partner_obj.sequence_number + 1, '05'),
 							'partner_id':partner_obj.id,
 							'product_id':self.product_en.id,
 							'drawing_number':vals.get('internal_code_en'),
@@ -346,7 +414,7 @@ class crm_lead_line(models.Model):
 						partner_obj.write({'sequence_number': partner_obj.sequence_number + 1})
 				else:
 					draw_dict = {
-						'name': str(partner_obj.partner_code) + ' - ' + format(partner_obj.sequence_number + 1, '05'),
+						'name': str(partner_obj.partner_code) + '-' + format(partner_obj.sequence_number + 1, '05'),
 						'partner_id':partner_obj.id,
 						'product_id':self.product_en.id,
 						'drawing_number':vals.get('internal_code_en'),
@@ -364,7 +432,7 @@ class crm_lead_line(models.Model):
 					partner_obj.write({'sequence_number': partner_obj.sequence_number + 1})
 				if list_of_part:
 					draw_dict = {
-						'name': str(partner_obj.partner_code) + ' - ' + str(format(max(list_of_part) + 1, '05')),
+						'name': str(partner_obj.partner_code) + '-' + str(format(max(list_of_part) + 1, '05')),
 						'partner_id':partner_obj.id,
 						'product_id':self.product_en.id,
 						'drawing_number':vals.get('internal_code_en'),
