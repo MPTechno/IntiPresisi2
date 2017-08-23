@@ -529,14 +529,18 @@ class crm_lead(models.Model):
 				stage = self.stage_id
 				collect_data_list = []
 				login_user = self.env['res.users'].browse(self._uid)
-				if login_user.sales_coordinator_b == True:
-					collect_data_list.append(login_user.partner_id.id)
-				else:
-					collect_list = self.env['res.users'].search(['|',('sales_coordinator_b','=',True),('sales_supervisor_b','=',True)])
-					if collect_list:
-						for i in collect_list:
-							collect_data_list.append(i.partner_id.id)
-				
+				# if login_user.sales_coordinator_b == True:
+				# 	collect_data_list.append(login_user.partner_id.id)
+				# else:
+				# 	collect_list = self.env['res.users'].search(['|',('sales_coordinator_b','=',True),('sales_supervisor_b','=',True)])
+				# 	if collect_list:
+				# 		for i in collect_list:
+				# 			collect_data_list.append(i.partner_id.id)
+				collect_list = self.env['res.users'].search([('sales_supervisor_b','=',True)])
+				if collect_list:
+					for i in collect_list:
+						collect_data_list.append(i.partner_id.id)
+						
 				if login_user.sales_person_b == True:
 					collect_data_list.append(login_user.partner_id.id)
 

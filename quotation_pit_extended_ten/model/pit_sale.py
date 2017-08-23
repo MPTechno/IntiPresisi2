@@ -11,6 +11,43 @@ from odoo.tools.misc import formatLang
 from odoo.addons.base.res.res_partner import WARNING_MESSAGE, WARNING_HELP
 import odoo.addons.decimal_precision as dp
 
+class res_users(models.Model):
+	_inherit = 'res.users'
+
+	@api.multi
+	def get_phonecall_ids(self):
+		for rc in self:
+			result_ids = self.env['crm.phonecall'].search([('user_id','=',rc.id),('date','>=',rc.start_date),('date','<=',rc.end_date)])
+			rc.phonelog_ids = self.env['crm.phonecall'].browse([x.id for x in result_ids])
+			
+	@api.multi
+	def get_emails_ids(self):
+		rc = ''
+		if self:
+			rc = self[0]
+			result_ids = self.env['mail.mail'].search([('create_uid','=',rc.id),('date','>=',rc.start_date),('date','<=',rc.end_date)])
+			rc.email_log_ids = self.env['mail.mail'].browse([x.id for x in result_ids])
+				
+	@api.multi
+	def get_meeting_ids(self):
+		for rc in self:
+			meeting_ids = []
+			self.env.cr.execute(''' select calendar_event_id from calendar_event_res_partner_rel where res_partner_id = %s; '''%rc.partner_id.id)
+			kq = self.env.cr.dictfetchall()
+			if kq:
+				for x in kq:
+					calendar_obj = self.env['calendar.event'].browse(x['calendar_event_id'])
+					if calendar_obj.start >= rc.start_date and calendar_obj.start <= rc.end_date:
+						meeting_ids.append(calendar_obj.id)
+				rc.meeting_log_ids = meeting_ids
+
+
+	phonelog_ids = fields.Many2many('crm.phonecall', 'user_phonecall_rel', 'user_id', 'phonecall_id', compute='get_phonecall_ids', string='Phone Log')
+	email_log_ids = fields.Many2many('mail.mail', 'user_email_rel', 'user_id', 'email_id', string='Email Log', compute='get_emails_ids')
+	meeting_log_ids = fields.Many2many('calendar.event', 'user_cal_meeting_rel', 'user_id', 'meeting_id', string='Meeting Log',compute='get_meeting_ids')
+	start_date = fields.Datetime('Start Date')
+	end_date = fields.Datetime('End Date')
+
 class ResCompany(models.Model):
 	_inherit = 'res.company'
 	

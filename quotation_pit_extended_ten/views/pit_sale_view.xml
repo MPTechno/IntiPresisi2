@@ -14,6 +14,66 @@
 			</field>
 		</record>
 
+		<record id="nemw_meet_view_calendar_event_search" model="ir.ui.view">
+		    <field name="name">calendar.event.search</field>
+		    <field name="model">calendar.event</field>
+		    <field name="arch" type="xml">
+		        <search string="Search Meetings">
+		            <field name="name" string="Meeting" filter_domain="[('name','ilike',self)]"/>
+		            <field name="partner_ids"/>
+		            <field name="categ_ids"/>
+		            <field name="user_id"/>
+		            <field name="show_as"/>
+		            <field name="privacy" string="Privacy"/>
+		            <filter string="My Events" domain="[]" help="My Events"/>
+		            <filter string="My Meetings" domain="[]" help="My Meetings" name="mymeetings"/>
+		            <filter string="Unread Messages" name="message_needaction" domain="[('message_needaction','=',True)]"/>
+		            <separator/>
+		            <group expand="0" string="Group By">
+		                <filter string="Responsible" domain="[]" context="{'group_by':'user_id'}"/>
+		                <filter string="Availability" domain="[]" context="{'group_by':'show_as'}"/>
+		                <filter string="Privacy" domain="[]" context="{'group_by':'privacy'}"/>
+		            </group>
+		        </search>
+		    </field>
+		</record>
+
+		<record id="view_c_new_viewalendar_event_calendar" model="ir.ui.view">
+		    <field name="name">calendar.event.calendar</field>
+		    <field name="model">calendar.event</field>
+		    <field name="priority" eval="2"/>
+		    <field name="arch" type="xml">
+		        <calendar string="Meetings" date_start="start" date_stop="stop" date_delay="duration" all_day="allday"
+		                     display="[name]" color="color_partner_id" attendee="partner_ids" avatar_model="res.partner"
+		                     use_contacts="False" event_open_popup="%(calendar.view_calendar_event_form_popup)s">
+		            <field name="name"/>
+		            <field name="user_id"/>
+		            <field name="color_partner_id"/>
+		            <field name="partner_ids"/>
+		        </calendar>
+		    </field>
+		</record>
+
+		<record id="action_calendar_event_extended_for_nwq" model="ir.actions.act_window">
+		    <field name="name">Meetings</field>
+		    <field name="res_model">calendar.event</field>
+		    <field name="view_mode">calendar</field>
+		    <field name="domain">[('user_id','=',context.get('default_id')),('start','&gt;=',context.get('start')),('start','&lt;=',context.get('stop'))]</field>
+		    <field name="view_id" ref="view_c_new_viewalendar_event_calendar"/>
+		    <field name="search_view_id" ref="nemw_meet_view_calendar_event_search"/>
+		</record>
+
+		<record model="ir.ui.view" id="res_users_extended_form_view">
+			<field name="name">res Users</field>
+			<field name="model">res.users</field>
+			<field name="inherit_id" ref="salestarget_achievement_popup_window__ipt_custom.res_user_viewlog_form_inherit"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='meeting_log_ids']" position="before">
+					<button name="%(quotation_pit_extended_ten.action_calendar_event_extended_for_nwq)d" string="Meeting Log" context="{'default_id':active_id,'start':start_date,'stop':end_date}" class="btn-primary o_sale_confirm oe_right" type="action" />
+				</xpath>
+			</field>
+		</record>
+
 		<!-- SALE ORDER VIEW -->
 
 		<record model="ir.ui.view" id="quotation_per_quotation_form_view">
