@@ -191,8 +191,12 @@
 						            <td style="border:none;" class="text-right">
 						                <span t-esc="int(l.product_uom_qty)"/> <span t-field="l.product_uom.name"/>
 						            </td>
-						            <td style="border:none;" class="text-right"><span t-esc="o.get_python_value(l.price_unit)"/></td>
-						            <td style="border:none;" class="text-right"><span t-esc="o.get_python_value(l.price_subtotal)"/></td>
+						            <td style="border:none;" class="text-right">
+						            	<span t-esc="'{:,.2f}'.format(l.price_unit)"/>
+						            </td>
+						            <td style="border:none;" class="text-right">
+						            	<span t-esc="'{:,.2f}'.format(l.price_subtotal)"/>
+						            </td>
 						        </tr>
 						    </tbody>
 						</table>
@@ -202,7 +206,7 @@
 						            <tr class="border-black">
 						                <td><strong>Total excl. PPN (IDR)</strong></td>
 						                <td class="text-right">
-						                    <span t-esc="o.get_python_value(o.amount_untaxed)"/>
+						                    <span t-esc="'{:,.2f}'.format(o.amount_untaxed)"/>
 						                </td>
 						            </tr>
 						        </table>
