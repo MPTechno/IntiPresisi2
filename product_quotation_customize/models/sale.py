@@ -2,6 +2,7 @@
 
 from odoo import api, fields, models, _
 import datetime
+import locale
 
 class sale_order(models.Model):
 	_inherit = 'sale.order'
@@ -13,6 +14,15 @@ class sale_order(models.Model):
 	manual_sequence = fields.Char('Quote Number')
 	contact_id = fields.Many2one('res.partner','Your Reference')
 	
+	def get_python_value(self, amount):
+		amount_new = ''
+		locale.setlocale(locale.LC_MONETARY, 'en_IN')
+		amount_new = locale.currency(float(amount), grouping=True)
+		if amount_new:
+			return str(amount_new).split(' ')[1]
+		else:
+			return ''
+
 	def get_date_order(self,order_date):
 		if order_date:
 			date_str = str(order_date).split(' ')

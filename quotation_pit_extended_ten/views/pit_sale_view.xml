@@ -246,6 +246,19 @@
 		</record>
 
 
+		<record id="view_quotation_discount_field_readonly" model="ir.ui.view">
+			<field name="name">quotation.sales.discount.readonly.cust</field>
+			<field name="model">sale.order</field>
+			<field name="priority" eval="20"/>
+			<field name="inherit_id" ref="sale.view_order_form"/>
+			<field name="groups_id" eval="[(6, 0, [ref('quotation_pit_extended_ten.group_discount_readonly')])]"/>
+			<field name="arch" type="xml">
+				<xpath expr='//field[@name="order_line"]//field[@name="discount"]' position="attributes">
+					<attribute name="readonly">1</attribute>
+				</xpath>
+			</field>
+		</record>
+
 		<!-- PRICELIST FORM VIEW -->
 
 		<record id="view_changer_product_pricelist_form_view" model="ir.ui.view">

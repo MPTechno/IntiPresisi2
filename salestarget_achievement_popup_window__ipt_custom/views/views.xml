@@ -98,14 +98,35 @@
           <field name="model">res.users</field>
           <field name="inherit_id" ref="salestarget_achievement__ipt_custom.res_users_simplified_form_inherit"/>
           <field name="arch" type="xml">
-          <xpath expr="//field[@name='achievement']" position="after">
-              <field name="phonelog_ids"/>
-              <field name="email_log_ids"/>
-              <field name="meeting_log_ids" string="Meeting Log"/>
-		  </xpath>
+          <xpath expr="//group" position="after">
+            <notebook>
+              <page name="phonelog" string="Phone Log">
+                <field name="phonelog_ids" nolabel="1"/>
+              </page>
+              <page name="email" string="Email Log">
+                <field name="email_log_ids"/>
+              </page>
+              <page name="meeting" string="Meeting Log">
+                <field name="meeting_log_ids"/>
+              </page>
+            </notebook>
+		      </xpath>
           </field>
       </record>
-      
+
+      <record id="res_user_calender_meeting_m_inherit" model="ir.ui.view">
+          <field name="name">res.calendar.event.form.inherit</field>
+          <field name="model">calendar.event</field>
+          <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+          <field name="arch" type="xml">
+            <xpath expr="//label[@for='user_id']" position="replace">
+              
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="replace">
+              <field name="user_id"/>
+            </xpath>
+          </field>
+      </record>      
 
   </data>
 </odoo>

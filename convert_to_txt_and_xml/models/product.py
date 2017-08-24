@@ -198,7 +198,8 @@ class ProductProduct(models.Model):
                         worksheet.write(row, col,product_obj.partner_id.partner_code or '')
                         col += 1
 
-                        worksheet.write(row, col,format((product_obj.lst_price or 0), '.2f'))
+                        if product_obj.lst_price:
+                            worksheet.write(row, col,format((product_obj.lst_price or 0), '.2f'))
                         col += 1
 
                         worksheet.write(row, col,product_obj.customer_part_no or '')
