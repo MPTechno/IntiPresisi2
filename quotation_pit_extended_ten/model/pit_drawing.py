@@ -124,8 +124,8 @@ class sequence_number_product(models.Model):
 
 	@api.multi
 	def write(self, vals):
+		partner_obj = self.env['res.partner'].browse(self.partner_id.id)
 		if vals.has_key('expected_number') and vals.get('expected_number') != 0:
-			partner_obj = self.env['res.partner'].browse(self.partner_id.id)
 			vals.update({
 				'name': str(partner_obj.partner_code) + '-' + str(format(vals.get('expected_number') or self.expected_number, '05')),
 				'expected_number':0,
