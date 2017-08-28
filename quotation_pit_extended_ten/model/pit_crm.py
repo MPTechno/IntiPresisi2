@@ -244,7 +244,7 @@ class workpiece_grade(models.Model):
 class part_type(models.Model):
 	_name = 'part.type'
 	_description = 'Part Type'
-    
+	
 	name = fields.Char('Name', required=True, translate=True)
 
 class kind_of_machine(models.Model):
@@ -892,6 +892,14 @@ class CalendarEvent(models.Model):
 				vals['lead_id'] = self._context['active_id']
 		event = super(CalendarEvent, self).create(vals)
 		return event
+
+	@api.model
+	def search(self, args, offset=0, limit=0, order=None, count=False):
+		if self._uid == 1:
+			args = []
+		# offset, limit, order and count must be treated separately as we may need to deal with virtual ids
+		events = super(CalendarEvent, self).search(args, offset=0, limit=0, order=None, count=False)
+		return events
 
 class validate_new_date(models.Model):
 	_name = 'validate.new.date'

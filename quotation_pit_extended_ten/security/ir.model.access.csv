@@ -64,3 +64,4 @@ access_attachment_enquiry_sales_person,access.attachment.enquiry.sales.person,qu
 
 access_product_family,access_product_family,quotation_pit_extended_ten.model_product_family,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
 access_sign_line,access_sign_line,quotation_pit_extended_ten.model_sign_line,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
+access_stock_pickoingh,access.ss.stock.picking,stock.model_stock_picking,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
