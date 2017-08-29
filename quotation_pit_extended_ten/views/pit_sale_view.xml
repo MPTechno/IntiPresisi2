@@ -2,6 +2,18 @@
 <openerp>
 	<data>
 
+		<record id="product_pricelist_action2_for_salec" model="ir.actions.act_window">
+		    <field name="name">Pricelists</field>
+		    <field name="type">ir.actions.act_window</field>
+		    <field name="res_model">product.pricelist</field>
+		    <field name="view_type">form</field>
+		    <field name="view_mode">tree,form</field>
+		    <field name="search_view_id" ref="product.product_pricelist_view_search" />
+		    <field name="context">{"default_base":'list_price'}</field>
+		</record>
+
+		<menuitem id="pricelist_menu_sales_coordinator" name="Pricelists" parent="sales_team.menu_sale_report" sequence="10" groups="quotation_pit_extended_ten.group_sales_coordinator" action="product_pricelist_action2_for_salec" />
+
 		<record model="ir.ui.view" id="mail_conpose_message_form_view">
 			<field name="name">Compose Email</field>
 			<field name="model">mail.compose.message</field>

@@ -302,6 +302,20 @@ class crm_phonecall(models.Model):
 				vals.update({'prospect_id':self._context['active_id']})
 		return super(crm_phonecall, self).create(vals)
 
+	@api.model
+	def search(self, args, offset=0, limit=0, order=None, count=False):
+		user_obj = self.env['res.users'].browse(self._uid)
+		print "sssssssssssssssssssssssssssssssss", user_obj
+
+		if self._uid == 1:
+			args = []
+		if user_obj.sales_supervisor_b:
+			print "PRINT/////////"
+			args = []
+		# offset, limit, order and count must be treated separately as we may need to deal with virtual ids
+		events = super(crm_phonecall, self).search(args, offset=0, limit=0, order=None, count=False)
+		return events
+
 class crm_lead(models.Model):
 	_inherit = 'crm.lead'
 
@@ -895,7 +909,10 @@ class CalendarEvent(models.Model):
 
 	@api.model
 	def search(self, args, offset=0, limit=0, order=None, count=False):
+		user_obj = self.env['res.users'].browse(self._uid)
 		if self._uid == 1:
+			args = []
+		if user_obj.sales_supervisor_b:
 			args = []
 		# offset, limit, order and count must be treated separately as we may need to deal with virtual ids
 		events = super(CalendarEvent, self).search(args, offset=0, limit=0, order=None, count=False)
