@@ -288,6 +288,20 @@ class MailTemplate(models.Model):
 			force_send = False
 		return super(MailTemplate,self).send_mail(res_id, force_send, raise_exception,email_values)
 
+class mail_mail(models.Model):
+	_inherit = 'mail.mail'
+
+	@api.model
+	def search(self, args, offset=0, limit=0, order=None, count=False):
+		user_obj = self.env['res.users'].browse(self._uid)
+		if self._uid == 1:
+			args = []
+		if user_obj.sales_supervisor_b == True or user_obj.admin_b == True or user_obj.president_director_b == True:
+			args = []
+		# offset, limit, order and count must be treated separately as we may need to deal with virtual ids
+		events = super(mail_mail, self).search(args, offset=0, limit=0, order=None, count=False)
+		return events
+
 class crm_phonecall(models.Model):
 	_inherit = 'crm.phonecall'
 
@@ -305,12 +319,9 @@ class crm_phonecall(models.Model):
 	@api.model
 	def search(self, args, offset=0, limit=0, order=None, count=False):
 		user_obj = self.env['res.users'].browse(self._uid)
-		print "sssssssssssssssssssssssssssssssss", user_obj
-
 		if self._uid == 1:
 			args = []
-		if user_obj.sales_supervisor_b:
-			print "PRINT/////////"
+		if user_obj.sales_supervisor_b == True or user_obj.admin_b == True or user_obj.president_director_b == True:
 			args = []
 		# offset, limit, order and count must be treated separately as we may need to deal with virtual ids
 		events = super(crm_phonecall, self).search(args, offset=0, limit=0, order=None, count=False)
