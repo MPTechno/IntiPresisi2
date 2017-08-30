@@ -14,10 +14,11 @@ var widgets = require('web_calendar.widgets');
 var Widget = require('web.Widget');
 var UserMenu = require('web.UserMenu');
 var Menu = require('web.Menu');
+var session = require('web.session');
 var _t = core._t;
 var _lt = core._lt;
 var QWeb = core.qweb;
-
+    var user_obj = ''
 
     var QuotationReminder = Widget.extend({
         sequence: 100, // force it to be the left-most item in the systray to prevent flickering as it is not displayed in all apps
@@ -31,12 +32,28 @@ var QWeb = core.qweb;
         start: function() {
             var self = this;
             var waiting_order = [];
-            (new Model('sale.order')).query().all().then(function(order) {
-                _.each(order, function(user) {
-                    if (user.state == 'sent'){
-                        waiting_order.push(user);
-                    }
+            var res_user = new Model('res.users');
+            res_user.call('search_read', [[['id', '=', self.session.uid]]]).then(function(res) {
+                _.each(res, function(user) {
+                    user_obj = user
                 });
+            });
+            var sale_order = (new Model('sale.order')).query().all().then(function(order) {
+                _.each(order, function(sale) {
+                    if (sale.state == 'sent'){
+                        if (sale.user_id[0] == self.session.uid){
+                            waiting_order.push(sale);
+                        }else{
+                            if (user_obj.admin_b == true || user_obj.president_director_b == true){
+                                waiting_order.push(sale);
+                            }
+                        }
+                    }
+                    
+                });
+            })
+
+            sale_order.done(function() {
                 var total_count = waiting_order.length;
                 $('.o_reminder_counter').text(total_count);
                 var widget = $('.o_reminder_dropdown_channels', this.$el).html(QWeb.render('reminder_order',{
@@ -46,7 +63,6 @@ var QWeb = core.qweb;
         },
         on_menu_clicked: function(menu_id) {
             var self = this;
-            console.log('Menu Clicked...')
             $('.recorddata').click(function(){
                 if ( $(this).attr('id') ){
                     self.open_ui($(this).attr('id'));
@@ -55,7 +71,7 @@ var QWeb = core.qweb;
         },
         open_ui: function(sale_id){
             var self = this;
-            console.log('self....',this);
+
             if (sale_id) {
                 var action = {
                     type: 'ir.actions.act_window',

@@ -288,16 +288,36 @@ class MailTemplate(models.Model):
 			force_send = False
 		return super(MailTemplate,self).send_mail(res_id, force_send, raise_exception,email_values)
 
+class mail_message(models.Model):
+	_inherit = 'mail.message'
+
+	@api.model
+	def _find_allowed_doc_ids(self, model_ids):
+	    IrModelAccess = self.env['ir.model.access']
+	    user_obj = self.env['res.users'].browse(self._uid)
+	    allowed_ids = set()
+	    for doc_model, doc_dict in model_ids.iteritems():
+	        if not IrModelAccess.check(doc_model, 'read', False):
+	            continue
+	        if user_obj.sales_supervisor_b == True or user_obj.admin_b == True or user_obj.president_director_b == True:
+	        	continue
+	        else:
+	        	allowed_ids |= self._find_allowed_model_wise(doc_model, doc_dict)
+	    return allowed_ids
+
 class mail_mail(models.Model):
 	_inherit = 'mail.mail'
 
 	@api.model
 	def search(self, args, offset=0, limit=0, order=None, count=False):
 		user_obj = self.env['res.users'].browse(self._uid)
+		print 'EDDDDDDDDDDDDD',args
 		if self._uid == 1:
 			args = []
+
 		if user_obj.sales_supervisor_b == True or user_obj.admin_b == True or user_obj.president_director_b == True:
 			args = []
+		print 'EDDDDDDDDDDDDD',args
 		# offset, limit, order and count must be treated separately as we may need to deal with virtual ids
 		events = super(mail_mail, self).search(args, offset=0, limit=0, order=None, count=False)
 		return events

@@ -834,6 +834,16 @@
             <field name="view_id" ref="calendar.view_calendar_event_calendar"/>
             <field name="search_view_id" ref="calendar.view_calendar_event_search"/>
         </record>
+
+        <record id="calendar.action_calendar_event" model="ir.actions.act_window">
+            <field name="name">Meetings</field>
+            <field name="res_model">calendar.event</field>
+            <field name="view_mode">calendar,tree,form</field>
+            <field name="domain">[]</field>
+            <field name="groups_id">[(6, 0, [ref('quotation_pit_extended_ten.group_see_all_calendar')])]</field>
+            <field name="view_id" ref="calendar.view_calendar_event_calendar"/>
+            <field name="search_view_id" ref="calendar.view_calendar_event_search"/>
+        </record>
     
 
         <record model="ir.actions.act_window" id="crm.crm_case_category_act_leads_all">
