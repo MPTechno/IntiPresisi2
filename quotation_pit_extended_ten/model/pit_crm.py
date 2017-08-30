@@ -383,7 +383,7 @@ class crm_lead(models.Model):
 	# System Information:
 	created_by = fields.Many2one('res.users','Created By',default=lambda self: self.env.user)
 	last_modified_by = fields.Datetime('Last Modified By')
-
+	company_currency = fields.Many2one(string='Currency', related='pricelist_id.currency_id', readonly=True, relation="res.currency")
 
 	# OPPORTUNITY FIELDS
 	en_number = fields.Char('Enquiry Number')
@@ -918,6 +918,12 @@ class res_partner(models.Model):
 		for partner in self:
 			partner.email_count = self.env['mail.mail'].search_count([('recipient_ids','in', [partner.id])])
 
+	@api.multi
+	def write(self,vals):
+		for partner in self:
+			if vals.get('currency_new_id'):
+				partner.property_product_pricelist.write({'currency_id':vals.get('currency_new_id')})
+		return super(res_partner,self).write(vals)
 
 class location_calnder(models.Model):
 	_name = 'location.calnder'

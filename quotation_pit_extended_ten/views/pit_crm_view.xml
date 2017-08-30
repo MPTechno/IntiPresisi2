@@ -137,7 +137,7 @@
                                             <field name="kind_of_machine"/>
                                             <field name="workpiece_material"/>
                                             <field name="coating_en"/>
-                                            <field name="tax_id" widget="many2many_tags"/>
+                                            <field name="tax_id" widget="many2many_tags" invisible="1"/>
                                             <field name="pricing_date" readonly="1"/>
                                             <field name="currency_id" invisible="1"/>
                                             <field name="check_uid" invisible="1"/>
