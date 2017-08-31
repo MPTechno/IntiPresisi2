@@ -26,6 +26,20 @@
 			</field>
 		</record>
 
+		<record model="ir.ui.view" id="calendar_event_frm_extend_tree_view">
+			<field name="name">Calendar</field>
+			<field name="model">calendar.event</field>
+			<field name="inherit_id" ref="calendar.view_calendar_event_tree"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='partner_ids']" position="attributes">
+					<attribute name="string">Account</attribute>
+				</xpath>
+				<xpath expr="//field[@name='partner_ids']" position="after">
+					<field name="description"/>
+				</xpath>
+			</field>
+		</record>
+
 		<record id="nemw_meet_view_calendar_event_search" model="ir.ui.view">
 		    <field name="name">calendar.event.search</field>
 		    <field name="model">calendar.event</field>

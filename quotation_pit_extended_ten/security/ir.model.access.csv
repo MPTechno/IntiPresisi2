@@ -1,5 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_res_partner_for_sales_person,access.res.partner.for.sales.person,base.model_res_partner,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,0
+access_res_partner_for_account_move_line,access.res.partner.for.account.move.line,account.model_account_move_line,quotation_pit_extended_ten.group_sales_person_level_pit,1,0,0,0
 access_crm_lead_for_sales_person,access.crm.lead.for.sales.person,model_crm_lead,quotation_pit_extended_ten.group_sales_person_level_pit,1,1,1,1
 access_account_invoice_for_sales_person,access.account.invoice.for.sales.person,account.model_account_invoice,quotation_pit_extended_ten.group_sales_person_level_pit,1,0,0,0
 access_sale_order_for_sales_person,access.sale.order.for.sales.person,sale.model_sale_order,quotation_pit_extended_ten.group_sales_person_level_pit,1,0,0,0

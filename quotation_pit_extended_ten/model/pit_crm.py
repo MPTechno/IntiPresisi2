@@ -14,50 +14,6 @@ import odoo.addons.decimal_precision as dp
 
 
 def int_to_roman(input):
-	"""
-   Convert an integer to Roman numerals.
-
-   Examples:
-   >>> int_to_roman(0)
-   Traceback (most recent call last):
-   ValueError: Argument must be between 1 and 3999
-
-   >>> int_to_roman(-1)
-   Traceback (most recent call last):
-   ValueError: Argument must be between 1 and 3999
-
-   >>> int_to_roman(1.5)
-   Traceback (most recent call last):
-   TypeError: expected integer, got <type 'float'>
-
-   >>> for i in range(1, 21): print int_to_roman(i)
-   ...
-   I
-   II
-   III
-   IV
-   V
-   VI
-   VII
-   VIII
-   IX
-   X
-   XI
-   XII
-   XIII
-   XIV
-   XV
-   XVI
-   XVII
-   XVIII
-   XIX
-   XX
-   >>> print int_to_roman(2000)
-   MM
-   >>> print int_to_roman(1999)
-   MCMXCIX
-   """
-
 	if type(input) != type(1):
 		raise TypeError, 'expected integer, got %s' % type(input)
 	if not 0 < input < 4000:
@@ -101,33 +57,6 @@ def int_to_roman(input):
 
 
 def roman_to_int(input):
-	"""
-   Convert a roman numeral to an integer.
-   
-   >>> r = range(1, 4000)
-   >>> nums = [int_to_roman(i) for i in r]
-   >>> ints = [roman_to_int(n) for n in nums]
-   >>> print r == ints
-   1
-
-   >>> roman_to_int('VVVIV')
-   Traceback (most recent call last):
-	...
-   ValueError: input is not a valid roman numeral: VVVIV
-   >>> roman_to_int(1)
-   Traceback (most recent call last):
-	...
-   TypeError: expected string, got <type 'int'>
-   >>> roman_to_int('a')
-   Traceback (most recent call last):
-	...
-   ValueError: input is not a valid roman numeral: A
-   >>> roman_to_int('IL')
-   Traceback (most recent call last):
-	...
-   ValueError: input is not a valid roman numeral: IL
-   """
-
 	if type(input) != type(''):
 		raise TypeError, 'expected string, got %s' % type(input)
 	input = input.upper()
@@ -311,13 +240,11 @@ class mail_mail(models.Model):
 	@api.model
 	def search(self, args, offset=0, limit=0, order=None, count=False):
 		user_obj = self.env['res.users'].browse(self._uid)
-		print 'EDDDDDDDDDDDDD',args
 		if self._uid == 1:
 			args = []
 
 		if user_obj.sales_supervisor_b == True or user_obj.admin_b == True or user_obj.president_director_b == True:
 			args = []
-		print 'EDDDDDDDDDDDDD',args
 		# offset, limit, order and count must be treated separately as we may need to deal with virtual ids
 		events = super(mail_mail, self).search(args, offset=0, limit=0, order=None, count=False)
 		return events
@@ -924,6 +851,23 @@ class res_partner(models.Model):
 			if vals.get('currency_new_id'):
 				partner.property_product_pricelist.write({'currency_id':vals.get('currency_new_id')})
 		return super(res_partner,self).write(vals)
+
+	@api.model
+	def search(self, args, offset=0, limit=0, order=None, count=False):
+		filter_partners = []
+		partners = super(res_partner, self).search(args, offset=0, limit=0, order=None, count=False)
+		print "DDDDSS",type(partners)
+		user_obj = self.env['res.users'].browse(self._uid)
+		if partners and user_obj.sales_person_b == True or user_obj.technical_support_b == True:
+			for partner in partners:
+				if partner.user_id.id != self._uid and partner.company_type == 'company':
+					print "DDDDDDD",partner.user_id.id ,self._uid
+					filter_partners.append(partner.id)
+			if filter_partners:
+				remove_partner = [par.id for par in partners if par.id not in filter_partners]
+				partners = self.browse(remove_partner)
+		return partners
+
 
 class location_calnder(models.Model):
 	_name = 'location.calnder'

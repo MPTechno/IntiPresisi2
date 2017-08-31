@@ -174,6 +174,7 @@
 						            <th><strong>Part No</strong></th>
 						            <th><strong>Description</strong></th>
 						            <th class="text-right"><strong>Qty</strong></th>
+						            <th class="text-right" groups="sale.group_discount_per_so_line">Disc.(%)</th>
 						            <th class="text-right"><strong>Unit Price %</strong></th>
 						            <th class="text-right"><strong>Amount</strong></th>
 						        </tr>
@@ -190,6 +191,9 @@
 						            </td>
 						            <td style="border:none;" class="text-right">
 						                <span t-esc="int(l.product_uom_qty)"/> <span t-field="l.product_uom.name"/>
+						            </td>
+						            <td class="text-right" groups="sale.group_discount_per_so_line">
+						                <span t-field="l.discount"/>
 						            </td>
 						            <td style="border:none;" class="text-right">
 						            	<span t-esc="'{:,.2f}'.format(l.price_unit)"/>
