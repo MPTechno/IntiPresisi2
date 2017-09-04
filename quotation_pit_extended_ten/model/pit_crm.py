@@ -1,4 +1,4 @@
-	# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from odoo.osv.orm import setup_modifiers
 from datetime import datetime
@@ -265,13 +265,14 @@ class crm_phonecall(models.Model):
 
 	@api.model
 	def search(self, args, offset=0, limit=0, order=None, count=False):
+		events = super(crm_phonecall, self).search(args, offset=0, limit=0, order=None, count=False)
 		user_obj = self.env['res.users'].browse(self._uid)
 		if self._uid == 1:
 			args = []
 		if user_obj.sales_supervisor_b == True or user_obj.admin_b == True or user_obj.president_director_b == True:
 			args = []
 		# offset, limit, order and count must be treated separately as we may need to deal with virtual ids
-		events = super(crm_phonecall, self).search(args, offset=0, limit=0, order=None, count=False)
+		
 		return events
 
 class crm_lead(models.Model):
