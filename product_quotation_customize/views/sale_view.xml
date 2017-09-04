@@ -38,6 +38,12 @@
 		        	<field name="setup" invisible="1"/>
 		        	<field name="alloy" invisible="1"/>
 		        </xpath>
+		        <xpath expr="//field[@name='order_line']/tree//field[@name='tax_id']" position="attributes">
+		        	<attribute name="invisible">1</attribute>
+		        </xpath>
+		        <xpath expr="//field[@name='amount_tax']" position="attributes">
+		        	<attribute name="invisible">1</attribute>
+		        </xpath>
 		    </data>
 		</field>
 	</record>
