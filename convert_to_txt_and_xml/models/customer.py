@@ -185,83 +185,109 @@ class ResPartner(models.Model):
                     row += 1
                     col = 0
 
-                    worksheet.write(row, col,customer.partner_code or ' ')
+                    if customer.partner_code:
+                        worksheet.write(row, col,customer.partner_code or ' ')
                     col += 1
                     
-                    worksheet.write(row, col,customer.name or ' ')
+                    if customer.name:
+                        worksheet.write(row, col,customer.name or ' ')
                     col += 1
 
-                    worksheet.write(row, col,customer.mailing_address_name or ' ')
+                    if customer.mailing_address_name:
+                        worksheet.write(row, col,customer.mailing_address_name or ' ')
                     col += 1
 
-                    worksheet.write(row, col,customer.street or ' ')
+                    if customer.street:     
+                        worksheet.write(row, col,customer.street or ' ')
                     col += 1
 
-                    worksheet.write(row, col,customer.street2 or ' ')
+                    if customer.street2:
+                        worksheet.write(row, col,customer.street2 or ' ')
                     col += 1
 
-                    worksheet.write(row, col,str(customer.city or ' ')+ ' ' + str(customer.zip or '') or '')
+                    if customer.city:
+                        worksheet.write(row, col,str(customer.city or ' ')+ ' ' + str(customer.zip or '') or '')
                     col += 1
 
-                    worksheet.write(row, col,str(customer.city2_mailing or ' ')+ ' ' + str(customer.zip2_mailing or '') or '')
+                    if customer.city2_mailing:
+                        worksheet.write(row, col,str(customer.city2_mailing or ' ')+ ' ' + str(customer.zip2_mailing or '') or '')
                     col += 1
 
-                    worksheet.write(row, col,customer.delivery_address_name or ' ')
+                    if customer.delivery_address_name:
+                        worksheet.write(row, col,customer.delivery_address_name or ' ')
                     col += 1
                     
-                    worksheet.write(row, col,customer.street_delivery or ' ')
+                    if customer.street_delivery:
+                        worksheet.write(row, col,customer.street_delivery or ' ')
                     col += 1
 
-                    worksheet.write(row, col,customer.street2_delivery or ' ')
+                    if customer.street2_delivery:
+                        worksheet.write(row, col,customer.street2_delivery or ' ')
                     col += 1
 
-                    worksheet.write(row, col,str(customer.city_delivery or ' ') +' '+str(customer.zip_delivery or '') or '')
+                    if customer.city_delivery:
+                        worksheet.write(row, col,str(customer.city_delivery or ' ') +' '+str(customer.zip_delivery or '') or '')
                     col += 1
 
-                    worksheet.write(row, col,str(customer.street2_delivery or ' ') +' '+ str(customer.city2_delivery or '') or '')
+                    if customer.street2_delivery:
+                        worksheet.write(row, col,str(customer.street2_delivery or ' ') +' '+ str(customer.city2_delivery or '') or '')
                     col += 1
 
                     if customer.lang == 'en_US':
                         worksheet.write(row, col,'EN')
                         col += 1
-                    else:
+                    elif customer.lang:
                         worksheet.write(row, col,customer.lang or ' ')
                         col += 1
+                    else:
+                        col += 1
 
-                    worksheet.write(row, col,customer.currency_new_id.name or ' ')
+                    if customer.currency_new_id:
+                        worksheet.write(row, col,customer.currency_new_id.name or ' ')
                     col += 1
 
-                    worksheet.write(row, col,customer.customer_group_id.name or ' ')
+                    if customer.customer_group_id:
+                        worksheet.write(row, col,customer.customer_group_id.name or ' ')
                     col += 1
 
-                    worksheet.write(row, col,customer.vat_code or ' ')
+                    if customer.vat_code:
+                        worksheet.write(row, col,customer.vat_code or ' ')
                     col += 1
 
-                    worksheet.write(row, col,customer.vat_number or ' ')
+                    if customer.vat_number:
+                        worksheet.write(row, col,customer.vat_number or ' ')
                     col += 1
 
-                    worksheet.write(row, col,customer.country_id.code or ' ')
+                    if customer.country_id:
+                        worksheet.write(row, col,customer.country_id.code or ' ')
                     col += 1
 
-                    worksheet.write(row, col,customer.phone or ' ')
+                    if customer.phone:
+                        worksheet.write(row, col,customer.phone or ' ')
                     col += 1
 
-                    worksheet.write(row, col,customer.fax or ' ')
+                    if customer.fax:
+                        worksheet.write(row, col,customer.fax or ' ')
                     col += 1
 
-                    worksheet.write(row, col,customer.email or ' ')
+                    if customer.email:
+                        worksheet.write(row, col,customer.email or ' ')
                     col += 1
 
-                    worksheet.write(row, col,child.name or ' ')
+                    if child:
+                        worksheet.write(row, col,child.name or ' ')
                     col += 1
 
-                    worksheet.write(row, col,child.phone or ' ')
+                    if child and child.phone:
+                        worksheet.write(row, col,child.phone or ' ')
                     col += 1
 
-                    worksheet.write(row, col,child.mobile or ' ')
+                    if child and child.mobile:
+                        worksheet.write(row, col,child.mobile or ' ')
                     col += 1
 
-                    worksheet.write(row, col,child.email or ' ')
+                    if child and child.email:
+                        worksheet.write(row, col,child.email or ' ')
                     col += 1
 
 
