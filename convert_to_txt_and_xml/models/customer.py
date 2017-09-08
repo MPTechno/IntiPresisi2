@@ -73,7 +73,7 @@ class ResPartner(models.Model):
             res = self
             output =  StringIO.StringIO()
             workbook = xlsxwriter.Workbook(output, {'in_memory': True})
-            worksheet = workbook.add_worksheet()
+            worksheet = workbook.add_worksheet('Sheet1')
             row = 0
             col = 0
             bold_format = workbook.add_format({'bold':  1})
