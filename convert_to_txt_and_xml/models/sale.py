@@ -154,11 +154,12 @@ class SaleOrder(models.Model):
                     Currency.text = ustr(order.pricelist_id.currency_id.name)
                 Rows = SubElement(Order,'Rows')#Line Items
                 line_no = 1
+                row_type = 1
                 for line in order.order_line:
                     Row = SubElement(Rows,'Row')
                     Row.set('RowNumber',ustr(line_no))
-                    Row.set('RowType',ustr(line_no))#FixMe
-                    # line_no+=1
+                    Row.set('RowType',ustr(row_type))#FixMe
+                    line_no+=1
                     
                     Part = SubElement(Row,'Part')
                     if line.product_id and line.product_id.part_number:
