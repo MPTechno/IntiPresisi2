@@ -40,6 +40,21 @@
 			</field>
 		</record>
 
+		<record id="defaul_meet_view_calendar_event_search_inh" model="ir.ui.view">
+		    <field name="name">calendar.event.inherit</field>
+		    <field name="model">calendar.event</field>
+		    <field name="inherit_id" ref="calendar.view_calendar_event_search"/>
+		    <field name="arch" type="xml">
+				<xpath expr="//field[@name='privacy']" position="after">
+					<filter string="Admin" domain="[('user_id.admin_b','=',True)]"/>
+					<filter string="President Director" domain="[('user_id.president_director_b','=',True)]"/>
+					<filter string="Director" domain="[('user_id.director_b','=',True)]"/>
+					<filter string="Sales Coordinator" domain="[('user_id.sales_coordinator_b','=',True)]"/>
+					<filter string="Sales Supervisor" domain="[('user_id.sales_supervisor_b','=',True)]"/>
+				</xpath>
+			</field>
+		</record>
+
 		<record id="nemw_meet_view_calendar_event_search" model="ir.ui.view">
 		    <field name="name">calendar.event.search</field>
 		    <field name="model">calendar.event</field>

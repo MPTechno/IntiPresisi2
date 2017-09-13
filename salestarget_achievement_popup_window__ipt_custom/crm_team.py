@@ -5,6 +5,12 @@ from odoo.exceptions import Warning
 class CRMTeam(models.Model):
     _inherit = 'crm.team'
     
+    def _get_current_user(self):
+        userlist= []
+        return [('id', '=', self.env.uid)]
+
+    achievement_member_ids = fields.One2many('res.users', 'sale_team_id',domain=_get_current_user, string='Team Members')
+    
     @api.multi
     def open_popup_id(self):        
         context = dict(self.env.context or {})
@@ -21,7 +27,7 @@ class CRMTeam(models.Model):
                 'context': context,
                 'target': 'new',
             }
-            
+
 class ResUsers(models.Model):
     _inherit = 'res.users'
     

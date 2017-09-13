@@ -862,7 +862,6 @@ class res_partner(models.Model):
 		if partners and user_obj.sales_person_b == True or user_obj.technical_support_b == True:
 			for partner in partners:
 				if partner.user_id.id != self._uid and partner.company_type == 'company':
-					print "DDDDDDD",partner.user_id.id ,self._uid
 					filter_partners.append(partner.id)
 			if filter_partners:
 				remove_partner = [par.id for par in partners if par.id not in filter_partners]
@@ -881,6 +880,7 @@ class CalendarEvent(models.Model):
 	lead_id = fields.Many2one('crm.lead', 'Leads', domain="[('type', '=', 'lead')]")
 	location_cal_id =fields.Many2one('location.calnder','Location')
 
+
 	@api.model
 	def create(self, vals):
 		if 'stage_type' in self._context:
@@ -889,16 +889,17 @@ class CalendarEvent(models.Model):
 		event = super(CalendarEvent, self).create(vals)
 		return event
 
-	@api.model
-	def search(self, args, offset=0, limit=0, order=None, count=False):
-		user_obj = self.env['res.users'].browse(self._uid)
-		if self._uid == 1:
-			args = []
-		if user_obj.sales_supervisor_b:
-			args = []
-		# offset, limit, order and count must be treated separately as we may need to deal with virtual ids
-		events = super(CalendarEvent, self).search(args, offset=0, limit=0, order=None, count=False)
-		return events
+	# @api.model
+	# def search(self, args, offset=0, limit=0, order=None, count=False):
+	# 	user_obj = self.env['res.users'].browse(self._uid)
+	# 	print "---------------------", args
+	# 	if self._uid == 1:
+	# 		args = []
+	# 	if user_obj.sales_supervisor_b:
+	# 		args = []
+	# 	# offset, limit, order and count must be treated separately as we may need to deal with virtual ids
+	# 	events = super(CalendarEvent, self).search(args, offset=0, limit=0, order=None, count=False)
+	# 	return events
 
 class validate_new_date(models.Model):
 	_name = 'validate.new.date'

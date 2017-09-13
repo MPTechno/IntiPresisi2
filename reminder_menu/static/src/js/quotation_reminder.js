@@ -44,7 +44,7 @@ var QWeb = core.qweb;
                         if (sale.user_id[0] == self.session.uid){
                             waiting_order.push(sale);
                         }else{
-                            if (user_obj.admin_b == true || user_obj.president_director_b == true){
+                            if (user_obj.admin_b == true || user_obj.president_director_b == true || user_obj.sales_supervisor_b == true){
                                 waiting_order.push(sale);
                             }
                         }
