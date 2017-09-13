@@ -34,7 +34,7 @@ class SaleOrder(models.Model):
             
             for order in self.env['sale.order'].browse(order_ids):
                 Order = SubElement(Orders,'Order')
-                Order.set('OrderNumber',ustr(str(order.name).split('/')[0]))
+                Order.set('OrderNumber',ustr(str(order.po_num) or ''))
                 
                 head = SubElement(Order,'Head')#Header Part
                 
@@ -96,7 +96,7 @@ class SaleOrder(models.Model):
                 
                 GoodsLabeling = SubElement(References, 'GoodsLabeling')
                 GoodsLabeling_row1 = SubElement(GoodsLabeling,'Row1')
-                GoodsLabeling_row1.text = ustr(str(order.name).split('/')[0] or '')
+                GoodsLabeling_row1.text = ustr(str(order.po_num) or '')
                 GoodsLabeling_row2 = SubElement(GoodsLabeling,'Row2')
                 
                 DeliveryAddress = SubElement(head, 'DeliveryAddress')#Delivery Address #FixMe: Need to confirm which value?
@@ -139,8 +139,8 @@ class SaleOrder(models.Model):
                 CustomerInvoiceCode = SubElement(Terms, 'CustomerInvoiceCode')
                 CustomerInvoiceCode.text = ustr(order.customer_invoice_code or '')
                 OrderDate = SubElement(Terms, 'OrderDate')
-                if order.date_order:
-                    OrderDate.text = ustr(order.date_order).split(' ')[0]
+                if order.order_date:
+                    OrderDate.text = ustr(order.order_date).split(' ')[0]
                     
                 PaymentTerms = SubElement(Terms, 'PaymentTerms')
                 
@@ -158,15 +158,15 @@ class SaleOrder(models.Model):
                     Row = SubElement(Rows,'Row')
                     Row.set('RowNumber',ustr(line_no))
                     Row.set('RowType',ustr(line_no))#FixMe
-                    line_no+=1
+                    # line_no+=1
                     
                     Part = SubElement(Row,'Part')
                     if line.product_id and line.product_id.part_number:
-                        Part.set('PartNumber',ustr(line.part_number_product))
+                        Part.set('PartNumber','')
                     else:
                         Part.set('PartNumber','')
-                    if line.product_id and line.product_id.customer_part_no:
-                        Part.set('SupplierPartNumber',ustr(line.product_id.customer_part_no))
+                    if line.product_id and line.part_number_product:
+                        Part.set('SupplierPartNumber',ustr(line.part_number_product.name))
                     else:
                         Part.set('SupplierPartNumber','')
                     
