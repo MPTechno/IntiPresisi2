@@ -228,7 +228,7 @@ class mail_message(models.Model):
 	    for doc_model, doc_dict in model_ids.iteritems():
 	        if not IrModelAccess.check(doc_model, 'read', False):
 	            continue
-	        if user_obj.sales_supervisor_b == True or user_obj.admin_b == True or user_obj.president_director_b == True:
+	        if user_obj.admin_b == True or user_obj.president_director_b == True:
 	        	continue
 	        else:
 	        	allowed_ids |= self._find_allowed_model_wise(doc_model, doc_dict)
